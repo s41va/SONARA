@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/head :: head ('Sonara - Detalle de Género')"></head>
+
+
+<body class="d-flex flex-column h-100">
+
+
+<header th:replace="fragments/header :: header"></header>
+
+<main class="list-page">
+    <div class="form-card">
+
+        <h1>
+            <span th:text="#{msg.genero-detail.title}">Detalle del Género:</span>
+            <span th:text="${genero.nombre}">Nombre del Género</span>
+        </h1>
+
+        <div class="mt-3">
+            <h2 class="h5" th:text="#{msg.genero-detail.section.mainData}">Información del Género</h2>
+            <dl class="row">
+                <dt class="col-sm-3" th:text="#{msg.genero-detail.field.id}"></dt>
+                <dd class="col-sm-9" th:text="${genero.id}"></dd>
+
+                <dt class="col-sm-3" th:text="#{msg.genero-detail.field.nombre}"></dt>
+                <dd class="col-sm-9" th:text="${genero.nombre}"></dd>
+
+                <dt class="col-sm-3" th:text="#{msg.genero-detail.field.descripcion}"></dt>
+                <dd class="col-sm-9" th:text="${genero.descripcion}"></dd>
+            </dl>
+        </div>
+
+        <div class="mt-4">
+            <a th:href="@{/generos/edit(id=${genero.id})}"
+               class="btn btn-primary"
+               th:text="#{msg.genero-detail.action.edit}">Editar</a>
+
+            <a th:href="@{/generos}" class="btn btn-secondary" th:text="#{msg.genero-detail.action.returnback}">Volver a
+                la lista</a>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="fragments/footer :: footer"></footer>
+
+<div th:replace="fragments/scripts :: scripts"></div>
+
+</body>
+
+</html>

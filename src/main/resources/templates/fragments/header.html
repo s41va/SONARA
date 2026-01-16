@@ -1,0 +1,88 @@
+<header th:fragment="header" class="border-bottom bg-light" xmlns:th="http://www.thymeleaf.org">
+    <div class="navbar navbar-expand-sm border-5 border-bottom border-primary" style="background-color: #B9F6FF;">
+        <div class="container-fluid">
+            <a href="#" class="navbar-brand ps-2"><img src="/images/Group%209.png" class="w-50"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collaseNavbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="collaseNavbarContent">
+                <ul class="navbar-nav me-auto w-100 ">
+                    <li class="nav-item text-sm-center text-start border-3 border-primary border-start border-end " >
+                        <a th:href="@{/}" class="nav-link">
+                            <i class="bi bi-house"></i>
+                            <span class="ocultar-palabrabarra">Home </span>
+
+                        </a>
+                    </li>
+                    <li class="nav-item text-sm-center text-start border-3 border-primary  border-end " >
+                        <a th:href="@{/artistas}" class="nav-link">
+                            <i class="bi bi-person"></i>
+                            <span class="ocultar-palabrabarra" th:text="#{msg.artista}">Artistas </span>
+
+                        </a>
+                    </li>
+                    <li class="nav-item text-sm-center text-start border-3 border-primary  border-end " >
+                        <a th:href="@{/generos}" class="nav-link">
+                            <i class="bi bi-music-note-beamed"></i>
+                            <span class="ocultar-palabrabarra" th:text="#{msg.genero}">Generos</span>
+
+                        </a>
+                    </li>
+
+                    <li class="nav-item text-sm-center text-start border-3 color-borde border-end">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-map"></i>
+                            <span class="ocultar-palabrabarra">Mapa</span>
+                        </a>
+                    </li>
+                    <li class="nav-item text-sm-center text-start border-3 color-borde  border-end">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-chat-left-dots"></i>
+                            <span class="ocultar-palabrabarra">Chats</span>
+                        </a>
+                    </li>
+                    <li class="nav-item text-sm-center text-start border-3 color-borde  border-end">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-ticket-perforated"></i>
+                            <span class="ocultar-palabrabarra">Tickets</span>
+                        </a>
+                    </li>
+                    <li class="nav-item text-sm-center text-start border-3 color-borde  border-end ocultar-busqueda">
+                        <a href="#" class="nav-link ">
+                            <i class="bi bi-search"></i>
+                            <span class="ocultar-palabrabarra">Busqueda</span>
+                        </a>
+                    </li>
+                    <li class="nav-item text-sm-center text-start border-3 color-borde  border-end">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-person"></i>
+                            <span class="ocultar-palabrabarra">Perfil</span>
+                        </a>
+                    </li>
+                    <li class="nav-item border-3 color-borde  border-end">
+                        <a href="#" class="nav-link">
+                            Idioma
+                        </a>
+                    </li>
+
+                </ul>
+                <form method="get"
+                      class="d-lg-flex align-items-center me-3"
+                      th:action="@{/}">
+
+
+                    <label for="langSelect" class="visually-hidden">Idioma</label>
+                    <select id="langSelect" name="lang" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="es" th:selected="${#locale.language == 'es'}">Español</option>
+                        <option value="en" th:selected="${#locale.language == 'en'}">English</option>
+                    </select>
+                </form>
+                <!--<form action="" class="d-flex d-none d-lg-flex  p-2 ">
+                    <input class="form-control" type="search" placeholder="Buscar..">
+                    <button class="btn "><i class="bi bi-search"></i></button>
+                </form>-->
+            </div>
+        </div>
+    </div>
+</header>
