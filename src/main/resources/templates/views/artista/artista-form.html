@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head ('Sonara - Artista Form')"></head>
+
+<body class="d-flex flex-column h-100">
+
+<header th:replace="fragments/header :: header"></header>
+
+<main class="form-page">
+  <div class="form-card">
+
+    <h1 th:text="${artista.artista_id == null} ? #{msg.artista-form.add} : #{msg.artista-form.edit}">Nuevo Artista</h1>
+
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+    <form th:action="${artista.artista_id} == null ? @{/artistas/insert} : @{/artistas/update}"
+          th:object="${artista}" method="post" class="mt-3">
+
+      <input type="hidden" th:field="*{artista_id}" />
+
+      <div class="mb-3">
+        <label for="nombre_artistico" class="form-label" th:text="#{msg.artista-form.nombre_artistico}"></label>
+        <input type="text" th:field="*{nombre_artistico}" id="nombre_artistico" class="form-control"
+               maxlength="100" required />
+        <div th:if="${#fields.hasErrors('nombre_artistico')}" class="text-danger" th:errors="*{nombre_artistico}"></div>
+      </div>
+
+      <div class="mb-3">
+        <label for="pais" class="form-label" th:text="#{msg.artista-form.pais}"></label>
+        <input type="text" th:field="*{pais}" id="pais" class="form-control"
+               maxlength="50" required />
+        <div th:if="${#fields.hasErrors('pais')}" class="text-danger" th:errors="*{pais}"></div>
+      </div>
+
+      <div class="mb-3">
+        <label for="descripcion" class="form-label" th:text="#{msg.artista-form.descripcion}"></label>
+        <textarea th:field="*{descripcion}" id="descripcion" class="form-control"
+                  rows="3" maxlength="500"></textarea>
+        <div th:if="${#fields.hasErrors('descripcion')}" class="text-danger" th:errors="*{descripcion}"></div>
+      </div>
+
+      <button type="submit" class="btn btn-primary"
+              th:text="${artista.artista_id == null} ? #{msg.artista-form.create} : #{msg.artista-form.update}"></button>
+
+      <a th:href="@{/artistas}" class="btn btn-secondary" th:text="#{msg.artista-form.returnback}">Volver</a>
+    </form>
+
+  </div>
+</main>
+
+<footer th:replace="fragments/footer :: footer"></footer>
+
+<div th:replace="fragments/scripts :: scripts"></div>
+
+</body>
+</html>

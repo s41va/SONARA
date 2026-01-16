@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head ('Sonara - Genero List')"></head>
+
+
+<body class="d-flex flex-column h-100">
+
+
+<header th:replace="fragments/header :: header"></header>
+
+
+<main class="list-page">
+    <div class="list-card">
+
+        <h1 th:text="#{msg.genero-list.title}"></h1>
+
+        <a th:href="@{/generos/new}" class="btn btn-success" th:text="#{msg.genero-list.add}"></a>
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+        <table class="table table-bordered table-striped mt-3">
+            <thead>
+            <tr>
+                <th th:text="#{msg.genero-list.id}"></th>
+                <th th:text="#{msg.genero-list.generoname}"></th>
+                <th th:text="#{msg.genero-list.descripcion}"></th>
+                <th th:text="#{msg.genero-list.actions}"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="genero : ${listGeneros}">
+                <td th:text="${genero.id}"></td>
+                <td th:text="${genero.nombre}"></td>
+                <td th:text="${genero.descripcion}"></td>
+                <td>
+
+                    <a th:href="@{/generos/detail(id=${genero.id})}"
+                       class="btn btn-primary btn-sm"
+                       th:text="#{msg.genero-list.viewDetail}"></a>
+
+                    <a th:href="@{/generos/edit(id=${genero.id})}" class="btn btn-primary btn-sm" th:text="#{msg.genero-list.edit}"></a>
+
+                    <form th:action="@{/generos/delete}" method="post" class="d-inline">
+                        <input type="hidden" name="id" th:value="${genero.id}" />
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                th:onclick="|return confirm(#{msg.genero-list.confirm});|" th:text="#{msg.genero-list.delete}">
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <a th:href="@{/}" class="btn btn-secondary" th:text="#{msg.genero-list.returnback}"></a>
+    </div>
+</main>
+
+
+<footer th:replace="fragments/footer :: footer"></footer>
+
+
+<div th:replace="fragments/scripts :: scripts"></div>
+
+
+</body>
+</html>

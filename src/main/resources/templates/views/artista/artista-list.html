@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head ('Sonara - Artista List')"></head>
+
+
+<body class="d-flex flex-column h-100">
+
+
+<header th:replace="fragments/header :: header"></header>
+
+
+<main class="list-page">
+    <div class="list-card">
+
+        <h1 th:text="#{msg.artista-list.title}"></h1>
+
+        <a th:href="@{/artistas/new}" class="btn btn-success" th:text="#{msg.artista-list.add}"></a>
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+        <table class="table table-bordered table-striped mt-3">
+            <thead>
+            <tr>
+                <th th:text="#{msg.artista-list.artista_id}"></th>
+                <th th:text="#{msg.artista-list.nombre_artistico}"></th>
+                <th th:text="#{msg.artista-list.pais}"></th>
+                <th th:text="#{msg.artista-list.descripcion}"></th>
+                <th th:text="#{msg.genero-list.actions}"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="artista : ${listArtistas}">
+                <td th:text="${artista.artista_id}"></td>
+                <td th:text="${artista.nombre_artistico}"></td>
+                <td th:text="${artista.pais}"></td>
+                <td th:text="${artista.descripcion}"></td>
+                <td>
+
+                    <a th:href="@{/artistas/detail(id=${artista.artista_id})}"
+                       class="btn btn-primary btn-sm"
+                       th:text="#{msg.artista-list.viewDetail}"></a>
+
+                    <a th:href="@{/artistas/edit(id=${artista.artista_id})}" class="btn btn-primary btn-sm"
+                       th:text="#{msg.artista-list.edit}"></a>
+
+                    <form th:action="@{/artistas/delete}" method="post" class="d-inline">
+                        <input type="hidden" name="id" th:value="${artista.artista_id}"/>
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                th:onclick="|return confirm(#{msg.artista-list.confirm});|"
+                                th:text="#{msg.artista-list.delete}">
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <a th:href="@{/}" class="btn btn-secondary" th:text="#{msg.artista-list.returnback}"></a>
+    </div>
+</main>
+
+
+<footer th:replace="fragments/footer :: footer"></footer>
+
+
+<div th:replace="fragments/scripts :: scripts"></div>
+
+
+</body>
+</html>
