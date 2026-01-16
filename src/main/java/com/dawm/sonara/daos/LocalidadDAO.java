@@ -1,6 +1,6 @@
 package com.dawm.sonara.daos;
 
-import com.example.demo.entities.Localidad;
+import com.dawm.sonara.entities.Localidad;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

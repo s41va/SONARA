@@ -1,6 +1,7 @@
 package com.dawm.sonara.controllers;
 
-import com.example.demo.daos.LocalidadDAO;
+
+import com.dawm.sonara.daos.LocalidadDAO;
 import com.dawm.sonara.dtos.LocalidadCreateDTO;
 import com.dawm.sonara.dtos.LocalidadDTO;
 import com.dawm.sonara.dtos.LocalidadDetailDTO;
