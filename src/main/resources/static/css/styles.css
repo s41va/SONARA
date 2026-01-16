@@ -10,6 +10,43 @@
 }
 
 
+/* @import "node_modules/bootstrap/scss/bootstrap.scss"; */
+.ocultar-busqueda, .ocultar-palabrabarra, .coloca-izquierda {
+  display: none;
+}
+
+li {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.color-borde {
+  border-color: #00B8D4 !important;
+}
+
+@media (max-width: 991.98px) {
+  .ocultar-busqueda {
+    display: block;
+  }
+}
+@media (min-width: 767.98px) {
+  .ocultar-palabrabarra {
+    display: block;
+  }
+}
+.navbar-collapse.show .ocultar-palabrabarra {
+  display: inline !important;
+}
+
+/* @media(min-width:787.98px){
+    .ocultar-busqueda-cuadro{
+        display: block;
+    }
+    .ocultar-palabrabarra{
+        display: block;
+    }
+} *//*# sourceMappingURL=style.css.map */
+
 /* =========================================================
   ESTRUCTURA DE PÁGINA (FOOTER SIEMPRE VISIBLE)
   ========================================================= */
