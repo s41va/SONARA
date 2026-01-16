@@ -1,13 +1,13 @@
-package com.example.demo.controllers;
+package com.dawm.sonara.controllers;
 
 import com.example.demo.daos.LocalidadDAO;
-import com.example.demo.dtos.LocalidadCreateDTO;
-import com.example.demo.dtos.LocalidadDTO;
-import com.example.demo.dtos.LocalidadDetailDTO;
-import com.example.demo.dtos.LocalidadUpdateDTO;
-import com.example.demo.entities.Localidad;
+import com.dawm.sonara.dtos.LocalidadCreateDTO;
+import com.dawm.sonara.dtos.LocalidadDTO;
+import com.dawm.sonara.dtos.LocalidadDetailDTO;
+import com.dawm.sonara.dtos.LocalidadUpdateDTO;
+import com.dawm.sonara.entities.Localidad;
 import jakarta.validation.Valid;
-import com.example.demo.mappers.LocalidadMapper;
+import com.dawm.sonara.mappers.LocalidadMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

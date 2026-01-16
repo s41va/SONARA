@@ -1,14 +1,14 @@
-package com.example.demo.controllers;
+package com.dawm.sonara.controllers;
 
 import com.example.demo.daos.LocalidadDAO;
 import com.example.demo.daos.UsuarioDAO;
-import com.example.demo.dtos.UsuarioCreateDTO;
-import com.example.demo.dtos.UsuarioDTO;
-import com.example.demo.dtos.UsuarioDetailDTO;
-import com.example.demo.dtos.UsuarioUpdateDTO;
-import com.example.demo.entities.Localidad;
-import com.example.demo.entities.Usuario;
-import com.example.demo.mappers.UsuarioMapper;
+import com.dawm.sonara.dtos.UsuarioCreateDTO;
+import com.dawm.sonara.dtos.UsuarioDTO;
+import com.dawm.sonara.dtos.UsuarioDetailDTO;
+import com.dawm.sonara.dtos.UsuarioUpdateDTO;
+import com.dawm.sonara.entities.Localidad;
+import com.dawm.sonara.entities.Usuario;
+import com.dawm.sonara.mappers.UsuarioMapper;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +20,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 

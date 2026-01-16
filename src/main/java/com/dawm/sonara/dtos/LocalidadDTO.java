@@ -1,16 +1,15 @@
-package com.example.demo.dtos;
+package com.dawm.sonara.dtos;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LocalidadDetailDTO {
+@Builder
+public class LocalidadDTO {
     private Long id;
     private String pais;
     private String nombreCiudad;

@@ -1,4 +1,4 @@
-package com.example.demo.entities;
+package com.dawm.sonara.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;

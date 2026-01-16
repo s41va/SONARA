@@ -1,10 +1,10 @@
-package com.example.demo.mappers;
+package com.dawm.sonara.mappers;
 
-import com.example.demo.dtos.UsuarioCreateDTO;
-import com.example.demo.dtos.UsuarioDTO;
-import com.example.demo.dtos.UsuarioDetailDTO;
-import com.example.demo.dtos.UsuarioUpdateDTO;
-import com.example.demo.entities.Usuario;
+import com.dawm.sonara.dtos.UsuarioCreateDTO;
+import com.dawm.sonara.dtos.UsuarioDTO;
+import com.dawm.sonara.dtos.UsuarioDetailDTO;
+import com.dawm.sonara.dtos.UsuarioUpdateDTO;
+import com.dawm.sonara.entities.Usuario;
 
 import java.util.List;
 

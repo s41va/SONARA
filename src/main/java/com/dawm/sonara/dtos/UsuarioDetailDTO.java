@@ -1,6 +1,5 @@
-package com.example.demo.dtos;
+package com.dawm.sonara.dtos;
 
-import com.example.demo.entities.Localidad;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

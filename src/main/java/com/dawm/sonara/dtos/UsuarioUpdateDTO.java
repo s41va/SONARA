@@ -1,9 +1,14 @@
-package com.example.demo.dtos;
+package com.dawm.sonara.dtos;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -11,7 +16,9 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioCreateDTO {
+@Builder
+public class UsuarioUpdateDTO {
+    @NotNull(message = "{msg.usuario.id.notNull}")
     private Long id;
 
     @NotBlank(message = "{msg.usuario.nombre.notEmpty}")
@@ -36,5 +43,4 @@ public class UsuarioCreateDTO {
     private Long localidadId;
 
     private LocalDateTime fechaRegistro;
-
 }

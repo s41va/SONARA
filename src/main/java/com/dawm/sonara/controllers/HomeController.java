@@ -1,4 +1,4 @@
-package com.example.demo.controllers;
+package com.dawm.sonara.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
