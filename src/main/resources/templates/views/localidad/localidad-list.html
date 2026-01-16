@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head ('Sonara - Localidades')"></head>
+
+<body class="d-flex flex-column h-100">
+
+<!-- Header -->
+<header th:replace="fragments/header :: header"></header>
+
+<!-- Contenido dinámico -->
+<main class="list-page">
+    <div class="list-card">
+
+        <h1 th:text="#{msg.localidad-list.title}">Lista de Localidades</h1>
+
+        <a th:href="@{/localidad/new}" class="btn btn-success" th:text="#{msg.localidad-list.button.add}">
+            Añadir Localidad
+        </a>
+
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+        <table class="table table-bordered table-striped mt-3">
+            <thead>
+            <tr>
+                <!-- ID -->
+                <th>
+                    <a class="text-decoration-none"
+                       th:href="@{/localidad(page=${currentPage},size=${pageSize},sortField='id',sortDir=${(sortField == 'id') ? reverseSortDir : 'asc'})}">
+                        <span th:text="#{msg.localidad-list.table.id}">ID</span>
+                        <span class="ms-1" th:if="${sortField == 'id'}" th:text="${sortDir == 'asc'} ? '▲' : '▼'"></span>
+                    </a>
+                </th>
+
+                <!-- País -->
+                <th>
+                    <a class="text-decoration-none"
+                       th:href="@{/localidad(page=${currentPage},size=${pageSize},sortField='pais',sortDir=${(sortField == 'pais') ? reverseSortDir : 'asc'})}">
+                        <span th:text="#{msg.localidad-list.table.pais}">País</span>
+                        <span class="ms-1" th:if="${sortField == 'pais'}" th:text="${sortDir == 'asc'} ? '▲' : '▼'"></span>
+                    </a>
+                </th>
+
+                <!-- Nombre Ciudad -->
+                <th>
+                    <a class="text-decoration-none"
+                       th:href="@{/localidad(page=${currentPage},size=${pageSize},sortField='nombreCiudad',sortDir=${(sortField == 'nombreCiudad') ? reverseSortDir : 'asc'})}">
+                        <span th:text="#{msg.localidad-list.table.nombreCiudad}">Ciudad</span>
+                        <span class="ms-1" th:if="${sortField == 'nombreCiudad'}" th:text="${sortDir == 'asc'} ? '▲' : '▼'"></span>
+                    </a>
+                </th>
+
+                <!-- Código Postal -->
+                <th>
+                    <a class="text-decoration-none"
+                       th:href="@{/localidad(page=${currentPage},size=${pageSize},sortField='codigoPostal',sortDir=${(sortField == 'codigoPostal') ? reverseSortDir : 'asc'})}">
+                        <span th:text="#{msg.localidad-list.table.codigoPostal}">Código Postal</span>
+                        <span class="ms-1" th:if="${sortField == 'codigoPostal'}" th:text="${sortDir == 'asc'} ? '▲' : '▼'"></span>
+                    </a>
+                </th>
+
+                <!-- Acciones -->
+                <th th:text="#{msg.localidad-list.table.actions}">Acciones</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="localidad : ${listLocalidades}">
+                <td th:text="${localidad.id}"></td>
+                <td th:text="${localidad.pais}"></td>
+                <td th:text="${localidad.nombreCiudad}"></td>
+                <td th:text="${localidad.codigoPostal}"></td>
+                <td>
+                    <a th:href="@{/localidad/detail(id=${localidad.id})}"
+                       class="btn btn-outline-secondary btn-sm me-1"
+                       th:text="#{msg.localidad-list.viewDetail}">Ver</a>
+
+                    <a th:href="@{/localidad/edit(id=${localidad.id})}" class="btn btn-primary btn-sm"
+                       th:text="#{msg.localidad-list.button.edit}">Editar</a>
+
+                    <form th:action="@{/localidad/delete}" method="post" class="d-inline">
+                        <input type="hidden" name="id" th:value="${localidad.id}"/>
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                th:onclick="|return confirm('#{msg.localidad-list.confirm.delete}');|"
+                                th:text="#{msg.localidad-list.button.delete}">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <a th:href="@{/}" class="btn btn-secondary" th:text="#{msg.localidad-list.button.back}">
+            Volver al inicio
+        </a>
+
+        <!-- Paginación -->
+        <div class="d-flex justify-content-between align-items-center mt-3"
+             th:if="${totalPages > 0}">
+
+            <!-- Info de página -->
+            <div>
+                <span th:text="#{msg.pagination.info(${currentPage} + 1, ${totalPages}, ${totalElements})}"></span>
+            </div>
+
+            <!-- Controles de paginación -->
+            <nav th:aria-label="#{msg.pagination.aria.label}">
+                <ul class="pagination mb-0">
+
+                    <!-- Botón Anterior -->
+                    <li class="page-item" th:classappend="${currentPage == 0} ? ' disabled'">
+                        <a class="page-link"
+                           th:href="@{/localidad(page=${currentPage - 1}, size=${pageSize}, sortField=${sortField}, sortDir=${sortDir})}"
+                           th:aria-label="#{msg.pagination.prev}">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+
+                    <!-- Números de página -->
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(startPage, endPage)}"
+                        th:classappend="${i} == ${currentPage} ? ' active'">
+                        <a class="page-link"
+                           th:text="${i + 1}"
+                           th:href="@{/localidad(page=${i}, size=${pageSize}, sortField=${sortField}, sortDir=${sortDir})}"></a>
+                    </li>
+
+                    <!-- Botón Siguiente -->
+                    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? ' disabled'">
+                        <a class="page-link"
+                           th:href="@{/localidad(page=${currentPage + 1}, size=${pageSize}, sortField=${sortField}, sortDir=${sortDir})}"
+                           th:aria-label="#{msg.pagination.next}">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer th:replace="fragments/footer :: footer"></footer>
+<div th:replace="fragments/scripts :: scripts"></div>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head ('Sonara - Localidad')"></head>
+
+<body class="d-flex flex-column h-100">
+
+<!-- Header -->
+<header th:replace="fragments/header :: header"></header>
+
+<main class="form-page">
+    <div class="form-card">
+        <!-- Título -->
+        <h1>
+            <span th:text="#{msg.localidad-detail.title}"></span>
+            <span th:text="${localidad.nombreCiudad}"></span>
+        </h1>
+
+        <!-- Datos básicos de la localidad -->
+        <div class="mt-3">
+            <h2 class="h5" th:text="#{msg.localidad-detail.section.localidadData}"></h2>
+            <dl class="row">
+                <dt class="col-sm-3" th:text="#{msg.localidad-detail.field.id}"></dt>
+                <dd class="col-sm-9" th:text="${localidad.id}"></dd>
+
+                <dt class="col-sm-3" th:text="#{msg.localidad-detail.field.pais}"></dt>
+                <dd class="col-sm-9" th:text="${localidad.pais}"></dd>
+
+                <dt class="col-sm-3" th:text="#{msg.localidad-detail.field.nombreCiudad}"></dt>
+                <dd class="col-sm-9" th:text="${localidad.nombreCiudad}"></dd>
+
+                <dt class="col-sm-3" th:text="#{msg.localidad-detail.field.codigoPostal}"></dt>
+                <dd class="col-sm-9" th:text="${localidad.codigoPostal}"></dd>
+            </dl>
+        </div>
+
+        <div class="mt-4">
+            <a class="btn btn-secondary" th:href="@{/localidad}" th:text="#{msg.localidad-detail.action.back}"></a>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="fragments/footer :: footer"></footer>
+<div th:replace="fragments/scripts :: scripts"></div>
+
+</body>
+</html>

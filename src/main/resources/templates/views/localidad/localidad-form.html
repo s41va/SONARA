@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head ('Sonara - Localidad')"></head>
+
+<body class="d-flex flex-column h-100">
+
+<header th:replace="fragments/header :: header"></header>
+
+<main class="form-page">
+    <div class="form-card">
+
+        <!-- Título -->
+        <h1 th:if="${localidad.id == null}" th:text="#{msg.localidad-form.title.create}"></h1>
+        <h1 th:unless="${localidad.id == null}" th:text="#{msg.localidad-form.title.edit}"></h1>
+
+        <!-- Mensaje de error -->
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+        <!-- Formulario -->
+        <!-- Formulario para crear (cuando localidad.id es null) -->
+        <form th:if="${localidad.id == null}" th:action="@{/localidad/insert}" th:object="${localidad}" method="post" class="mt-3">
+            <input type="hidden" th:field="*{id}"/>
+
+            <div class="mb-3">
+                <label for="pais" class="form-label" th:text="#{msg.localidad-form.label.pais}">País:</label>
+                <input type="text" th:field="*{pais}" id="pais" class="form-control"/>
+                <div th:if="${#fields.hasErrors('pais')}" class="text-danger" th:errors="*{pais}"></div>
+            </div>
+
+            <div class="mb-3">
+                <label for="nombreCiudad" class="form-label" th:text="#{msg.localidad-form.label.nombreCiudad}">Ciudad:</label>
+                <input type="text" th:field="*{nombreCiudad}" id="nombreCiudad" class="form-control"/>
+                <div th:if="${#fields.hasErrors('nombreCiudad')}" class="text-danger" th:errors="*{nombreCiudad}"></div>
+            </div>
+
+            <div class="mb-3">
+                <label for="codigoPostal" class="form-label" th:text="#{msg.localidad-form.label.codigoPostal}">Código Postal:</label>
+                <input type="text" th:field="*{codigoPostal}" id="codigoPostal" class="form-control"/>
+                <div th:if="${#fields.hasErrors('codigoPostal')}" class="text-danger" th:errors="*{codigoPostal}"></div>
+            </div>
+
+
+            <button type="submit" class="btn btn-primary" th:text="#{msg.localidad-form.button.create}">Crear</button>
+            <a th:href="@{/localidad}" class="btn btn-secondary" th:text="#{msg.localidad-form.button.back}">Volver al listado</a>
+        </form>
+
+        <!-- Formulario para editar (cuando localidad.id NO es null) -->
+        <form th:unless="${localidad.id == null}" th:action="@{/localidad/update}" th:object="${localidad}" method="post" class="mt-3">
+            <input type="hidden" th:field="*{id}"/>
+
+            <div class="mb-3">
+                <label for="pais" class="form-label" th:text="#{msg.localidad-form.label.pais}">País:</label>
+                <input type="text" th:field="*{pais}" id="pais" class="form-control"/>
+                <div th:if="${#fields.hasErrors('pais')}" class="text-danger" th:errors="*{pais}"></div>
+            </div>
+
+            <div class="mb-3">
+                <label for="nombreCiudad" class="form-label" th:text="#{msg.localidad-form.label.nombreCiudad}">Ciudad:</label>
+                <input type="text" th:field="*{nombreCiudad}" id="nombreCiudad" class="form-control"/>
+                <div th:if="${#fields.hasErrors('nombreCiudad')}" class="text-danger" th:errors="*{nombreCiudad}"></div>
+            </div>
+
+            <div class="mb-3">
+                <label for="codigoPostal" class="form-label" th:text="#{msg.localidad-form.label.codigoPostal}">Código Postal:</label>
+                <input type="text" th:field="*{codigoPostal}" id="codigoPostal" class="form-control"/>
+                <div th:if="${#fields.hasErrors('codigoPostal')}" class="text-danger" th:errors="*{codigoPostal}"></div>
+            </div>
+
+
+            <button type="submit" class="btn btn-primary" th:text="#{msg.localidad-form.button.update}">Actualizar</button>
+            <a th:href="@{/localidad}" class="btn btn-secondary" th:text="#{msg.localidad-form.button.back}">Volver al listado</a>
+        </form>
+
+
+    </div>
+</main>
+
+<footer th:replace="fragments/footer :: footer"></footer>
+<div th:replace="fragments/scripts :: scripts"></div>
+
+</body>
+</html>

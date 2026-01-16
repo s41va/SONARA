@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head ('Sonara - Usuario')"></head>
+
+<body class="d-flex flex-column h-100">
+
+<!-- Header -->
+<header th:replace="fragments/header :: header"></header>
+
+<main class="form-page">
+    <div class="form-card">
+        <!-- Título -->
+        <h1>
+            <span th:text="#{msg.usuario-detail.title}">Detalle del Usuario</span>
+            <span th:text="${usuario.nombre}"></span>
+        </h1>
+
+        <!-- Datos básicos del usuario -->
+        <div class="mt-3">
+            <h2 class="h5" th:text="#{msg.usuario-detail.section.usuarioData}">Datos del usuario</h2>
+            <dl class="row">
+                <dt class="col-sm-3" th:text="#{msg.usuario-detail.field.id}">ID</dt>
+                <dd class="col-sm-9" th:text="${usuario.id}"></dd>
+
+                <dt class="col-sm-3" th:text="#{msg.usuario-detail.field.nombre}">Nombre</dt>
+                <dd class="col-sm-9" th:text="${usuario.nombre}"></dd>
+
+                <dt class="col-sm-3" th:text="#{msg.usuario-detail.field.email}">Email</dt>
+                <dd class="col-sm-9" th:text="${usuario.email}"></dd>
+
+                <dt class="col-sm-3" th:text="#{msg.usuario-detail.field.contrasena}">Contraseña</dt>
+                <dd class="col-sm-9" th:text="${usuario.contrasena}"></dd>
+
+                <dt class="col-sm-3" th:text="#{msg.usuario-detail.field.fechaNacimiento}">Fecha de Nacimiento</dt>
+                <dd class="col-sm-9" th:text="${usuario.fechaNacimiento}"></dd>
+
+
+                <dt class="col-sm-3" th:text="#{msg.usuario-detail.field.generosFavoritos}">Géneros Favoritos</dt>
+                <dd class="col-sm-9">
+                    <ul>
+                        <li th:each="genero : ${usuario.generosFavoritos}" th:text="${genero}"></li>
+                    </ul>
+                </dd>
+
+                <dt class="col-sm-3" th:text="#{msg.usuario-detail.field.localidadNombre}">Localidad</dt>
+                <dd class="col-sm-9" th:text="${usuario.localidadNombre}"></dd>
+
+                <dt class="col-sm-3" th:text="#{msg.usuario-detail.field.fechaRegistro}">Fecha de Registro</dt>
+                <dd class="col-sm-9" th:text="${usuario.fechaRegistro}"></dd>
+            </dl>
+        </div>
+
+        <div class="mt-4">
+            <a class="btn btn-secondary" th:href="@{/usuario}" th:text="#{msg.usuario-detail.action.back}">Volver</a>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="fragments/footer :: footer"></footer>
+<div th:replace="fragments/scripts :: scripts"></div>
+
+</body>
+</html>
