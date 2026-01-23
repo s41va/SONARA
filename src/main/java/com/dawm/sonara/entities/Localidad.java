@@ -1,7 +1,6 @@
 package com.dawm.sonara.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "localidad")
+@Table(name = "Localidad")
 public class Localidad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
