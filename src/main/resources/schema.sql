@@ -63,18 +63,18 @@ CREATE TABLE Usuario_Gustos (
     CONSTRAINT fk_gustos_artista FOREIGN KEY (artista_id) REFERENCES Artista(artista_id),
     CONSTRAINT fk_gustos_cancion FOREIGN KEY (cancion_id) REFERENCES Cancion(cancion_id)
 );
-
-CREATE TABLE Reproduccion (
-    reproduccion_id INT PRIMARY KEY,
-    usuario_id INT,
-    cancion_id INT,
-    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    localidad_id INT,
-    -- Opcional
-    CONSTRAINT fk_repro_usuario FOREIGN KEY (usuario_id) REFERENCES Usuario(usuario_id),
-    CONSTRAINT fk_repro_cancion FOREIGN KEY (cancion_id) REFERENCES Cancion(cancion_id),
-    CONSTRAINT fk_repro_localidad FOREIGN KEY (localidad_id) REFERENCES Localidad(localidad_id)
-);
+--
+--CREATE TABLE Reproduccion (
+--    reproduccion_id INT PRIMARY KEY,
+--    usuario_id INT,
+--    cancion_id INT,
+--    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--    localidad_id INT,
+--    -- Opcional
+--    CONSTRAINT fk_repro_usuario FOREIGN KEY (usuario_id) REFERENCES Usuario(usuario_id),
+--    CONSTRAINT fk_repro_cancion FOREIGN KEY (cancion_id) REFERENCES Cancion(cancion_id),
+--    CONSTRAINT fk_repro_localidad FOREIGN KEY (localidad_id) REFERENCES Localidad(localidad_id)
+--);
 
 CREATE TABLE Ranking (
     localidad_id INT,
@@ -99,16 +99,16 @@ CREATE TABLE Concierto (
     CONSTRAINT fk_concierto_localidad FOREIGN KEY (localidad_id) REFERENCES Localidad(localidad_id)
 );
 
-CREATE TABLE Colaboracion (
-    cancion_id INT,
-    artista_id INT,
-    artista_2_id INT,
-    -- FK a Artista
-    PRIMARY KEY (cancion_id, artista_id),
-    CONSTRAINT fk_colab_cancion FOREIGN KEY (cancion_id) REFERENCES Cancion(cancion_id),
-    CONSTRAINT fk_colab_artista1 FOREIGN KEY (artista_id) REFERENCES Artista(artista_id),
-    CONSTRAINT fk_colab_artista2 FOREIGN KEY (artista_2_id) REFERENCES Artista(artista_id)
-);
+--CREATE TABLE Colaboracion (
+--    cancion_id INT,
+--    artista_id INT,
+--    artista_2_id INT,
+--    -- FK a Artista
+--    PRIMARY KEY (cancion_id, artista_id),
+--    CONSTRAINT fk_colab_cancion FOREIGN KEY (cancion_id) REFERENCES Cancion(cancion_id),
+--    CONSTRAINT fk_colab_artista1 FOREIGN KEY (artista_id) REFERENCES Artista(artista_id),
+--    CONSTRAINT fk_colab_artista2 FOREIGN KEY (artista_2_id) REFERENCES Artista(artista_id)
+--);
 
 CREATE TABLE Recomendacion (
     usuario_id INT,
