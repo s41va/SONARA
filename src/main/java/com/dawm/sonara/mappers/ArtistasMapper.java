@@ -2,10 +2,10 @@ package com.dawm.sonara.mappers;
 
 
 
-import com.dawm.sonara.dtos.ArtistasCreateDTO;
-import com.dawm.sonara.dtos.ArtistasDTO;
-import com.dawm.sonara.dtos.ArtistasDetailDTO;
-import com.dawm.sonara.dtos.ArtistasUpdateDTO;
+import com.dawm.sonara.dtos.artistas.ArtistasCreateDTO;
+import com.dawm.sonara.dtos.artistas.ArtistasDTO;
+import com.dawm.sonara.dtos.artistas.ArtistasDetailDTO;
+import com.dawm.sonara.dtos.artistas.ArtistasUpdateDTO;
 import com.dawm.sonara.entities.Artista;
 
 import java.util.List;

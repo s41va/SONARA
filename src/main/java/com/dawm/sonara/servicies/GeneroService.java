@@ -1,7 +1,7 @@
 package com.dawm.sonara.servicies;
 
-import com.dawm.sonara.dtos.GenerosCreateDTO;
-import com.dawm.sonara.dtos.GenerosUpdateDTO;
+import com.dawm.sonara.dtos.generos.GenerosCreateDTO;
+import com.dawm.sonara.dtos.generos.GenerosUpdateDTO;
 
 public interface GeneroService {
 

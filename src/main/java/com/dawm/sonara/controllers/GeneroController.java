@@ -2,10 +2,10 @@ package com.dawm.sonara.controllers;
 
 
 import com.dawm.sonara.daos.GeneroDAO;
-import com.dawm.sonara.dtos.GenerosDTO;
-import com.dawm.sonara.dtos.GenerosDetailDTO;
-import com.dawm.sonara.dtos.GenerosUpdateDTO;
-import com.dawm.sonara.dtos.GenerosCreateDTO;
+import com.dawm.sonara.dtos.generos.GenerosDTO;
+import com.dawm.sonara.dtos.generos.GenerosDetailDTO;
+import com.dawm.sonara.dtos.generos.GenerosUpdateDTO;
+import com.dawm.sonara.dtos.generos.GenerosCreateDTO;
 import com.dawm.sonara.entities.Genero;
 
 import com.dawm.sonara.mappers.GeneroMapper;

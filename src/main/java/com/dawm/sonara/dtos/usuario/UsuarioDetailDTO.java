@@ -1,4 +1,4 @@
-package com.dawm.sonara.dtos;
+package com.dawm.sonara.dtos.usuario;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UsuarioDTO {
+public class UsuarioDetailDTO {
     private Long id;
     private String nombre;
     private String email;

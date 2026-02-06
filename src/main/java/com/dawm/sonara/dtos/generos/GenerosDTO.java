@@ -1,4 +1,4 @@
-package com.dawm.sonara.dtos;
+package com.dawm.sonara.dtos.generos;
 
 import lombok.*;
 
