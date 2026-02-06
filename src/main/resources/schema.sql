@@ -33,10 +33,19 @@ CREATE TABLE IF NOT EXISTS Usuario (
     );
 CREATE TABLE IF NOT EXISTS usuario_generos_favoritos (
     usuario_id INT NOT NULL,
-    genero_favorito VARCHAR(50),
-    CONSTRAINT fk_usuario_generos
+    genero_id INT NOT NULL,
+
+    PRIMARY KEY (usuario_id, genero_id),
+
+    CONSTRAINT fk_ugf_usuario
     FOREIGN KEY (usuario_id) REFERENCES Usuario(usuario_id)
+    ON DELETE CASCADE,
+
+    CONSTRAINT fk_ugf_genero
+    FOREIGN KEY (genero_id) REFERENCES Genero(genero_id)
+    ON DELETE CASCADE
     );
+
 CREATE TABLE IF NOT EXISTS Cancion (
     cancion_id INT AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(200),
