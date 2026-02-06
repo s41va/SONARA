@@ -1,9 +1,4 @@
-package com.dawm.sonara.dtos;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+package com.dawm.sonara.dtos.artistas;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;

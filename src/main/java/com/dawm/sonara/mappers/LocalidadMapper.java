@@ -1,8 +1,8 @@
 package com.dawm.sonara.mappers;
-import com.dawm.sonara.dtos.LocalidadCreateDTO;
-import com.dawm.sonara.dtos.LocalidadDTO;
-import com.dawm.sonara.dtos.LocalidadDetailDTO;
-import com.dawm.sonara.dtos.LocalidadUpdateDTO;
+import com.dawm.sonara.dtos.localidad.LocalidadCreateDTO;
+import com.dawm.sonara.dtos.localidad.LocalidadDTO;
+import com.dawm.sonara.dtos.localidad.LocalidadDetailDTO;
+import com.dawm.sonara.dtos.localidad.LocalidadUpdateDTO;
 import com.dawm.sonara.entities.Localidad;
 
 import java.util.List;

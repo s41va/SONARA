@@ -1,4 +1,4 @@
-package com.dawm.sonara.dtos;
+package com.dawm.sonara.dtos.localidad;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

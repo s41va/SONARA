@@ -1,6 +1,5 @@
-package com.dawm.sonara.dtos;
+package com.dawm.sonara.dtos.generos;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

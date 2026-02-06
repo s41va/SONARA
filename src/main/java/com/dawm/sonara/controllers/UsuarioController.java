@@ -3,10 +3,10 @@ package com.dawm.sonara.controllers;
 
 import com.dawm.sonara.daos.LocalidadDAO;
 import com.dawm.sonara.daos.UsuarioDAO;
-import com.dawm.sonara.dtos.UsuarioCreateDTO;
-import com.dawm.sonara.dtos.UsuarioDTO;
-import com.dawm.sonara.dtos.UsuarioDetailDTO;
-import com.dawm.sonara.dtos.UsuarioUpdateDTO;
+import com.dawm.sonara.dtos.usuario.UsuarioCreateDTO;
+import com.dawm.sonara.dtos.usuario.UsuarioDTO;
+import com.dawm.sonara.dtos.usuario.UsuarioDetailDTO;
+import com.dawm.sonara.dtos.usuario.UsuarioUpdateDTO;
 import com.dawm.sonara.entities.Localidad;
 import com.dawm.sonara.entities.Usuario;
 import com.dawm.sonara.mappers.UsuarioMapper;

@@ -1,6 +1,8 @@
 package com.dawm.sonara.servicies;
 
-import com.dawm.sonara.dtos.*;
+import com.dawm.sonara.dtos.artistas.ArtistasCreateDTO;
+import com.dawm.sonara.dtos.artistas.ArtistasDetailDTO;
+import com.dawm.sonara.dtos.artistas.ArtistasUpdateDTO;
 
 public interface ArtistaService {
 

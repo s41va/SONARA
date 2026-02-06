@@ -1,4 +1,4 @@
-package com.dawm.sonara.dtos;
+package com.dawm.sonara.dtos.usuario;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

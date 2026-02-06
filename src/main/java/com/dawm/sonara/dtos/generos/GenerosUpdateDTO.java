@@ -1,7 +1,6 @@
-package com.dawm.sonara.dtos;
+package com.dawm.sonara.dtos.generos;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -9,21 +8,12 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ArtistasUpdateDTO {
+public class GenerosUpdateDTO {
 
-
-    private Long artista_id;
-
+    private Long id;
     @NotBlank
     @Size(max = 50)
-    private String nombre_artistico;
-
-    @NotBlank
-    @Size(max = 100)
-    private String pais;
-
-
+    private String nombre;
     @Size(max = 400)
     private String descripcion;
-
 }
