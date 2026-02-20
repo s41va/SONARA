@@ -1,7 +1,7 @@
 <header th:fragment="header" class="border-bottom bg-light" xmlns:th="http://www.thymeleaf.org">
-    <div class="navbar navbar-expand-sm border-5 border-bottom border-primary" style="background-color: #B9F6FF;">
+    <div class="navbar navbar-expand-sm border-5 border-bottom color-borde" style="background-color: #B9F6FF;">
         <div class="container-fluid">
-            <a href="#" class="navbar-brand ps-2"><img src="/images/Group%209.png" class="w-50"></a>
+            <a href="#" class="navbar-brand ps-2"><img src="../../static/images/LogoSonara.png" class="w-50"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#collaseNavbarContent">
                 <span class="navbar-toggler-icon"></span>
@@ -15,32 +15,28 @@
 
                         </a>
                     </li>
-                    <li class="nav-item text-sm-center text-start border-3 border-primary  border-end " >
-                        <a th:href="@{/artistas}" class="nav-link">
-                            <i class="bi bi-person"></i>
-                            <span class="ocultar-palabrabarra" th:text="#{msg.artista}">Artistas </span>
-
+                    <li class="nav-item text-sm-center text-start border-3 color-borde border-end">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-map"></i>
+                            <span class="ocultar-palabrabarra" th:text="#{msg.artista}">Artistas</span>
                         </a>
                     </li>
-                    <li class="nav-item text-sm-center text-start border-3 border-primary  border-end " >
-                        <a th:href="@{/generos}" class="nav-link">
-                            <i class="bi bi-music-note-beamed"></i>
-                            <span class="ocultar-palabrabarra" th:text="#{msg.genero}">Generos</span>
-
+                    <li class="nav-item text-sm-center text-start border-3 color-borde border-end">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-map"></i>
+                            <span class="ocultar-palabrabarra" th:text="#{msg.genero}">Genero</span>
                         </a>
                     </li>
-                    <li class="nav-item text-sm-center text-start border-3 border-primary  border-end " >
-                        <a th:href="@{/usuarios}" class="nav-link">
-                            <i class="bi bi-person"></i>
-                            <span class="ocultar-palabrabarra" th:text="#{msg.artista}">Usuarios </span>
-
+                    <li class="nav-item text-sm-center text-start border-3 color-borde border-end">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-map"></i>
+                            <span class="ocultar-palabrabarra" th:text="#{msg.usuario}">Usuario</span>
                         </a>
                     </li>
-                    <li class="nav-item text-sm-center text-start border-3 border-primary  border-end " >
-                        <a th:href="@{/localidad}" class="nav-link">
-                            <i class="bi bi-geo"></i>
-                            <span class="ocultar-palabrabarra" th:text="#{msg.genero}">Localidad</span>
-
+                    <li class="nav-item text-sm-center text-start border-3 color-borde border-end">
+                        <a href="#" class="nav-link">
+                            <i class="bi bi-map"></i>
+                            <span class="ocultar-palabrabarra" th:text="#{msg.localidad}">Localidad</span>
                         </a>
                     </li>
 
