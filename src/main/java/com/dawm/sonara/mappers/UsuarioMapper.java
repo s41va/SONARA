@@ -4,9 +4,12 @@ import com.dawm.sonara.dtos.usuario.UsuarioCreateDTO;
 import com.dawm.sonara.dtos.usuario.UsuarioDTO;
 import com.dawm.sonara.dtos.usuario.UsuarioDetailDTO;
 import com.dawm.sonara.dtos.usuario.UsuarioUpdateDTO;
+import com.dawm.sonara.entities.Roles;
 import com.dawm.sonara.entities.Usuario;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public class UsuarioMapper {
     // Entity -> DTO (listado/tabla básico)
@@ -52,6 +55,15 @@ public class UsuarioMapper {
         dto.setFechaNacimiento(entity.getFechaNacimiento());
         dto.setGenerosFavoritos(entity.getGenerosFavoritos());
         dto.setLocalidadId(entity.getLocalidad() != null ? entity.getLocalidad().getId() : null);
+
+        if (entity.getRoles() != null) {
+            dto.setRolesIds(
+                    entity.getRoles()
+                            .stream()
+                            .map(Roles::getId)
+                            .collect(java.util.stream.Collectors.toSet())
+            );
+        }
         return dto;
     }
 
@@ -96,7 +108,7 @@ public class UsuarioMapper {
         return e;
     }
 
-    public static void copyToExistingEntity(UsuarioUpdateDTO dto, Usuario entity) {
+    public static void copyToExistingEntity(UsuarioUpdateDTO dto, Usuario entity, Set<Roles> roles) {
         if (dto == null || entity == null) return;
         entity.setNombre(dto.getNombre());
         entity.setEmail(dto.getEmail());
@@ -108,7 +120,41 @@ public class UsuarioMapper {
             entity.setFechaRegistro(dto.getFechaRegistro());
         }
         entity.setGenerosFavoritos(dto.getGenerosFavoritos());
+        entity.setRoles(roles);
         // Localidad se debe setear en el service o controller
+    }
+
+    public static Usuario copyToNewEntity(UsuarioCreateDTO dto, Set<Roles> roles) {
+        if (dto == null) return null;
+
+        // Crear una nueva entidad Usuario
+        Usuario entity = new Usuario();
+
+        // Asignar datos del DTO al nuevo usuario
+        entity.setNombre(dto.getNombre());
+        entity.setEmail(dto.getEmail());
+
+        // Validación de contraseña si está presente
+        if (dto.getContrasena() != null && !dto.getContrasena().isBlank()) {
+            // Aquí podrías considerar encriptar la contraseña antes de asignarla
+            entity.setContrasena(dto.getContrasena());
+        }
+
+        // Asignar la fecha de nacimiento
+        entity.setFechaNacimiento(dto.getFechaNacimiento());
+
+        // Establecer roles
+        if (roles != null) {
+            entity.setRoles(roles);
+        }
+
+        // Generar fecha de registro (automáticamente)
+        entity.setFechaRegistro(LocalDateTime.now());
+
+        // Otros campos adicionales del DTO
+        entity.setGenerosFavoritos(dto.getGenerosFavoritos());
+
+        return entity;
     }
 
 }

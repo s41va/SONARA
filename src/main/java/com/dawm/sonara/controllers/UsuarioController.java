@@ -1,8 +1,6 @@
 package com.dawm.sonara.controllers;
 
 
-import com.dawm.sonara.daos.LocalidadDAO;
-import com.dawm.sonara.daos.UsuarioDAO;
 import com.dawm.sonara.dtos.usuario.UsuarioCreateDTO;
 import com.dawm.sonara.dtos.usuario.UsuarioDTO;
 import com.dawm.sonara.dtos.usuario.UsuarioDetailDTO;
@@ -34,11 +32,6 @@ public class UsuarioController {
     @Autowired
     private MessageSource messageSource;
 
-    @Autowired
-    private UsuarioDAO usuarioDAO;
-
-    @Autowired
-    private LocalidadDAO localidadDAO;
 
     private List<String> getAllGeneros() {
         return List.of("Rock", "Pop", "Jazz", "Clásica", "Trap", "Reggaeton", "R&B", "Breakbeat", "Hip-Hop");

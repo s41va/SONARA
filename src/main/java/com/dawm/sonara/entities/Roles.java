@@ -12,11 +12,11 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = "usuario")
-@ToString(exclude = "usuarios")
+@EqualsAndHashCode(exclude = "users")
+@ToString(exclude = "users")
 @Entity
 @Table(name = "roles")
-public class Rol {
+public class Roles {
 
 
     /** BIGINT AUTO_INCREMENT PRIMARY KEY */
@@ -49,7 +49,7 @@ public class Rol {
 
 
     /** Constructor útil para crear roles sin id ni usuarios. */
-    public Rol(String name, String displayName, String description) {
+    public Roles(String name, String displayName, String description) {
         this.name = name;
         this.displayName = displayName;
         this.description = description;

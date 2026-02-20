@@ -1,5 +1,6 @@
 package com.dawm.sonara.dtos.usuario;
 
+import com.dawm.sonara.entities.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,4 +23,7 @@ public class UsuarioDTO {
     private Set<String> generosFavoritos;
     private String localidadNombre;
     private LocalDateTime fechaRegistro;
+
+    private Set<String> roles;
+
 }

@@ -1,5 +1,6 @@
 package com.dawm.sonara.dtos.usuario;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -22,4 +24,9 @@ public class UsuarioDetailDTO {
     private Set<String> generosFavoritos;
     private String localidadNombre;
     private LocalDateTime fechaRegistro;
+
+    private Set<String> roles;
+
+    @NotEmpty(message = "{msg.user.roles.notempty}")
+    private Set<Long> rolesIds = new HashSet<>();
 }

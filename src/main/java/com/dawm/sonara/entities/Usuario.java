@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -52,6 +53,6 @@ public class Usuario {
             joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Rol> roles;
+    private Set<Roles> roles = new HashSet<>();
 
 }
