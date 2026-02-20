@@ -21,7 +21,5 @@ public interface UsuarioService {
     void delete(Long id);
     UsuarioDetailDTO getDetail(Long id);
 
-    List<UsuarioDTO> listAll(Sort email);
-    Usuario findById(Long id);
-    List<Roles> findAllRoles();
+    Page<UsuarioDTO> listAll(Pageable pageable);
 }

@@ -103,6 +103,11 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuario = usuarioRepository.findById(dto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", dto.getId()));
 
+        if (dto.getRolesIds() != null) {
+            roles = new HashSet<>(rolesRepository.findAllById(dto.getRolesIds()));
+        }
+        usuario.setRoles(roles);
+
         // Validar Localidad
         Long localidadId = dto.getLocalidadId();
         Localidad localidad = localidadRepository.findById(localidadId)
@@ -111,15 +116,11 @@ public class UsuarioServiceImpl implements UsuarioService {
                 ));
         usuario.setLocalidad(localidad);
 
-        if (dto.getRolesIds() != null) {
-            roles = new HashSet<>(rolesRepository.findAllById(dto.getRolesIds()));
-        }
-        usuario.setRoles(roles);
-
-
         UsuarioMapper.copyToExistingEntity(dto, usuario, roles);
 
         usuarioRepository.save(usuario);
+
+        return UsuarioMapper.toDTO(usuario);
     }
 
     @Override
@@ -138,26 +139,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public List<UsuarioDTO> listAll(Sort email) {
-        return List.of();
-    }
-
-    @Override
-    public Usuario findById(Long id) {
-        return null;
-    }
-
-    @Override
-    public List<Roles> findAllRoles() {
-        return List.of();
-    }
-
-    @Override
-    public List<UsuarioDTO> listAll() {
-        return usuarioRepository.findAll()
-                .stream()
-                .map(UsuarioMapper::toDTO)
-                .toList();
+    public Page<UsuarioDTO> listAll(Pageable pageable) {
+        return usuarioRepository.findAll(pageable)  // Usa pageable en lugar de sort
+                .map(UsuarioMapper::toDTO);  // Convierte la entidad a DTO
     }
 
     private void validarFechaNacimiento(LocalDate fechaNacimiento) {
