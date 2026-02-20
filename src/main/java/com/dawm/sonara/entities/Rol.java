@@ -1,6 +1,5 @@
 package com.dawm.sonara.entities;
 
-import com.dawm.sonara.entities.Usuario;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +16,7 @@ import java.util.Set;
 @ToString(exclude = "usuarios")
 @Entity
 @Table(name = "roles")
-public class Role {
+public class Rol {
 
 
     /** BIGINT AUTO_INCREMENT PRIMARY KEY */
@@ -50,7 +49,7 @@ public class Role {
 
 
     /** Constructor útil para crear roles sin id ni usuarios. */
-    public Role(String name, String displayName, String description) {
+    public Rol(String name, String displayName, String description) {
         this.name = name;
         this.displayName = displayName;
         this.description = description;

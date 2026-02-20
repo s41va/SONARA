@@ -32,10 +32,10 @@ CREATE TABLE IF NOT EXISTS Usuario (
     FOREIGN KEY (localidad_id) REFERENCES Localidad(localidad_id)
     );
 CREATE TABLE IF NOT EXISTS usuario_generos_favoritos (
-                                                         usuario_id INT NOT NULL,
-                                                         genero_id INT NOT NULL,
+    usuario_id INT NOT NULL,
+    genero_id INT NOT NULL,
 
-                                                         PRIMARY KEY (usuario_id, genero_id),
+    PRIMARY KEY (usuario_id, genero_id),
 
     CONSTRAINT fk_ugf_usuario
     FOREIGN KEY (usuario_id) REFERENCES Usuario(usuario_id)
@@ -45,7 +45,38 @@ CREATE TABLE IF NOT EXISTS usuario_generos_favoritos (
     FOREIGN KEY (genero_id) REFERENCES Genero(genero_id)
     ON DELETE CASCADE
     );
+CREATE TABLE IF NOT EXISTS usuario_artistas_favoritos (
+                                                          usuario_id INT NOT NULL,
+                                                          artista_id INT NOT NULL,
 
+                                                          PRIMARY KEY (usuario_id, artista_id),
+
+    CONSTRAINT fk_uaf_usuario
+    FOREIGN KEY (usuario_id)
+    REFERENCES Usuario(usuario_id)
+    ON DELETE CASCADE,
+
+    CONSTRAINT fk_uaf_artista
+    FOREIGN KEY (artista_id)
+    REFERENCES Artista(artista_id)
+    ON DELETE CASCADE
+    );
+
+CREATE TABLE IF NOT EXISTS usuario_perfil (
+                                              usuario_id INT PRIMARY KEY,
+                                              first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    phone_number VARCHAR(30),
+    profile_image VARCHAR(255),
+    bio VARCHAR(500),
+    locale VARCHAR(10),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_usuario_perfil_usuario
+    FOREIGN KEY (usuario_id) REFERENCES Usuario(usuario_id)
+                                                   ON DELETE CASCADE
+    );
 CREATE TABLE IF NOT EXISTS Cancion (
                                        cancion_id INT AUTO_INCREMENT PRIMARY KEY,
                                        titulo VARCHAR(200),

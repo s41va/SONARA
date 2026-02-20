@@ -4,18 +4,23 @@ import com.dawm.sonara.dtos.usuario.UsuarioCreateDTO;
 import com.dawm.sonara.dtos.usuario.UsuarioDTO;
 import com.dawm.sonara.dtos.usuario.UsuarioDetailDTO;
 import com.dawm.sonara.dtos.usuario.UsuarioUpdateDTO;
-import com.dawm.sonara.entities.Role;
+import com.dawm.sonara.entities.Rol;
+import com.dawm.sonara.entities.Usuario;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
 public interface UsuarioService {
     Page<UsuarioDTO> list(Pageable pageable);
     UsuarioUpdateDTO getForEdit(Long id);
-    void create(UsuarioCreateDTO dto);
-    void update(UsuarioUpdateDTO dto);
+    UsuarioDTO create(UsuarioCreateDTO dto);
+    UsuarioDTO update(UsuarioUpdateDTO dto);
     void delete(Long id);
     UsuarioDetailDTO getDetail(Long id);
-    List<Role> findAllRoles();
+
+    List<UsuarioDTO> listAll(Sort email);
+    Usuario findById(Long id);
+    List<Rol> findAllRoles();
 }
