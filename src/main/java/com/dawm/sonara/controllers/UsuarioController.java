@@ -8,24 +8,30 @@ import com.dawm.sonara.dtos.usuario.UsuarioUpdateDTO;
 import com.dawm.sonara.entities.Localidad;
 import com.dawm.sonara.entities.Usuario;
 import com.dawm.sonara.mappers.UsuarioMapper;
+import com.dawm.sonara.repositories.UsuarioRepository;
+import com.dawm.sonara.servicies.UsuarioService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.awt.print.Pageable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 
-@Controller
-@RequestMapping("/usuario")
+@RestController
+@RequestMapping("/api/usuarios")
 public class UsuarioController {
     private static final Logger logger = LoggerFactory.getLogger(UsuarioController.class);
 
@@ -33,62 +39,77 @@ public class UsuarioController {
     private MessageSource messageSource;
 
     @Autowired
-    private
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private UsuarioService usuarioService;
 
 
     private List<String> getAllGeneros() {
         return List.of("Rock", "Pop", "Jazz", "Clásica", "Trap", "Reggaeton", "R&B", "Breakbeat", "Hip-Hop");
     }
 
+//    @GetMapping
+//    public String listUsuarios(@RequestParam(name = "page", defaultValue = "0") int page,
+//                               @RequestParam(name = "size", defaultValue = "10") int size,
+//                               @RequestParam(name = "sortField", defaultValue = "nombre") String sortField,
+//                               @RequestParam(name = "sortDir", defaultValue = "asc") String sortDir,
+//                               Model model,
+//                               Locale locale) {
+//        logger.info("Solicitando la lista de todos los usuarios... page={}, size={}, sortField={}, sortDir={}", page, size, sortField, sortDir);
+//        if (page < 0) page = 0;
+//        if (size <= 0) size = 10;
+//        try {
+//            long totalElements = usuarioDAO.countUsuarios();
+//            int totalPages = (int) Math.ceil((double) totalElements / size);
+//            if (totalPages > 0 && page >= totalPages) {
+//                page = totalPages - 1;
+//            }
+//            int maxPagesToShow = 5;  // cantidad de páginas a mostrar en la paginación
+//
+//            int startPage = Math.max(0, page - 2); // mostrar 2 páginas antes de la actual
+//            int endPage = Math.min(totalPages - 1, startPage + maxPagesToShow - 1);
+//
+//            // Ajustar startPage si no hay suficientes páginas al final
+//            if (endPage - startPage + 1 < maxPagesToShow) {
+//                startPage = Math.max(0, endPage - maxPagesToShow + 1);
+//            }
+//
+//            model.addAttribute("startPage", startPage);
+//            model.addAttribute("endPage", endPage);
+//
+//            List<Usuario> listUsuarios = usuarioDAO.listUsuariosPage(page, size, sortField, sortDir);
+//            List<UsuarioDTO> listUsuariosDTO = UsuarioMapper.toDTOList(listUsuarios);
+//            logger.info("Se han cargado {} usuarios en la pagina {}.", listUsuariosDTO.size(), page);
+//            model.addAttribute("listUsuarios", listUsuariosDTO);
+//            model.addAttribute("currentPage", page);
+//            model.addAttribute("pageSize", size);
+//            model.addAttribute("totalPages", totalPages);
+//            model.addAttribute("totalElements", totalElements);
+//            //Para que la vista sepa como estamos ordenando ASC/DESC
+//            model.addAttribute("sortField", sortField);
+//            model.addAttribute("sortDir", sortDir);
+//            model.addAttribute("reverseSortDir", "asc".equalsIgnoreCase(sortDir) ? "desc" : "asc");
+//        } catch (Exception e) {
+//            logger.error("Error al listar los usuarios", e);
+//            String errorMessage = messageSource.getMessage("msg.usuario-controller.list.error", null, locale);
+//            model.addAttribute("errorMessage", errorMessage);
+//        }
+//
+//        return "views/usuario/usuario-list";
+//    }
     @GetMapping
-    public String listUsuarios(@RequestParam(name = "page", defaultValue = "0") int page,
-                               @RequestParam(name = "size", defaultValue = "10") int size,
-                               @RequestParam(name = "sortField", defaultValue = "nombre") String sortField,
-                               @RequestParam(name = "sortDir", defaultValue = "asc") String sortDir,
-                               Model model,
-                               Locale locale) {
-        logger.info("Solicitando la lista de todos los usuarios... page={}, size={}, sortField={}, sortDir={}", page, size, sortField, sortDir);
-        if (page < 0) page = 0;
-        if (size <= 0) size = 10;
-        try {
-            long totalElements = usuarioDAO.countUsuarios();
-            int totalPages = (int) Math.ceil((double) totalElements / size);
-            if (totalPages > 0 && page >= totalPages) {
-                page = totalPages - 1;
-            }
-            int maxPagesToShow = 5;  // cantidad de páginas a mostrar en la paginación
+    public ResponseEntity<?> listUsuarios(
+            @PageableDefault(size = 10, sort = "email") Pageable pageable,
+            @RequestParam(defaultValue = "false") boolean unpaged) {
 
-            int startPage = Math.max(0, page - 2); // mostrar 2 páginas antes de la actual
-            int endPage = Math.min(totalPages - 1, startPage + maxPagesToShow - 1);
-
-            // Ajustar startPage si no hay suficientes páginas al final
-            if (endPage - startPage + 1 < maxPagesToShow) {
-                startPage = Math.max(0, endPage - maxPagesToShow + 1);
-            }
-
-            model.addAttribute("startPage", startPage);
-            model.addAttribute("endPage", endPage);
-
-            List<Usuario> listUsuarios = usuarioDAO.listUsuariosPage(page, size, sortField, sortDir);
-            List<UsuarioDTO> listUsuariosDTO = UsuarioMapper.toDTOList(listUsuarios);
-            logger.info("Se han cargado {} usuarios en la pagina {}.", listUsuariosDTO.size(), page);
-            model.addAttribute("listUsuarios", listUsuariosDTO);
-            model.addAttribute("currentPage", page);
-            model.addAttribute("pageSize", size);
-            model.addAttribute("totalPages", totalPages);
-            model.addAttribute("totalElements", totalElements);
-            //Para que la vista sepa como estamos ordenando ASC/DESC
-            model.addAttribute("sortField", sortField);
-            model.addAttribute("sortDir", sortDir);
-            model.addAttribute("reverseSortDir", "asc".equalsIgnoreCase(sortDir) ? "desc" : "asc");
-        } catch (Exception e) {
-            logger.error("Error al listar los usuarios", e);
-            String errorMessage = messageSource.getMessage("msg.usuario-controller.list.error", null, locale);
-            model.addAttribute("errorMessage", errorMessage);
+        if (unpaged) {
+            return ResponseEntity.ok(usuarioService.listAll(Sort.by("name").ascending()))
         }
-
-        return "views/usuario/usuario-list";
+        return ResponseEntity.ok(usuarioService.list(pageable));
     }
+
+
 
     @GetMapping("/new")
     public String showNewForm(Model model) {
