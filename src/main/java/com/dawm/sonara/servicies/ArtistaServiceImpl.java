@@ -1,6 +1,7 @@
 package com.dawm.sonara.servicies;
 
 import com.dawm.sonara.dtos.artistas.ArtistasCreateDTO;
+import com.dawm.sonara.dtos.artistas.ArtistasDTO;
 import com.dawm.sonara.dtos.artistas.ArtistasDetailDTO;
 import com.dawm.sonara.dtos.artistas.ArtistasUpdateDTO;
 import com.dawm.sonara.entities.Artista;
@@ -24,7 +25,7 @@ public class ArtistaServiceImpl implements ArtistaService{
 
 
     @Override
-    public void create(ArtistasCreateDTO dto) {
+    public ArtistasDTO create(ArtistasCreateDTO dto) {
         if (artistasRepository.existsById(dto.getArtista_id())){
             throw new DuplicateResourceException("artista", "nombre", dto.getNombre_artistico());
         }
@@ -34,7 +35,7 @@ public class ArtistaServiceImpl implements ArtistaService{
     }
 
     @Override
-    public void update(ArtistasUpdateDTO dto) {
+    public ArtistasDTO update(ArtistasUpdateDTO dto) {
         if (artistasRepository.existsById(dto.getArtista_id())){
             throw new DuplicateResourceException("artista", "nombre", dto.getNombre_artistico());
         }
