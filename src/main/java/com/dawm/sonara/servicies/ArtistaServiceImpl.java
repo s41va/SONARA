@@ -11,6 +11,8 @@ import com.dawm.sonara.mappers.ArtistasMapper;
 import com.dawm.sonara.repositories.ArtistasRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,6 +25,16 @@ public class ArtistaServiceImpl implements ArtistaService{
     private ArtistasRepository artistasRepository;
 
 
+    @Override
+    public Page<ArtistasDTO> list(Pageable pageable) {
+        return artistasRepository.findAll(pageable).map(ArtistasMapper::toDTO);
+    }
+
+    @Override
+    public ArtistasUpdateDTO  getArtistaById(Long id) {
+        Artista artista = artistasRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("artista", "id", id));
+        return ArtistasMapper.toUpdateDTO(artista);
+    }
 
     @Override
     public ArtistasDTO create(ArtistasCreateDTO dto) {
@@ -30,8 +42,8 @@ public class ArtistaServiceImpl implements ArtistaService{
             throw new DuplicateResourceException("artista", "nombre", dto.getNombre_artistico());
         }
         Artista artista = ArtistasMapper.toEntity(dto);
-        artistasRepository.save(artista);
-
+        artista = artistasRepository.save(artista);
+        return ArtistasMapper.toDTO(artista);
     }
 
     @Override
@@ -44,8 +56,8 @@ public class ArtistaServiceImpl implements ArtistaService{
                 .orElseThrow(()-> new ResourceNotFoundException("artista", "nombre", dto.getArtista_id()));
 
         ArtistasMapper.copyToExistingEntity(dto, artista);
-        artistasRepository.save(artista);
-
+        artista=artistasRepository.save(artista);
+        return ArtistasMapper.toDTO(artista);
     }
 
     @Override

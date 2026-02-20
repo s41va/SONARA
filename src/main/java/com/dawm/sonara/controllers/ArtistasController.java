@@ -1,43 +1,66 @@
-//package com.dawm.sonara.controllers;
-//
-//
-//import com.dawm.sonara.daos.ArtistaDAO;
-//import com.dawm.sonara.dtos.artistas.ArtistasCreateDTO;
-//import com.dawm.sonara.dtos.artistas.ArtistasDTO;
-//import com.dawm.sonara.dtos.artistas.ArtistasDetailDTO;
-//import com.dawm.sonara.dtos.artistas.ArtistasUpdateDTO;
-//import com.dawm.sonara.entities.Artista;
-//import jakarta.validation.Valid;
-//import com.dawm.sonara.mappers.ArtistasMapper;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.context.MessageSource;
-//import org.springframework.stereotype.Controller;
-//import org.springframework.ui.Model;
-//import org.springframework.validation.BindingResult;
-//import org.springframework.web.bind.annotation.*;
-//import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.GetMapping;
-//
-//import java.util.List;
-//import java.util.Locale;
-//
-//@Controller
-//@RequestMapping("/artistas")
-//public class ArtistasController {
-//
-//
-//    private static final Logger logger = LoggerFactory.getLogger(ArtistasController.class);
-//
-//    @Autowired
-//    private ArtistaDAO artistaDAO;
-//
-//
-//    @Autowired
-//    private MessageSource messageSource; // Para mensajes de internacionalización/error
-//
+package com.dawm.sonara.controllers;
+
+
+import com.dawm.sonara.dtos.artistas.ArtistasCreateDTO;
+import com.dawm.sonara.dtos.artistas.ArtistasDTO;
+import com.dawm.sonara.dtos.artistas.ArtistasDetailDTO;
+import com.dawm.sonara.dtos.artistas.ArtistasUpdateDTO;
+import com.dawm.sonara.entities.Artista;
+import com.dawm.sonara.servicies.ArtistaService;
+import jakarta.validation.Valid;
+import com.dawm.sonara.mappers.ArtistasMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
+import java.util.Locale;
+
+@Controller
+@RequestMapping("/artistas")
+public class ArtistasController {
+
+
+    private static final Logger logger = LoggerFactory.getLogger(ArtistasController.class);
+
+    @Autowired
+    private ArtistaService artistaService;
+
+
+    @Autowired
+    private MessageSource messageSource; // Para mensajes de internacionalización/error
+
+
+
+
+    @GetMapping
+    public ResponseEntity<Page<ArtistasDTO>> listArtista(
+            @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
+
+        logger.info("Listando provincias (REST) page={}, size={}, sort={}",
+                pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
+
+        Page<ArtistasDTO> page = artistaService.list(pageable);
+
+        logger.info("Se han cargado {} provincia en la página {}.",
+                page.getNumberOfElements(), page.getNumber());
+
+        return ResponseEntity.ok(page);
+    }
+
 //    // --- MÉTODOS GET: LISTAR, NUEVO, EDITAR ---
 //
 //    /**
@@ -260,4 +283,4 @@
 //        }
 //        return "redirect:/artistas";
 //    }
-//}
+}
