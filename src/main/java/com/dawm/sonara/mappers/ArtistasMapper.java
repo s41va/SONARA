@@ -7,8 +7,10 @@ import com.dawm.sonara.dtos.artistas.ArtistasDTO;
 import com.dawm.sonara.dtos.artistas.ArtistasDetailDTO;
 import com.dawm.sonara.dtos.artistas.ArtistasUpdateDTO;
 import com.dawm.sonara.entities.Artista;
+import com.dawm.sonara.entities.Roles;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ArtistasMapper {
@@ -115,6 +117,8 @@ public class ArtistasMapper {
             entity.setDescripcion(dto.getDescripcion());
 
         }
+
+
 
 
 }

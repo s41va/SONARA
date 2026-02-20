@@ -32,6 +32,9 @@ public class UsuarioController {
     @Autowired
     private MessageSource messageSource;
 
+    @Autowired
+    private
+
 
     private List<String> getAllGeneros() {
         return List.of("Rock", "Pop", "Jazz", "Clásica", "Trap", "Reggaeton", "R&B", "Breakbeat", "Hip-Hop");
