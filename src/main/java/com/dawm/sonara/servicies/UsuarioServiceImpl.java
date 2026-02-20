@@ -139,9 +139,11 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public Page<UsuarioDTO> listAll(Pageable pageable) {
-        return usuarioRepository.findAll(pageable)  // Usa pageable en lugar de sort
-                .map(UsuarioMapper::toDTO);  // Convierte la entidad a DTO
+    public List<UsuarioDTO> listAll(Sort sort) {
+        return usuarioRepository.findAll(sort)
+                .stream()
+                .map(UsuarioMapper::toDTO)
+                .toList();
     }
 
     private void validarFechaNacimiento(LocalDate fechaNacimiento) {

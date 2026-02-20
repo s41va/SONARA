@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.awt.print.Pageable;
+
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -104,20 +107,23 @@ public class UsuarioController {
             @RequestParam(defaultValue = "false") boolean unpaged) {
 
         if (unpaged) {
-            return ResponseEntity.ok(usuarioService.listAll(Sort.by("name").ascending()))
+            return ResponseEntity.ok(usuarioService.listAll(Sort.by("name").ascending()));
         }
         return ResponseEntity.ok(usuarioService.list(pageable));
     }
 
 
 
-    @GetMapping("/new")
-    public String showNewForm(Model model) {
-        logger.info("Mostrando formulario para nuevo usuario.");
-        model.addAttribute("usuario", new UsuarioCreateDTO());
-        model.addAttribute("allGeneros", getAllGeneros());
-        model.addAttribute("allLocalidades", localidadDAO.listAllLocalidades());
-        return "views/usuario/usuario-form";
+    @PostMapping
+    public ResponseEntity<UsuarioDTO> createUsuario(@Valid @RequestBody UsuarioCreateDTO dto) {
+        UsuarioDTO created = usuarioService.create(dto);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(created.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(created);
     }
 
     @PostMapping("/insert")
