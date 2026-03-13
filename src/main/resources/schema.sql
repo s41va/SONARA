@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS artista (
     ON UPDATE CASCADE
     );
 
-CREATE TABLE IF NOT EXISTS Usuario (
+CREATE TABLE IF NOT EXISTS usuario (
                                        usuario_id INT AUTO_INCREMENT PRIMARY KEY,
                                        nombre VARCHAR(100),
     email VARCHAR(150) UNIQUE,
@@ -40,6 +40,18 @@ CREATE TABLE IF NOT EXISTS Usuario (
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_usuario_localidad
     FOREIGN KEY (localidad_id) REFERENCES Localidad(localidad_id)
+    );
+
+CREATE TABLE IF NOT EXISTS usuario_roles (
+                                             usuario_id BIGINT NOT NULL,
+                                             role_id BIGINT NOT NULL,
+                                             CONSTRAINT pk_usuario_roles PRIMARY KEY (usuario_id, role_id),
+    CONSTRAINT fk_usuario_roles_usuario
+    FOREIGN KEY (usuario_id) REFERENCES usuario(usuario_id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_usuario_roles_rol
+    FOREIGN KEY (role_id) REFERENCES roles(id)
+    ON DELETE CASCADE ON UPDATE CASCADE
     );
 CREATE TABLE IF NOT EXISTS usuario_generos_favoritos (
     usuario_id INT NOT NULL,
@@ -52,7 +64,7 @@ CREATE TABLE IF NOT EXISTS usuario_generos_favoritos (
     ON DELETE CASCADE,
 
     CONSTRAINT fk_ugf_genero
-    FOREIGN KEY (genero_id) REFERENCES Genero(genero_id)
+    FOREIGN KEY (genero_id) REFERENCES genero(id)
     ON DELETE CASCADE
     );
 CREATE TABLE IF NOT EXISTS usuario_artistas_favoritos (
@@ -98,5 +110,5 @@ CREATE TABLE IF NOT EXISTS Cancion (
     CONSTRAINT fk_cancion_artista
     FOREIGN KEY (artista_id) REFERENCES artista(id),
     CONSTRAINT fk_cancion_genero
-    FOREIGN KEY (genero_id) REFERENCES Genero(genero_id)
+    FOREIGN KEY (genero_id) REFERENCES genero(id)
     );

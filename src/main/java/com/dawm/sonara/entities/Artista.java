@@ -24,6 +24,10 @@ public class Artista {
     @Column(name = "descripcion", nullable = false, length = 400)
     private String descripcion;
 
+    @ManyToOne(fetch = FetchType.EAGER) // Generalmente se carga inmediatamente
+    @JoinColumn(name = "genero_id") // Esta es la columna FK en la tabla 'artista'
+    private Genero genero;
+
 
     public Artista(String nombre_artistico, String pais, String descripcion) {
         this.nombre = nombre_artistico;
