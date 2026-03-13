@@ -12,13 +12,14 @@ import lombok.*;
 public class ArtistasDTO {
 
 
-    private Long artista_id;
 
-    @NotEmpty
+    private Long id;
+
+    @NotEmpty(message = "{msg.artista.nombre.notEmpty}")
     @Size(max = 50)
-    private String nombre_artistico;
+    private String nombre;
 
-    @NotEmpty
+    @NotEmpty(message = "{msg.artista.pais.notEmpty}")
     @Size(max = 100)
     private String pais;
 
@@ -26,4 +27,6 @@ public class ArtistasDTO {
     @Size(max = 400)
     private String descripcion;
 
+
+    //private GeneroSimpleDTO genero;
 }

@@ -1,4 +1,4 @@
-package com.dawm.sonara.servicies;
+package com.dawm.sonara.services;
 
 public interface ConciertoService {
 

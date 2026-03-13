@@ -1,11 +1,10 @@
-package com.dawm.sonara.servicies;
+package com.dawm.sonara.services;
 
 import com.dawm.sonara.dtos.usuario.UsuarioCreateDTO;
 import com.dawm.sonara.dtos.usuario.UsuarioDTO;
 import com.dawm.sonara.dtos.usuario.UsuarioDetailDTO;
 import com.dawm.sonara.dtos.usuario.UsuarioUpdateDTO;
 import com.dawm.sonara.entities.Roles;
-import com.dawm.sonara.entities.Usuario;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

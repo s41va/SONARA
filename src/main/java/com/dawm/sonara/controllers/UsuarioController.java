@@ -1,20 +1,28 @@
 package com.dawm.sonara.controllers;
 
-
 import com.dawm.sonara.dtos.usuario.UsuarioCreateDTO;
 import com.dawm.sonara.dtos.usuario.UsuarioDTO;
 import com.dawm.sonara.dtos.usuario.UsuarioDetailDTO;
 import com.dawm.sonara.dtos.usuario.UsuarioUpdateDTO;
-import com.dawm.sonara.entities.Localidad;
-import com.dawm.sonara.entities.Usuario;
-import com.dawm.sonara.mappers.UsuarioMapper;
-import com.dawm.sonara.repositories.UsuarioRepository;
-import com.dawm.sonara.servicies.UsuarioService;
+import com.dawm.sonara.entities.Roles;
+import com.dawm.sonara.exceptions.ResourceNotFoundException;
+import com.dawm.sonara.repositories.RolesRepository;
+import com.dawm.sonara.services.UsuarioService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.Servlet;
+import org.apache.coyote.Response;
+
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -26,15 +34,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-
+import javax.management.relation.Role;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping("/api/usuario")
 public class UsuarioController {
     private static final Logger logger = LoggerFactory.getLogger(UsuarioController.class);
 
@@ -42,80 +52,71 @@ public class UsuarioController {
     private MessageSource messageSource;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
     private UsuarioService usuarioService;
 
+    @Autowired
+    private RolesRepository rolesRepository;
 
-    private List<String> getAllGeneros() {
-        return List.of("Rock", "Pop", "Jazz", "Clásica", "Trap", "Reggaeton", "R&B", "Breakbeat", "Hip-Hop");
-    }
 
-//    @GetMapping
-//    public String listUsuarios(@RequestParam(name = "page", defaultValue = "0") int page,
-//                               @RequestParam(name = "size", defaultValue = "10") int size,
-//                               @RequestParam(name = "sortField", defaultValue = "nombre") String sortField,
-//                               @RequestParam(name = "sortDir", defaultValue = "asc") String sortDir,
-//                               Model model,
-//                               Locale locale) {
-//        logger.info("Solicitando la lista de todos los usuarios... page={}, size={}, sortField={}, sortDir={}", page, size, sortField, sortDir);
-//        if (page < 0) page = 0;
-//        if (size <= 0) size = 10;
-//        try {
-//            long totalElements = usuarioDAO.countUsuarios();
-//            int totalPages = (int) Math.ceil((double) totalElements / size);
-//            if (totalPages > 0 && page >= totalPages) {
-//                page = totalPages - 1;
-//            }
-//            int maxPagesToShow = 5;  // cantidad de páginas a mostrar en la paginación
-//
-//            int startPage = Math.max(0, page - 2); // mostrar 2 páginas antes de la actual
-//            int endPage = Math.min(totalPages - 1, startPage + maxPagesToShow - 1);
-//
-//            // Ajustar startPage si no hay suficientes páginas al final
-//            if (endPage - startPage + 1 < maxPagesToShow) {
-//                startPage = Math.max(0, endPage - maxPagesToShow + 1);
-//            }
-//
-//            model.addAttribute("startPage", startPage);
-//            model.addAttribute("endPage", endPage);
-//
-//            List<Usuario> listUsuarios = usuarioDAO.listUsuariosPage(page, size, sortField, sortDir);
-//            List<UsuarioDTO> listUsuariosDTO = UsuarioMapper.toDTOList(listUsuarios);
-//            logger.info("Se han cargado {} usuarios en la pagina {}.", listUsuariosDTO.size(), page);
-//            model.addAttribute("listUsuarios", listUsuariosDTO);
-//            model.addAttribute("currentPage", page);
-//            model.addAttribute("pageSize", size);
-//            model.addAttribute("totalPages", totalPages);
-//            model.addAttribute("totalElements", totalElements);
-//            //Para que la vista sepa como estamos ordenando ASC/DESC
-//            model.addAttribute("sortField", sortField);
-//            model.addAttribute("sortDir", sortDir);
-//            model.addAttribute("reverseSortDir", "asc".equalsIgnoreCase(sortDir) ? "desc" : "asc");
-//        } catch (Exception e) {
-//            logger.error("Error al listar los usuarios", e);
-//            String errorMessage = messageSource.getMessage("msg.usuario-controller.list.error", null, locale);
-//            model.addAttribute("errorMessage", errorMessage);
-//        }
-//
-//        return "views/usuario/usuario-list";
-//    }
+
+    /*@GetMapping
+    public ResponseEntity<Page<UsuarioDTO>> listUsuarios(
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+        logger.info("Solicitando la lista de usuarios... page={}, size={}, sort={}",
+                pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
+        Page<UsuarioDTO> page = usuarioService.list(pageable);
+
+        logger.info("Se han cargado {} usuarios en la pagina {}.",
+                page.getNumberOfElements(), page.getNumber());
+        return ResponseEntity.ok(page);
+    }*/
+    @Operation(
+            summary = "Obtener todos los usuarios",
+            description = "Devuelve una lista paginada de todos los usuarios disponibles en el sistema. " +
+                    "Si se envía el parámetro 'unpaged=true', devuelve la lista completa sin paginación."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de usuarios recuperada exitosamente",
+                    content = @Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = UsuarioDTO.class))
+                    )
+            ),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     @GetMapping
-    public ResponseEntity<?> listUsuarios(
-            @PageableDefault(size = 10, sort = "email") Pageable pageable,
+    public ResponseEntity<?> listAllUsuarios(
+            @PageableDefault(size = 10, sort = "id") Pageable pageable,
             @RequestParam(defaultValue = "false") boolean unpaged) {
 
         if (unpaged) {
             return ResponseEntity.ok(usuarioService.listAll(Sort.by("name").ascending()));
         }
+
         return ResponseEntity.ok(usuarioService.list(pageable));
     }
 
-
-
+    @Operation(
+            summary = "Crear un nuevo usuario",
+            description = "Permite registrar un nuevo usuario en la base de datos."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Usuario creado exitosamente",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UsuarioDTO.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos proporcionados"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     @PostMapping
     public ResponseEntity<UsuarioDTO> createUsuario(@Valid @RequestBody UsuarioCreateDTO dto) {
+
         UsuarioDTO created = usuarioService.create(dto);
 
         URI location = ServletUriComponentsBuilder
@@ -123,189 +124,99 @@ public class UsuarioController {
                 .path("/{id}")
                 .buildAndExpand(created.getId())
                 .toUri();
+
         return ResponseEntity.created(location).body(created);
     }
 
-    @PostMapping("/insert")
-    public String insertUsuario(
-            @Valid @ModelAttribute("usuario") UsuarioCreateDTO usuarioDTO,
-            BindingResult result,
-            Model model,
-            RedirectAttributes redirectAttributes,
-            Locale locale) {
-
-        logger.info("Insertando nuevo usuario con email {}", usuarioDTO.getEmail());
-
-        if (result.hasErrors()) {
-            model.addAttribute("allGeneros", getAllGeneros());
-            model.addAttribute("allLocalidades", localidadDAO.listAllLocalidades());
-            return "views/usuario/usuario-form";
-        }
-        if (usuarioDTO.getFechaNacimiento() != null) {
-            LocalDate fechaNacimiento = usuarioDTO.getFechaNacimiento();
-            int year = fechaNacimiento.getYear();
-            if (year < 1900 || year > LocalDate.now().getYear()) {
-                result.rejectValue("fechaNacimiento", "error.fechaNacimiento", "Fecha de nacimiento inválida");
-                model.addAttribute("allGeneros", getAllGeneros());
-                model.addAttribute("allLocalidades", localidadDAO.listAllLocalidades());
-                return "views/usuario/usuario-form";
-            }
-        }
-
-
-        if (usuarioDAO.existUsuarioByEmail(usuarioDTO.getEmail())) {
-            logger.warn("El usuario con email {} ya existe.", usuarioDTO.getEmail());
-            model.addAttribute("allGeneros", getAllGeneros());
-            model.addAttribute("allLocalidades", localidadDAO.listAllLocalidades());
-            String errorMessage = messageSource.getMessage("msg.usuario-controller.insert.emailExist", null, locale);
-            model.addAttribute("errorMessage", errorMessage);
-            return "views/usuario/usuario-form";
-        }
-
-        try {
-            Usuario usuario = UsuarioMapper.toEntity(usuarioDTO);
-
-            // Buscar la localidad por id
-            Long localidadId = usuarioDTO.getLocalidadId();
-            Localidad localidad = localidadDAO.getLocalidadById(localidadId);
-            if (localidad == null) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Localidad no encontrada");
-                return "redirect:/usuario/new";
-            }
-
-            usuario.setLocalidad(localidad);
-            usuario.setFechaRegistro(LocalDateTime.now());
-
-
-            usuarioDAO.insertUsuario(usuario);
-            logger.info("Usuario con email {} insertado con éxito.", usuario.getEmail());
-
-        } catch (Exception e) {
-            logger.error("Error al insertar el usuario", e);
-            redirectAttributes.addFlashAttribute(
-                    "errorMessage",
-                    messageSource.getMessage("msg.usuario-controller.insert.error", null, locale)
-            );
-            return "redirect:/usuario/new";
-        }
-
-        return "redirect:/usuario";
-    }
-
-
-    @PostMapping("/update")
-    public String updateUsuario(@Valid @ModelAttribute("usuario") UsuarioUpdateDTO usuarioDTO,
-                                BindingResult result,
-                                Model model,
-                                RedirectAttributes redirectAttributes,
-                                Locale locale) {
+    @Operation(
+            summary = "Actualizar un usuario",
+            description = "Permite actualizar los datos de un usuario existente en la base de datos, incluyendo sus roles."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Usuario actualizado exitosamente",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UsuarioDTO.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos proporcionados"),
+            @ApiResponse(responseCode = "404", description = "Usuario o roles no encontrados"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    @PutMapping("/{id}")
+    public ResponseEntity<UsuarioDTO> updateUsuario(@PathVariable Long id,
+                                                    @Valid @RequestBody UsuarioUpdateDTO usuarioDTO) {
         logger.info("Actualizando usuario con ID {}", usuarioDTO.getId());
-        if (result.hasErrors()) {
-            model.addAttribute("allGeneros", getAllGeneros());
-            model.addAttribute("allLocalidades", localidadDAO.listAllLocalidades());
-            return "views/usuario/usuario-form";
+        if (usuarioDTO.getRolesIds() != null && usuarioDTO.getRolesIds().isEmpty()) {
+            usuarioDTO.setRolesIds(null);
         }
-        try {
-            if (usuarioDAO.existUsuarioByEmailAndNotId(usuarioDTO.getEmail(), usuarioDTO.getId())) {
-                logger.warn("El email {} ya existe para otro usuario.", usuarioDTO.getEmail());
-                model.addAttribute("allGeneros", getAllGeneros());
-                model.addAttribute("allLocalidades", localidadDAO.listAllLocalidades());
-                String errorMessage = messageSource.getMessage("msg.usuario-controller.update.emailExist", null, locale);
-                model.addAttribute("errorMessage", errorMessage);
-                return "views/usuario/usuario-form";
+        // Filtrar nulls de roleIds
+        Set<Long> roleIds = new HashSet<>();
+        if (usuarioDTO.getRolesIds() != null) {
+            for (Long roleId : usuarioDTO.getRolesIds()) {
+                if (roleId != null) {
+                    roleIds.add(roleId);
+                }
             }
-            Usuario usuario = usuarioDAO.getUsuarioById(usuarioDTO.getId());
-
-            if (usuario == null) {
-                logger.warn("No se encontró el usuario con ID {}", usuarioDTO.getId());
-                String notFound = messageSource.getMessage("msg.usuario-controller.detail.notFound", null, locale);
-                redirectAttributes.addFlashAttribute("errorMessage", notFound);
-                return "redirect:/usuario";
-            }
-
-            UsuarioMapper.copyToExistingEntity(usuarioDTO, usuario);
-
-            // Asignar la localidad según el id del DTO
-            Long localidadId = usuarioDTO.getLocalidadId();
-            Localidad localidad = localidadDAO.getLocalidadById(localidadId);
-            if (localidad == null) {
-                String errorMessage = messageSource.getMessage("msg.usuario-controller.update.localidadNotFound", null, locale);
-                redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
-                return "redirect:/usuario/edit?id=" + usuarioDTO.getId();
-            }
-            usuario.setLocalidad(localidad);
-
-            usuarioDAO.updateUsuario(usuario);
-            logger.info("Usuario {} actualizado con éxito.", usuario.getId());
-        } catch (Exception e) {
-            logger.error("Error al actualizar el usuario con ID {}: {}", usuarioDTO.getId(), e.getMessage());
-            String errorMessage = messageSource.getMessage("msg.usuario-controller.update.error", null, locale);
-            redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
         }
-        return "redirect:/usuario";
+        // Obtener roles existentes
+        Set<Roles> roles = new HashSet<>(rolesRepository.findAllById(roleIds));
+
+        // Validar que se encontraron todos los roles
+        if (roles.size() != roleIds.size()) {
+            throw new ResourceNotFoundException("roles", "ids", roleIds);
+        }
+
+        UsuarioDTO updated = usuarioService.update(usuarioDTO, roles);
+        logger.info("Usuario con ID {} actualizado con éxito", usuarioDTO.getId());
+
+        return ResponseEntity.ok(updated);
     }
 
-
-    @PostMapping("/delete")
-    public String deleteUsuario(@RequestParam("id") Long id, RedirectAttributes redirectAttributes) {
+    @Operation(
+            summary = "Eliminar un usuario",
+            description = "Permite eliminar un usuario específico de la base de datos."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Usuario eliminado exitosamente"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUsuario(@PathVariable Long id) {
         logger.info("Eliminando usuario con ID {}", id);
-        try {
-            usuarioDAO.deleteUsuario(id);
-            logger.info("Usuario con ID {} eliminado con éxito.", id);
-        } catch (Exception e) {
-            logger.error("Error al eliminar el usuario con ID {}: {}", id, e.getMessage());
-            redirectAttributes.addFlashAttribute("errorMessage", "Error al eliminar el usuario.");
-        }
-        return "redirect:/usuario";
+
+        usuarioService.delete(id);
+
+        logger.info("Usuario con ID {} eliminado con éxito.", id);
+
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/edit")
-    public String showEditForm(@RequestParam("id") Long id, Model model, Locale locale) {
-        logger.info("Mostrando formulario de edición para el usuario con ID {}", id);
-        try {
-            Usuario usuario = usuarioDAO.getUsuarioById(id);
-            UsuarioUpdateDTO usuarioDTO = UsuarioMapper.toUpdateDTO(usuario);
-            if (usuarioDTO == null) {
-                logger.warn("No se encontró el usuario con ID {}", id);
-                String errorMessage = messageSource.getMessage("msg.usuario-controller.edit.notfound", null, locale);
-                model.addAttribute("errorMessage", errorMessage);
-                model.addAttribute("usuario", new UsuarioUpdateDTO());
-            } else {
-                model.addAttribute("usuario", usuarioDTO);
-            }
-            model.addAttribute("allGeneros", getAllGeneros());
-            model.addAttribute("allLocalidades", localidadDAO.listAllLocalidades());
-        } catch (Exception e) {
-            logger.error("Error al obtener el usuario con ID {}: {}", id, e.getMessage());
-            String errorMessage = messageSource.getMessage("msg.usuario-controller.edit.error", null, locale);
-            model.addAttribute("errorMessage", errorMessage);
-            model.addAttribute("usuario", new UsuarioUpdateDTO());
-        }
-        return "views/usuario/usuario-form";
-    }
-
-
-    @GetMapping("/detail")
-    public String showDetail(@RequestParam("id") Long id,
-                             Model model,
-                             RedirectAttributes redirectAttributes,
-                             Locale locale) {
+    @Operation(
+            summary = "Obtener un usuario por ID",
+            description = "Recupera un usuario específico según su identificador único."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Usuario encontrado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UsuarioDetailDTO.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<UsuarioDetailDTO> getRegionById(@PathVariable Long id) {
         logger.info("Mostrando detalle del usuario con ID {}", id);
-        try {
-            Usuario usuario = usuarioDAO.getUsuarioById(id);
-            if (usuario == null) {
-                String msg = messageSource.getMessage("msg.usuario-controller.detail.notFound", null, locale);
-                redirectAttributes.addFlashAttribute("errorMessage", msg);
-                return "redirect:/usuario";
-            }
-            UsuarioDetailDTO usuarioDTO = UsuarioMapper.toDetailDTO(usuario);
-            model.addAttribute("usuario", usuarioDTO);
-            return "views/usuario/usuario-detail";
-        } catch (Exception e) {
-            logger.error("Error al obtener el detalle del usuario {}: {}", id, e.getMessage(), e);
-            String msg = messageSource.getMessage("msg.usuario-controller.detail.error", null, locale);
-            redirectAttributes.addFlashAttribute("errorMessage", msg);
-            return "redirect:/usuario";
-        }
+
+        UsuarioDetailDTO usuarioDetailDTO = usuarioService.getDetail(id);
+
+        return ResponseEntity.ok(usuarioDetailDTO);
     }
 }

@@ -1,4 +1,4 @@
-package com.dawm.sonara.servicies;
+package com.dawm.sonara.services;
 
 
 import com.dawm.sonara.dtos.usuario.UsuarioCreateDTO;

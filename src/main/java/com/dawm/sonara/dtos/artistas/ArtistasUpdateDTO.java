@@ -11,18 +11,21 @@ import lombok.*;
 public class ArtistasUpdateDTO {
 
 
-    private Long artista_id;
+    private Long id;
 
-    @NotBlank
-    @Size(max = 50)
-    private String nombre_artistico;
+    @NotBlank(message = "{msg.artista.nombre.notBlank}")
+    @Size(max = 50,  message = "{msg.artista.nombre.size}")
+    private String nombre;
 
-    @NotBlank
-    @Size(max = 100)
+    @NotBlank(message = "{msg.artista.pais.notBlank}")
+    @Size(max = 100, message = "{msg.artista.pais.size}")
     private String pais;
 
 
-    @Size(max = 400)
+    @Size(max = 400, message = "{msg.artista.descripcion.size}")
     private String descripcion;
+
+    private Long generoId;
+
 
 }
