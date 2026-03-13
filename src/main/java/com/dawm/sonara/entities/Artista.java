@@ -13,10 +13,10 @@ import lombok.NoArgsConstructor;
 public class Artista {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long artista_id;
+    private Long id;
 
-    @Column(name = "nombre_artistico", nullable = false, unique = true, length = 50)
-    private String nombre_artistico;
+    @Column(name = "nombre", nullable = false, unique = true, length = 50)
+    private String nombre;
 
     @Column(name = "pais_origen", nullable = false, length = 100)
     private String pais;
@@ -26,7 +26,7 @@ public class Artista {
 
 
     public Artista(String nombre_artistico, String pais, String descripcion) {
-        this.nombre_artistico = nombre_artistico;
+        this.nombre = nombre_artistico;
         this.pais = pais;
         this.descripcion = descripcion;
     }

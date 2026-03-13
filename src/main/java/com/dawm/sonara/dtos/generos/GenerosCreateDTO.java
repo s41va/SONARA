@@ -12,11 +12,10 @@ import lombok.NoArgsConstructor;
 @Builder
 public class GenerosCreateDTO {
 
-
     private Long id;
-    @NotNull
+    @NotNull(message = "{msg.genero.nombre.notNull}")
     private String nombre;
-    @NotNull
+    @NotNull(message = "{msg.genero.descripcion.notNull}")
     private String descripcion;
 
 }

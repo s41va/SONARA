@@ -23,8 +23,8 @@ public class ArtistasMapper {
             if (entity == null) return null;
             ArtistasDTO dto = new ArtistasDTO();
 
-            dto.setArtista_id(entity.getArtista_id());
-            dto.setNombre_artistico(entity.getNombre_artistico());
+            dto.setId(entity.getId());
+            dto.setNombre(entity.getNombre());
             dto.setPais(entity.getPais());
             dto.setDescripcion(entity.getDescripcion());
             return dto;
@@ -48,8 +48,8 @@ public class ArtistasMapper {
             if (entity == null) return null;
 
             ArtistasDetailDTO dto = new ArtistasDetailDTO();
-            dto.setArtista_id(entity.getArtista_id());
-            dto.setNombre_artistico(entity.getNombre_artistico());
+            dto.setId(entity.getId());
+            dto.setNombre(entity.getNombre());
             dto.setPais(entity.getPais());
             dto.setDescripcion(entity.getDescripcion());
 
@@ -66,7 +66,7 @@ public class ArtistasMapper {
         public static Artista toEntity(ArtistasCreateDTO dto){
             if (dto == null) return null;
             Artista a = new Artista();
-            a.setNombre_artistico(dto.getNombre_artistico());
+            a.setNombre(dto.getNombre_artistico());
             a.setPais(dto.getPais());
             a.setDescripcion(dto.getDescripcion());
 
@@ -81,7 +81,7 @@ public class ArtistasMapper {
             if (dto == null) return null;
             Artista a = new Artista();
 
-            a.setNombre_artistico(dto.getNombre_artistico());
+            a.setNombre(dto.getNombre());
             a.setPais(dto.getPais());
             a.setDescripcion(dto.getDescripcion());
 
@@ -96,7 +96,7 @@ public class ArtistasMapper {
         public static ArtistasUpdateDTO toUpdateDTO(Artista entity) {
             if (entity == null) return null;
             ArtistasUpdateDTO dto = new ArtistasUpdateDTO();
-            dto.setNombre_artistico(dto.getNombre_artistico());
+            dto.setNombre(dto.getNombre());
             dto.setPais(dto.getPais());
             dto.setDescripcion(dto.getDescripcion());
 
@@ -112,7 +112,7 @@ public class ArtistasMapper {
         public static void copyToExistingEntity(ArtistasUpdateDTO dto,Artista entity){
             if (dto == null || entity == null) return;
 
-            entity.setNombre_artistico(dto.getNombre_artistico());
+            entity.setNombre(dto.getNombre());
             entity.setPais(dto.getPais());
             entity.setDescripcion(dto.getDescripcion());
 

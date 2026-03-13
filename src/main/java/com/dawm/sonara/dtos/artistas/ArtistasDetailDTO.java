@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ArtistasDetailDTO {
 
-    private Long artista_id;
-    private String nombre_artistico;
+    private Long id;
+    private String nombre;
     private String pais;
     private String descripcion;
 

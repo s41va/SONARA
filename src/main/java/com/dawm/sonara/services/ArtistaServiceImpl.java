@@ -55,11 +55,11 @@ public class ArtistaServiceImpl implements ArtistaService{
 
     @Override
     public ArtistasDTO update(ArtistasUpdateDTO dto) {
-        if (artistasRepository.existsByNombreAndIdNot(dto.getNombre_artistico(), dto.getArtista_id())){
-            throw new DuplicateResourceException("artista", "name", dto.getNombre_artistico());
+        if (artistasRepository.existsByNombreAndIdNot(dto.getNombre(), dto.getId())){
+            throw new DuplicateResourceException("artista", "name", dto.getNombre());
         }
-        Artista artista = artistasRepository.findById(dto.getArtista_id())
-                .orElseThrow(()-> new ResourceNotFoundException("user", "id", dto.getArtista_id()));
+        Artista artista = artistasRepository.findById(dto.getId())
+                .orElseThrow(()-> new ResourceNotFoundException("user", "id", dto.getId()));
 
 
         ArtistasMapper.copyToExistingEntity(dto,artista);

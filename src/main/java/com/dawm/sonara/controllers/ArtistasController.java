@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import com.dawm.sonara.dtos.*;
 import com.dawm.sonara.services.ArtistaService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -109,7 +108,7 @@ public class ArtistasController {
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(created.getArtista_id())
+                .buildAndExpand(created.getId())
                 .toUri();
 
         return ResponseEntity.created(location).body(created);
@@ -128,7 +127,7 @@ public class ArtistasController {
     public ResponseEntity<ArtistasDTO> updateArtista(@PathVariable Long id,
                                                      @Valid @RequestBody ArtistasUpdateDTO dto) {
         logger.info("Actualizando artista con ID {}", id);
-        dto.setArtista_id(id);
+        dto.setId(id);
         ArtistasDTO updated = artistaService.update(dto);
         return ResponseEntity.ok(updated);
     }

@@ -5,19 +5,29 @@ CREATE TABLE IF NOT EXISTS Localidad (
     codigo_postal VARCHAR(10)
     );
 
-CREATE TABLE IF NOT EXISTS Genero (
-                                      genero_id INT AUTO_INCREMENT PRIMARY KEY,
-                                      nombre VARCHAR(100),
-    descripcion TEXT
+-- TABLA GENERO (Lado ONE de la relación)
+CREATE TABLE IF NOT EXISTS genero (
+                                      id INT AUTO_INCREMENT PRIMARY KEY,
+                                      nombre VARCHAR(50) NOT NULL,
+    descripcion VARCHAR(400)
     );
-CREATE TABLE IF NOT EXISTS Artista (
-                                       artista_id INT AUTO_INCREMENT PRIMARY KEY,
-                                       nombre_artistico VARCHAR(150),
+
+-- TABLA ARTISTA (Lado MANY de la relación)
+CREATE TABLE IF NOT EXISTS artista (
+                                       id INT AUTO_INCREMENT PRIMARY KEY,
+                                       nombre VARCHAR(50) NOT NULL UNIQUE,
     pais_origen VARCHAR(100),
-    descripcion TEXT,
-    genero_id INT,
+    descripcion VARCHAR(400),
+
+    -- Añadimos la columna de clave foránea
+    genero_id INT NOT NULL,
+
+    -- Definición de la clave foránea
     CONSTRAINT fk_artista_genero
-    FOREIGN KEY (genero_id) REFERENCES Genero(genero_id)
+    FOREIGN KEY (genero_id)
+    REFERENCES genero(id)
+    ON DELETE RESTRICT -- Evita eliminar un género si hay artistas asociados
+    ON UPDATE CASCADE
     );
 
 CREATE TABLE IF NOT EXISTS Usuario (
@@ -49,7 +59,7 @@ CREATE TABLE IF NOT EXISTS usuario_artistas_favoritos (
                                                           usuario_id INT NOT NULL,
                                                           artista_id INT NOT NULL,
 
-                                                          PRIMARY KEY (usuario_id, artista_id),
+                                                          PRIMARY KEY (usuario_id, id),
 
     CONSTRAINT fk_uaf_usuario
     FOREIGN KEY (usuario_id)
@@ -58,7 +68,7 @@ CREATE TABLE IF NOT EXISTS usuario_artistas_favoritos (
 
     CONSTRAINT fk_uaf_artista
     FOREIGN KEY (artista_id)
-    REFERENCES Artista(artista_id)
+    REFERENCES artista(id)
     ON DELETE CASCADE
     );
 
@@ -86,7 +96,7 @@ CREATE TABLE IF NOT EXISTS Cancion (
     duracion INT,
     album VARCHAR(200),
     CONSTRAINT fk_cancion_artista
-    FOREIGN KEY (artista_id) REFERENCES Artista(artista_id),
+    FOREIGN KEY (artista_id) REFERENCES artista(id),
     CONSTRAINT fk_cancion_genero
     FOREIGN KEY (genero_id) REFERENCES Genero(genero_id)
     );
