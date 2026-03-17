@@ -27,13 +27,13 @@ public class UsuarioCreateDTO {
 
     @NotBlank(message = "{msg.usuario.contrasena.notEmpty}")
     @Size(min = 6, max = 100, message = "{msg.usuario.contrasena.size}")
-    private String contrasena;
+    private String contrasenaHash;
 
     @NotNull(message = "{msg.usuario.fechaNacimiento.notNull}")
+    @Past(message = "{msg.usuario.fechaNacimiento.past}")
     private LocalDate fechaNacimiento;
 
-    @NotNull(message = "{msg.usuario.generosFavoritos.notNull}")
-    private Set<@NotBlank(message = "{msg.usuario.generosFavoritos.notEmpty}") String> generosFavoritos;
+    private Set<String> generosFavoritos;
 
     @NotNull(message = "{msg.usuario.localidadId.notNull}")
     private Long localidadId;
@@ -42,4 +42,5 @@ public class UsuarioCreateDTO {
 
     @NotEmpty(message = "{msg.user.roles.notempty}")
     private Set<Long> rolesIds = new HashSet<>();
+
 }

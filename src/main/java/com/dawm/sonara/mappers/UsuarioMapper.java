@@ -23,6 +23,19 @@ public class UsuarioMapper {
         dto.setFechaRegistro(entity.getFechaRegistro());
         dto.setGenerosFavoritos(entity.getGenerosFavoritos());
         dto.setLocalidadNombre(entity.getLocalidad() != null ? entity.getLocalidad().getNombreCiudad() : null);
+
+        if (entity.getRoles() != null) {
+            dto.setRoles(
+                    entity.getRoles()
+                            .stream()
+                            .map(Roles::getDisplayName) // o getName si quieres nombre técnico
+                            .collect(java.util.stream.Collectors.toSet())
+            );
+        } else {
+            dto.setRoles(Set.of());
+        }
+
+
         return dto;
     }
 
@@ -42,6 +55,18 @@ public class UsuarioMapper {
         dto.setFechaRegistro(entity.getFechaRegistro());
         dto.setGenerosFavoritos(entity.getGenerosFavoritos());
         dto.setLocalidadNombre(entity.getLocalidad() != null ? entity.getLocalidad().getNombreCiudad() : null);
+
+        if (entity.getRoles() != null) {
+            dto.setRoles(
+                    entity.getRoles()
+                            .stream()
+                            .map(Roles::getDisplayName)
+                            .collect(java.util.stream.Collectors.toSet())
+            );
+        } else {
+            dto.setRoles(Set.of());
+        }
+
         return dto;
     }
 
@@ -73,7 +98,7 @@ public class UsuarioMapper {
         Usuario e = new Usuario();
         e.setNombre(dto.getNombre());
         e.setEmail(dto.getEmail());
-        e.setContrasena(dto.getContrasena());
+        e.setContrasenaHash(dto.getContrasenaHash());
         e.setFechaNacimiento(dto.getFechaNacimiento());
         e.setFechaRegistro(dto.getFechaRegistro());
         e.setGenerosFavoritos(dto.getGenerosFavoritos());
@@ -87,7 +112,7 @@ public class UsuarioMapper {
         e.setId(dto.getId());
         e.setNombre(dto.getNombre());
         e.setEmail(dto.getEmail());
-        e.setContrasena(dto.getContrasena());
+        e.setContrasenaHash(dto.getContrasenaHash());
         e.setFechaNacimiento(dto.getFechaNacimiento());
         e.setFechaRegistro(dto.getFechaRegistro());
         e.setGenerosFavoritos(dto.getGenerosFavoritos());
@@ -112,8 +137,8 @@ public class UsuarioMapper {
         if (dto == null || entity == null) return;
         entity.setNombre(dto.getNombre());
         entity.setEmail(dto.getEmail());
-        if (dto.getContrasena() != null && !dto.getContrasena().isBlank()) {
-            entity.setContrasena(dto.getContrasena());
+        if (dto.getContrasenaHash() != null && !dto.getContrasenaHash().isBlank()) {
+            entity.setContrasenaHash(dto.getContrasenaHash());
         }
         entity.setFechaNacimiento(dto.getFechaNacimiento());
         if (dto.getFechaRegistro() != null) {
@@ -122,39 +147,6 @@ public class UsuarioMapper {
         entity.setGenerosFavoritos(dto.getGenerosFavoritos());
         entity.setRoles(roles);
         // Localidad se debe setear en el service o controller
-    }
-
-    public static Usuario copyToNewEntity(UsuarioCreateDTO dto, Set<Roles> roles) {
-        if (dto == null) return null;
-
-        // Crear una nueva entidad Usuario
-        Usuario entity = new Usuario();
-
-        // Asignar datos del DTO al nuevo usuario
-        entity.setNombre(dto.getNombre());
-        entity.setEmail(dto.getEmail());
-
-        // Validación de contraseña si está presente
-        if (dto.getContrasena() != null && !dto.getContrasena().isBlank()) {
-            // Aquí podrías considerar encriptar la contraseña antes de asignarla
-            entity.setContrasena(dto.getContrasena());
-        }
-
-        // Asignar la fecha de nacimiento
-        entity.setFechaNacimiento(dto.getFechaNacimiento());
-
-        // Establecer roles
-        if (roles != null) {
-            entity.setRoles(roles);
-        }
-
-        // Generar fecha de registro (automáticamente)
-        entity.setFechaRegistro(LocalDateTime.now());
-
-        // Otros campos adicionales del DTO
-        entity.setGenerosFavoritos(dto.getGenerosFavoritos());
-
-        return entity;
     }
 
 }

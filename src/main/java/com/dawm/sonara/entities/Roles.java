@@ -47,7 +47,6 @@ public class Roles {
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
     private Set<Usuario> users = new HashSet<>();
 
-
     /** Constructor útil para crear roles sin id ni usuarios. */
     public Roles(String name, String displayName, String description) {
         this.name = name;

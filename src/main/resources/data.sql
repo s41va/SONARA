@@ -35,10 +35,10 @@
 -- -- ==========================
 -- -- USUARIOS
 -- -- ==========================
-INSERT IGNORE INTO Usuario (nombre, email, contrasena, fecha_nacimiento, localidad_id) VALUES
-('Alvaro Perez', 'alvaro@example.com', 'contrasena123', '1995-05-12', 1),
-('Lucia Gomez', 'lucia@example.com', 'password456', '1998-11-23', 2),
-('Carlos Ruiz', 'carlos@example.com', 'pass789', '1990-02-15', 3);
+-- INSERT IGNORE INTO Usuario (nombre, email, contrasena, fecha_nacimiento, localidad_id) VALUES
+-- ('Alvaro Perez', 'alvaro@example.com', 'contrasena123', '1995-05-12', 1),
+-- ('Lucia Gomez', 'lucia@example.com', 'password456', '1998-11-23', 2),
+-- ('Carlos Ruiz', 'carlos@example.com', 'pass789', '1990-02-15', 3);
 --
 -- -- ==========================
 -- -- USUARIO GENEROS FAVORITOS
@@ -241,13 +241,35 @@ INSERT IGNORE INTO artista (nombre, pais_origen, descripcion, genero_id) VALUES
 ('Arctic Monkeys','Reino Unido', 'Banda de rock indie y post-punk, muy influyente en los 2000s.', 4);   -- Rock
 
 
+INSERT IGNORE INTO usuario (nombre, email, contrasena_hash, fecha_nacimiento, fecha_registro, localidad_id) VALUES
+('Ana García', 'ana.garcia@example.com', '$2a$12$23zzGOK04oE9CyVMx/viPucEO8relsSV.8Av205WULOoI18s/ciRG', '1990-04-12', '2025-12-15 10:30:00', 1),
+('Carlos López', 'carlos.lopez@example.com', '$2a$12$23zzGOK04oE9CyVMx/viPucEO8relsSV.8Av205WULOoI18s/ciRG', '1985-07-23', '2025-12-14 09:00:00', 5),
+('María Pérez', 'maria.perez@example.com', '$2a$12$23zzGOK04oE9CyVMx/viPucEO8relsSV.8Av205WULOoI18s/ciRG', '1992-11-05', '2025-12-15 11:45:00', 3),
+('Jorge Martínez', 'jorge.martinez@example.com', '$2a$12$23zzGOK04oE9CyVMx/viPucEO8relsSV.8Av205WULOoI18s/ciRG', '1988-01-30', '2025-12-13 14:20:00', 1),
+('Lucía Fernández', 'lucia.fernandez@example.com', '$2a$12$23zzGOK04oE9CyVMx/viPucEO8relsSV.8Av205WULOoI18s/ciRG', '1995-06-18', '2025-12-12 08:15:00', 20),
+('Miguel Torres', 'miguel.torres@example.com', '$2a$12$23zzGOK04oE9CyVMx/viPucEO8relsSV.8Av205WULOoI18s/ciRG', '1991-09-22', '2025-12-11 16:40:00', 3),
+('Sofía Ruiz', 'sofia.ruiz@example.com', '$2a$12$23zzGOK04oE9CyVMx/viPucEO8relsSV.8Av205WULOoI18s/ciRG', '1993-03-10', '2025-12-10 13:55:00', 10),
+('Diego Sánchez', 'diego.sanchez@example.com', '$2a$12$23zzGOK04oE9CyVMx/viPucEO8relsSV.8Av205WULOoI18s/ciRG', '1987-12-02', '2025-12-09 12:30:00', 21),
+('Valeria Gómez', 'valeria.gomez@example.com', '$2a$12$23zzGOK04oE9CyVMx/viPucEO8relsSV.8Av205WULOoI18s/ciRG', '1994-08-25', '2025-12-08 15:10:00', 33),
+('Andrés Castillo', 'andres.castillo@example.com', '$2a$12$23zzGOK04oE9CyVMx/viPucEO8relsSV.8Av205WULOoI18s/ciRG', '1989-05-14', '2025-12-07 09:45:00', 1);
+
+
+INSERT IGNORE  INTO usuario_generos_favoritos (usuario_id, genero_favorito) VALUES
+(1, 'Rock'),
+(2, 'Jazz'),
+(4, 'Pop'),
+(5, 'Trap'),
+(6, 'R&B'),
+(7, 'Breakbeat'),
+(8, 'Reggaeton');
+
 INSERT IGNORE INTO roles (id, name, display_name, description) VALUES
 (1, 'ROLE_ADMIN', 'Administrador', 'Acceso total a todas las funcionalidades del sistema'),
 (2, 'ROLE_USER', 'Usuario', 'Usuario estándar con acceso limitado'),
 (3, 'ROLE_MANAGER', 'Gestor', 'Usuario gestor con permisos de gestión de datos');
 
 
-INSERT IGNORE INTO usuario_roles (usuario_id, role_id) VALUES
+INSERT IGNORE INTO usuario_roles (usuario_id, rol_id) VALUES
 -- Usuario 1: Ana García → admin completo
 (1, 1),  -- ROLE_ADMIN
 (1, 2),  -- ROLE_USER
@@ -257,4 +279,27 @@ INSERT IGNORE INTO usuario_roles (usuario_id, role_id) VALUES
 
 -- Usuario 3: María Pérez → manager + usuario
 (3, 3),  -- ROLE_MANAGER
-(3, 2);  -- ROLE_USER
+(3, 2),  -- ROLE_USER
+
+-- Usuario 4: Jorge Martínez → admin + usuario
+(4, 1),  -- ROLE_ADMIN
+(4, 2),  -- ROLE_USER
+
+-- Usuario 5: Lucía Fernández → usuario
+(5, 2),  -- ROLE_USER
+
+-- Usuario 6: Miguel Torres → usuario
+(6, 2),  -- ROLE_USER
+
+-- Usuario 7: Sofía Ruiz → usuario
+(7, 2),  -- ROLE_USER
+
+-- Usuario 8: Diego Sánchez → usuario
+(8, 2),  -- ROLE_USER
+
+-- Usuario 9: Valeria Gómez → usuario
+(9, 2),  -- ROLE_USER
+
+-- Usuario 10: Andrés Castillo → usuario
+(10, 2); -- ROLE_USER
+

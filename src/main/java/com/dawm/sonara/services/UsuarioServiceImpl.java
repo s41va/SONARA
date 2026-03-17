@@ -14,12 +14,13 @@ import com.dawm.sonara.mappers.UsuarioMapper;
 import com.dawm.sonara.repositories.LocalidadRepository;
 import com.dawm.sonara.repositories.RolesRepository;
 import com.dawm.sonara.repositories.UsuarioRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -41,6 +42,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Autowired
     private LocalidadRepository localidadRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public Page<UsuarioDTO> list(Pageable pageable) {
         return usuarioRepository.findAll(pageable).map(UsuarioMapper::toDTO);
@@ -55,58 +59,15 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public UsuarioDTO create(UsuarioCreateDTO dto) {
-        // Verificar si el email ya está registrado
         if (usuarioRepository.existsByEmail(dto.getEmail())) {
             throw new DuplicateResourceException("Usuario", "email", dto.getEmail());
         }
 
-        // Validar la fecha de nacimiento
         validarFechaNacimiento(dto.getFechaNacimiento());
 
-        // Crear la entidad Usuario utilizando el DTO y los roles
-        Set<Roles> roles = new HashSet<>();
-        if (dto.getRolesIds() != null) {
-            roles = new HashSet<>(rolesRepository.findAllById(dto.getRolesIds()));
-        }
+        Usuario usuario = UsuarioMapper.toEntity(dto);
 
-        // Usar mtodo copyToNewEntity para asignar los valores del DTO a la nueva entidad
-        Usuario usuario = UsuarioMapper.copyToNewEntity(dto, roles);
-
-        // Validar y asignar la localidad
-        if (dto.getLocalidadId() != null) {
-            Long localidadId = dto.getLocalidadId();
-            Localidad localidad = localidadRepository.findById(localidadId)
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "localidad", "id", localidadId
-                    ));
-            usuario.setLocalidad(localidad);
-        }
-
-        // Asignar la fecha de registro
-        usuario.setFechaRegistro(LocalDateTime.now());
-
-        // Guardar el usuario en la base de datos
-        usuarioRepository.save(usuario);
-
-        // Retornar el DTO del usuario creado
-        return UsuarioMapper.toDTO(usuario);
-    }
-
-
-    @Override
-    public UsuarioDTO update(UsuarioUpdateDTO dto, Set<Roles> roles) {
-        if (usuarioRepository.existsByEmailAndIdNot(dto.getEmail(), dto.getId())) {
-            throw new DuplicateResourceException("Usuario", "email", dto.getEmail());
-        }
-        validarFechaNacimiento(dto.getFechaNacimiento());
-
-        Usuario usuario = usuarioRepository.findById(dto.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", dto.getId()));
-
-        if (dto.getRolesIds() != null) {
-            roles = new HashSet<>(rolesRepository.findAllById(dto.getRolesIds()));
-        }
-        usuario.setRoles(roles);
+        usuario.setContrasenaHash(passwordEncoder.encode(dto.getContrasenaHash()));
 
         // Validar Localidad
         Long localidadId = dto.getLocalidadId();
@@ -116,10 +77,52 @@ public class UsuarioServiceImpl implements UsuarioService {
                 ));
         usuario.setLocalidad(localidad);
 
+        Set<Roles> roles = new HashSet<>();
+        if (dto.getRolesIds() != null) {
+            roles = new HashSet<>(rolesRepository.findAllById(dto.getRolesIds()));
+        }
+
+        usuario.setRoles(roles);
+
+        usuario.setFechaRegistro(LocalDateTime.now());
+
+        usuario = usuarioRepository.save(usuario);
+
+        return UsuarioMapper.toDTO(usuario);
+    }
+
+    @Override
+    public UsuarioDTO update(UsuarioUpdateDTO dto, Set<Roles> roles) {
+
+        if (usuarioRepository.existsByEmailAndIdNot(dto.getEmail(), dto.getId())) {
+            throw new DuplicateResourceException("Usuario", "email", dto.getEmail());
+        }
+        validarFechaNacimiento(dto.getFechaNacimiento());
+
+        Usuario usuario = usuarioRepository.findById(dto.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", dto.getId()));
+
+        // Validar Localidad
+        Long localidadId = dto.getLocalidadId();
+        Localidad localidad = localidadRepository.findById(localidadId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "localidad", "id", localidadId
+                ));
+        usuario.setLocalidad(localidad);
+
+        if (dto.getRolesIds() != null) {
+            roles = new HashSet<>(rolesRepository.findAllById(dto.getRolesIds()));
+        }
+        usuario.setRoles(roles);
+
+
         UsuarioMapper.copyToExistingEntity(dto, usuario, roles);
 
-        usuarioRepository.save(usuario);
+        if (dto.getContrasenaHash() != null && !dto.getContrasenaHash().isBlank()) {
+            usuario.setContrasenaHash(passwordEncoder.encode(dto.getContrasenaHash()));
+        }
 
+        usuario = usuarioRepository.save(usuario);
         return UsuarioMapper.toDTO(usuario);
     }
 
@@ -139,8 +142,8 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public List<UsuarioDTO> listAll(Sort sort) {
-        return usuarioRepository.findAll(sort)
+    public List<UsuarioDTO> listAll(Sort name) {
+        return usuarioRepository.findAll()
                 .stream()
                 .map(UsuarioMapper::toDTO)
                 .toList();

@@ -29,7 +29,7 @@ public class UsuarioUpdateDTO {
 
     @NotBlank(message = "{msg.usuario.contrasena.notEmpty}")
     @Size(min = 6, max = 100, message = "{msg.usuario.contrasena.size}")
-    private String contrasena;
+    private String contrasenaHash;
 
     @NotNull(message = "{msg.usuario.fechaNacimiento.notNull}")
     private LocalDate fechaNacimiento;

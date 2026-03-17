@@ -82,7 +82,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         // Se necesita el org.springframework.security.core.userdetails para poder diferenciarlo de nuestro User
         UserDetails userDetails = org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
-                .password(user.getContrasena())
+                .password(user.getContrasenaHash())
                 .authorities(
                         user.getRoles().stream()
                                 .map(role -> role.getName()) // ROLE_ADMIN, ROLE_USER...

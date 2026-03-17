@@ -6,7 +6,9 @@ import com.dawm.sonara.dtos.usuario.UsuarioDetailDTO;
 import com.dawm.sonara.dtos.usuario.UsuarioUpdateDTO;
 import com.dawm.sonara.entities.Roles;
 import com.dawm.sonara.exceptions.ResourceNotFoundException;
+import com.dawm.sonara.repositories.LocalidadRepository;
 import com.dawm.sonara.repositories.RolesRepository;
+import com.dawm.sonara.services.LocalidadService;
 import com.dawm.sonara.services.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -57,7 +59,16 @@ public class UsuarioController {
     @Autowired
     private RolesRepository rolesRepository;
 
+    @Autowired
+    private LocalidadService localidadService;
 
+    @Autowired
+    private LocalidadRepository localidadRepository;
+
+    //Esto ira en la entidad generos
+    private List<String> getAllGeneros() {
+        return List.of("Rock", "Pop", "Jazz", "Clásica", "Trap", "Reggaeton", "R&B", "Breakbeat", "Hip-Hop");
+    }
 
     /*@GetMapping
     public ResponseEntity<Page<UsuarioDTO>> listUsuarios(

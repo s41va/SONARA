@@ -27,6 +27,4 @@ public class UsuarioDetailDTO {
 
     private Set<String> roles;
 
-    @NotEmpty(message = "{msg.user.roles.notempty}")
-    private Set<Long> rolesIds = new HashSet<>();
 }
