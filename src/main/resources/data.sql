@@ -1,33 +1,11 @@
--- -- ==========================
--- -- LOCALIDADES
--- -- ==========================
--- INSERT INTO Localidad (pais, nombre_ciudad, codigo_postal)
--- SELECT 'España', 'Madrid', '28001'
---     WHERE NOT EXISTS (
---     SELECT 1 FROM Localidad
---     WHERE pais = 'España' AND nombre_ciudad = 'Madrid'
--- );
---
--- INSERT INTO Localidad (pais, nombre_ciudad, codigo_postal)
--- SELECT 'España', 'Barcelona', '08001'
---     WHERE NOT EXISTS (
---     SELECT 1 FROM Localidad
---     WHERE pais = 'España' AND nombre_ciudad = 'Barcelona'
--- );
---
--- INSERT INTO Localidad (pais, nombre_ciudad, codigo_postal)
--- SELECT 'México', 'Ciudad de México', '01000'
---     WHERE NOT EXISTS (
---     SELECT 1 FROM Localidad
---     WHERE pais = 'México' AND nombre_ciudad = 'Ciudad de México'
--- );
---
--- INSERT INTO Localidad (pais, nombre_ciudad, codigo_postal)
--- SELECT 'Argentina', 'Buenos Aires', '1000'
---     WHERE NOT EXISTS (
---     SELECT 1 FROM Localidad
---     WHERE pais = 'Argentina' AND nombre_ciudad = 'Buenos Aires'
--- );
+-- ==========================
+-- LOCALIDADES
+-- ==========================
+INSERT IGNORE INTO localidad (pais, nombre_ciudad, codigo_postal) VALUES
+('España', 'Madrid', '28001'),
+('España', 'Barcelona', '08001'),
+('México', 'Ciudad de México', '01000'),
+('Argentina', 'Buenos Aires', '1000');
 --
 --
 --
@@ -255,13 +233,13 @@ INSERT IGNORE INTO usuario (nombre, email, contrasena_hash, fecha_nacimiento, fe
 
 
 INSERT IGNORE  INTO usuario_generos_favoritos (usuario_id, genero_favorito) VALUES
-(1, 'Rock'),
-(2, 'Jazz'),
-(4, 'Pop'),
-(5, 'Trap'),
-(6, 'R&B'),
-(7, 'Breakbeat'),
-(8, 'Reggaeton');
+(1, 4),
+(2, 1),
+(4, 2),
+(5, 1),
+(6, 6),
+(7, 5),
+(8, 3);
 
 INSERT IGNORE INTO roles (id, name, display_name, description) VALUES
 (1, 'ROLE_ADMIN', 'Administrador', 'Acceso total a todas las funcionalidades del sistema'),

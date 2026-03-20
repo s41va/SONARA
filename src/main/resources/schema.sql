@@ -42,7 +42,8 @@ CREATE TABLE IF NOT EXISTS localidad (
     localidad_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     pais VARCHAR(100) NOT NULL,
     nombre_ciudad VARCHAR(100) NOT NULL,
-    codigo_postal VARCHAR(12) NOT NULL -- Tamaño 12 ya que hay paises que tienen codigos mas largos
+    codigo_postal VARCHAR(12) NOT NULL, -- Tamaño 12 ya que hay paises que tienen codigos mas largos
+    UNIQUE KEY unique_ciudad (pais, nombre_ciudad)
 );
 
 CREATE TABLE IF NOT EXISTS usuario (
@@ -58,9 +59,10 @@ CREATE TABLE IF NOT EXISTS usuario (
 
 CREATE TABLE IF NOT EXISTS usuario_generos_favoritos (
     usuario_id BIGINT NOT NULL,
-    genero_favorito VARCHAR(50),
+    genero_favorito INT,
     PRIMARY KEY (usuario_id, genero_favorito),
-    CONSTRAINT fk_ugf_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(usuario_id)
+    CONSTRAINT fk_ugf_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_ugf_genero FOREIGN KEY (genero_favorito) REFERENCES genero(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Tabla de roles
