@@ -1,6 +1,7 @@
 package com.dawm.sonara.services;
 
 
+import com.dawm.sonara.dtos.localidad.LocalidadCreateDTO;
 import com.dawm.sonara.dtos.localidad.LocalidadDTO;
 import com.dawm.sonara.dtos.localidad.LocalidadDetailDTO;
 import com.dawm.sonara.dtos.localidad.LocalidadUpdateDTO;
@@ -12,6 +13,7 @@ import com.dawm.sonara.repositories.LocalidadRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,23 +46,25 @@ public class LocalidadServiceImpl implements LocalidadService{
     }
 
     @Override
-    public void create(LocalidadUpdateDTO dto) {
+    public LocalidadDTO create(LocalidadCreateDTO dto) {
         if (localidadRepository.existsByCodigoPostal(dto.getCodigoPostal())) {
             throw new DuplicateResourceException("localidad", "codigoPostal", dto.getCodigoPostal());
         }
         Localidad localidad = LocalidadMapper.toEntity(dto);
-        localidadRepository.save(localidad);
+        localidad = localidadRepository.save(localidad);
+        return LocalidadMapper.toDTO(localidad);
     }
 
     @Override
-    public void update(LocalidadUpdateDTO dto) {
+    public LocalidadDTO update(LocalidadUpdateDTO dto) {
         if (localidadRepository.existsByCodigoPostalAndIdNot(dto.getCodigoPostal(), dto.getId())){
             throw new DuplicateResourceException("localidad", "codigoPostal", dto.getCodigoPostal());
         }
         Localidad localidad = localidadRepository.findById(dto.getId()).
                 orElseThrow(() -> new ResourceNotFoundException("localidad", "id", dto.getId()));
         LocalidadMapper.copyToExistingEntity(dto, localidad);
-        localidadRepository.save(localidad);
+        localidad = localidadRepository.save(localidad);
+        return LocalidadMapper.toDTO(localidad);
     }
 
     @Override
@@ -77,6 +81,19 @@ public class LocalidadServiceImpl implements LocalidadService{
                 .orElseThrow(() ->
                         new ResourceNotFoundException("localidad", "id", id));
         return LocalidadMapper.toDetailDTO(localidad);
+    }
+
+    @Override
+    public Page<LocalidadDTO> list(Pageable pageable) {
+        return localidadRepository.findAll(pageable).map(LocalidadMapper::toDTO);
+    }
+
+    @Override
+    public List<LocalidadDTO> listAll(Sort sort) {
+        return localidadRepository.findAll()
+                .stream()
+                .map(LocalidadMapper::toDTO)
+                .toList();
     }
 
 }

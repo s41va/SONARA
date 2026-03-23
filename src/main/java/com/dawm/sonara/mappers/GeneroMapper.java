@@ -1,7 +1,5 @@
 package com.dawm.sonara.mappers;
 
-
-
 import com.dawm.sonara.dtos.generos.GenerosCreateDTO;
 import com.dawm.sonara.dtos.generos.GenerosDTO;
 import com.dawm.sonara.dtos.generos.GenerosDetailDTO;
