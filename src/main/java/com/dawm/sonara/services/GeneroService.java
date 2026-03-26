@@ -14,8 +14,8 @@ public interface GeneroService {
 
     Page<GenerosDTO> list(Pageable pageable);
     GenerosUpdateDTO getForEdit(Long id);
-    void create(GenerosCreateDTO dto);
-    void update(GenerosUpdateDTO dto);
+    GenerosDTO create(GenerosCreateDTO dto);
+    GenerosDTO update(GenerosUpdateDTO dto);
     void delete(Long id);
     GenerosDetailDTO getDetail(Long id);
     List<Genero> findAllGeneros();

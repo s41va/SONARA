@@ -39,6 +39,7 @@ public class GeneroMapper {
         if (entity == null) return null;
 
         GenerosDetailDTO dto = new GenerosDetailDTO();
+        dto.setId(entity.getId());
         dto.setNombre(entity.getNombre());
         dto.setDescripcion(entity.getDescripcion());
         return dto;

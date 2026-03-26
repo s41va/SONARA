@@ -39,17 +39,18 @@ public class GeneroServiceImpl implements GeneroService {
     }
 
     @Override
-    public void create(GenerosCreateDTO dto) {
+    public GenerosDTO create(GenerosCreateDTO dto) {
         // Suponiendo que el género tiene un campo 'nombre' que debe ser único
         if (generoRepository.existsByNombre(dto.getNombre())) {
             throw new DuplicateResourceException("genero", "nombre", dto.getNombre());
         }
         Genero genero = GeneroMapper.toEntity(dto);
-        generoRepository.save(genero);
+        genero=generoRepository.save(genero);
+        return GeneroMapper.toDTO(genero);
     }
 
     @Override
-    public void update(GenerosUpdateDTO dto) {
+    public GenerosDTO update(GenerosUpdateDTO dto) {
         // Validamos si el nuevo nombre ya lo tiene otro registro (excluyendo el actual)
         if (generoRepository.existsByNombreAndIdNot(dto.getNombre(), dto.getId())) {
             throw new DuplicateResourceException("genero", "nombre", dto.getNombre());
@@ -60,7 +61,8 @@ public class GeneroServiceImpl implements GeneroService {
 
         // Copiamos los cambios del DTO a la entidad gestionada por JPA
         GeneroMapper.copyToExistingEntity(dto, genero);
-        generoRepository.save(genero);
+        genero = generoRepository.save(genero);
+        return GeneroMapper.toDTO(genero);
     }
 
     @Override

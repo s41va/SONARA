@@ -1,33 +1,32 @@
 package com.dawm.sonara.controllers;
 
-
-
 import com.dawm.sonara.dtos.generos.GenerosCreateDTO;
 import com.dawm.sonara.dtos.generos.GenerosDTO;
 import com.dawm.sonara.dtos.generos.GenerosDetailDTO;
 import com.dawm.sonara.dtos.generos.GenerosUpdateDTO;
-import com.dawm.sonara.exceptions.DuplicateResourceException;
-import com.dawm.sonara.exceptions.ResourceNotFoundException;
 import com.dawm.sonara.services.GeneroService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.Locale;
+import java.net.URI;
 
-@Controller
-@RequestMapping("/generos")
+@RestController
+@RequestMapping("/api/generos")
 public class GeneroController {
 
     private static final Logger logger = LoggerFactory.getLogger(GeneroController.class);
@@ -35,175 +34,96 @@ public class GeneroController {
     @Autowired
     private GeneroService generoService;
 
-    @Autowired
-    private MessageSource messageSource;
-
-    /**
-     * Lista los géneros con paginación y ordenación.
-     */
+    @Operation(
+            summary = "Obtener todos los géneros",
+            description = "Devuelve una lista paginada de todos los géneros musicales."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de géneros recuperada exitosamente",
+                    content = @Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = GenerosDTO.class))
+                    )
+            ),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     @GetMapping
-    public String listGeneros(
-            @PageableDefault(size = 10, sort = "nombre", direction = Sort.Direction.ASC) Pageable pageable,
-            Model model) {
+    public ResponseEntity<Page<GenerosDTO>> listGeneros(
+            @PageableDefault(size = 10, sort = "nombre", direction = Sort.Direction.ASC) Pageable pageable) {
 
-        logger.info("Listando géneros page={}, size={}, sort={}",
-                pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
-
-        try {
-            Page<GenerosDTO> page = generoService.list(pageable);
-            model.addAttribute("page", page);
-
-            String sortParam = "nombre,asc";
-            if (page.getSort().isSorted()) {
-                Sort.Order order = page.getSort().iterator().next();
-                sortParam = order.getProperty() + "," + order.getDirection().name().toLowerCase();
-            }
-            model.addAttribute("sortParam", sortParam);
-
-        } catch (Exception e) {
-            logger.error("Error al listar los géneros: {}", e.getMessage(), e);
-            model.addAttribute("errorMessage", "Error al listar los géneros.");
-        }
-
-        return "views/genero/genero-list";
+        logger.info("Listando géneros vía API: page={}, size={}", pageable.getPageNumber(), pageable.getPageSize());
+        return ResponseEntity.ok(generoService.list(pageable));
     }
 
-    @GetMapping("/new")
-    public String showNewForm(Model model) {
-        logger.info("Mostrando formulario para nuevo género.");
-        model.addAttribute("genero", new GenerosCreateDTO());
-        return "views/genero/genero-form";
+    @Operation(
+            summary = "Obtener un género por ID",
+            description = "Recupera la información detallada de un género específico."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Género encontrado"),
+            @ApiResponse(responseCode = "404", description = "Género no encontrado")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<GenerosDetailDTO> getGeneroById(@PathVariable Long id) {
+        logger.info("Obteniendo detalle del género ID: {}", id);
+        return ResponseEntity.ok(generoService.getDetail(id));
     }
 
-    @PostMapping("/insert")
-    public String insertGenero(@Valid @ModelAttribute("genero") GenerosCreateDTO generoDTO,
-                               BindingResult result,
-                               RedirectAttributes redirectAttributes,
-                               Locale locale) {
+    @Operation(
+            summary = "Crear un nuevo género",
+            description = "Registra un nuevo género musical en el sistema."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Género creado correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos"),
+            @ApiResponse(responseCode = "409", description = "El nombre del género ya existe")
+    })
+    @PostMapping
+    public ResponseEntity<GenerosDTO> createGenero(@Valid @RequestBody GenerosCreateDTO dto) {
+        logger.info("Creando nuevo género: {}", dto.getNombre());
+        GenerosDTO created = generoService.create(dto);
 
-        logger.info("Insertando nuevo género: {}", generoDTO.getNombre());
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(created.getId())
+                .toUri();
 
-        if (result.hasErrors()) {
-            return "views/genero/genero-form";
-        }
-
-        try {
-            generoService.create(generoDTO);
-            String successMessage = messageSource.getMessage("msg.genero-controller.insert.success", null, locale);
-            redirectAttributes.addFlashAttribute("successMessage", successMessage);
-            return "redirect:/generos";
-
-        } catch (DuplicateResourceException ex) {
-            logger.warn("El nombre del género {} ya existe.", generoDTO.getNombre());
-            String errorMessage = messageSource.getMessage("msg.genero-controller.insert.nameExist", null, locale);
-            redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
-            return "redirect:/generos/new";
-
-        } catch (Exception e) {
-            logger.error("Error al insertar género {}: {}", generoDTO.getNombre(), e.getMessage());
-            String errorMessage = messageSource.getMessage("msg.genero-controller.insert.error", null, locale);
-            redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
-            return "redirect:/generos/new";
-        }
+        return ResponseEntity.created(location).body(created);
     }
 
-    @GetMapping("/edit")
-    public String showEditForm(@RequestParam("id") Long id, Model model, RedirectAttributes redirectAttributes, Locale locale) {
-        logger.info("Mostrando formulario de edición ID {}", id);
-        try {
-            GenerosUpdateDTO generoDTO = generoService.getForEdit(id);
-            model.addAttribute("genero", generoDTO);
-            return "views/genero/genero-form";
-
-        } catch (ResourceNotFoundException ex) {
-            String msg = messageSource.getMessage("msg.genero-controller.edit.notFound", null, locale);
-            redirectAttributes.addFlashAttribute("errorMessage", msg);
-            return "redirect:/generos";
-
-        } catch (Exception e) {
-            logger.error("Error al obtener género ID {}: {}", id, e.getMessage());
-            String msg = messageSource.getMessage("msg.genero-controller.edit.error", null, locale);
-            redirectAttributes.addFlashAttribute("errorMessage", msg);
-            return "redirect:/generos";
-        }
+    @Operation(
+            summary = "Actualizar un género existente",
+            description = "Actualiza los datos de un género basándose en su ID."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Género actualizado"),
+            @ApiResponse(responseCode = "404", description = "Género no encontrado"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos")
+    })
+    @PutMapping("/{id}")
+    public ResponseEntity<GenerosDTO> updateGenero(@PathVariable Long id,
+                                                   @Valid @RequestBody GenerosUpdateDTO dto) {
+        logger.info("Actualizando género ID: {}", id);
+        dto.setId(id);
+        GenerosDTO updated = generoService.update(dto);
+        return ResponseEntity.ok(updated);
     }
 
-    @PostMapping("/update")
-    public String updateGenero(@Valid @ModelAttribute("genero") GenerosUpdateDTO generoDTO,
-                               BindingResult result,
-                               RedirectAttributes redirectAttributes,
-                               Locale locale) {
-
-        logger.info("Actualizando género ID {}", generoDTO.getId());
-
-        if (result.hasErrors()) {
-            return "views/genero/genero-form";
-        }
-
-        try {
-            generoService.update(generoDTO);
-            String successMessage = messageSource.getMessage("msg.genero-controller.update.success", null, locale);
-            redirectAttributes.addFlashAttribute("successMessage", successMessage);
-            return "redirect:/generos";
-
-        } catch (DuplicateResourceException ex) {
-            String errorMessage = messageSource.getMessage("msg.genero-controller.update.nameExists", null, locale);
-            redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
-            return "redirect:/generos/edit?id=" + generoDTO.getId();
-
-        } catch (ResourceNotFoundException ex) {
-            String msg = messageSource.getMessage("msg.genero-controller.edit.notFound", null, locale);
-            redirectAttributes.addFlashAttribute("errorMessage", msg);
-            return "redirect:/generos";
-
-        } catch (Exception e) {
-            logger.error("Error al actualizar género ID {}: {}", generoDTO.getId(), e.getMessage());
-            String errorMessage = messageSource.getMessage("msg.genero-controller.update.error", null, locale);
-            redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
-            return "redirect:/generos/edit?id=" + generoDTO.getId();
-        }
-    }
-
-    @PostMapping("/delete")
-    public String deleteGenero(@RequestParam("id") Long id, RedirectAttributes redirectAttributes, Locale locale) {
-        logger.info("Eliminando género ID {}", id);
-        try {
-            generoService.delete(id);
-            String successMessage = messageSource.getMessage("msg.genero-controller.delete.success", null, locale);
-            redirectAttributes.addFlashAttribute("successMessage", successMessage);
-            return "redirect:/generos";
-
-        } catch (ResourceNotFoundException ex) {
-            String msg = messageSource.getMessage("msg.genero-controller.edit.notFound", null, locale);
-            redirectAttributes.addFlashAttribute("errorMessage", msg);
-            return "redirect:/generos";
-
-        } catch (Exception e) {
-            logger.error("Error al eliminar género ID {}: {}", id, e.getMessage());
-            String errorMessage = messageSource.getMessage("msg.genero-controller.delete.error", null, locale);
-            redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
-            return "redirect:/generos";
-        }
-    }
-
-    @GetMapping("/detail")
-    public String showDetail(@RequestParam("id") Long id,
-                             Model model,
-                             RedirectAttributes redirectAttributes,
-                             Locale locale) {
-        try {
-            GenerosDetailDTO detailDTO = generoService.getDetail(id);
-            model.addAttribute("genero", detailDTO);
-            return "views/genero/genero-detail";
-
-        } catch (ResourceNotFoundException ex) {
-            String msg = messageSource.getMessage("msg.genero-controller.detail.notFound", null, locale);
-            redirectAttributes.addFlashAttribute("errorMessage", msg);
-            return "redirect:/generos";
-
-        } catch (Exception e) {
-            logger.error("Error detalle género ID {}: {}", id, e.getMessage());
-            return "redirect:/generos";
-        }
+    @Operation(
+            summary = "Eliminar un género",
+            description = "Borra de forma permanente un género del sistema."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Género eliminado correctamente"),
+            @ApiResponse(responseCode = "404", description = "Género no encontrado")
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteGenero(@PathVariable Long id) {
+        logger.info("Eliminando género ID: {}", id);
+        generoService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
