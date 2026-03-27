@@ -41,7 +41,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain swaggerChair(HttpSecurity http) throws Exception {
         http
-                .cors(withDefaults())
                 .securityMatcher(
                         "/swagger-ui/**",
                         "/swagger-ui.html",
@@ -63,6 +62,7 @@ public class SecurityConfig {
 
         // Configuración de seguridad
         http
+                .cors(withDefaults())
                 // 1) API REST: Normalmente desactivas CSRF (no hay sesion/cookies)
                 .csrf(csrf -> csrf.disable())
 
