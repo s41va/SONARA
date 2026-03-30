@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class LocalidadCreateDTO {
+
     private Long id;
 
     @NotBlank(message = "{msg.localidad.pais.notEmpty}")
@@ -24,7 +25,7 @@ public class LocalidadCreateDTO {
     @Size(max = 100, message = "{msg.localidad.nombre_ciudad.size}")
     private String nombreCiudad;
 
-    @NotNull(message = "{msg.localidad.codigo_postal.notNull}")
+    @NotBlank(message = "{msg.localidad.codigo_postal.notEmpty}")
     @Size(max = 12, message = "{msg.localidad.codigo_postal.size}")
     @Pattern(regexp = "\\d+", message = "{msg.localidad.codigo_postal.pattern}") //tiene que ser string ya que puede empezar por 0
     private String codigoPostal;

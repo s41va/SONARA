@@ -25,7 +25,7 @@ public class LocalidadUpdateDTO {
     @Size(max = 100, message = "{msg.localidad.nombre_ciudad.size}")
     private String nombreCiudad;
 
-    @NotNull(message = "{msg.localidad.codigo_postal.notNull}")
+    @NotBlank(message = "{msg.localidad.codigo_postal.notEmpty}")
     @Size(max = 12, message = "{msg.localidad.codigo_postal.size}")
     @Pattern(regexp = "\\d+", message = "{msg.localidad.codigo_postal.pattern}") //Tiene que ser string ya que puede empezar por 0
     private String codigoPostal;

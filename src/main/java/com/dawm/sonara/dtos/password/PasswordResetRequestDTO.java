@@ -1,4 +1,4 @@
-package com.dawm.sonara.dtos.Password;
+package com.dawm.sonara.dtos.password;
 
 
 import jakarta.validation.constraints.Email;
