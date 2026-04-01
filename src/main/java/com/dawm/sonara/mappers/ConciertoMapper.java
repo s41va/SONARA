@@ -5,7 +5,6 @@ import com.dawm.sonara.dtos.concierto.ConciertoDTO;
 import com.dawm.sonara.dtos.concierto.ConciertoDetailDTO;
 import com.dawm.sonara.dtos.concierto.ConciertoUpdateDTO;
 import com.dawm.sonara.entities.Concierto;
-import com.dawm.sonara.mappers.ArtistasMapper;
 
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class ConciertoMapper {
         dto.setDescripcion(entity.getDescripcion());
 
         // Relaciones (usar DTOs)
-        dto.setArtista(ArtistasMapper.toDTO(entity.getArtista()));
+        dto.setArtista(ArtistasMapperOLD.toDTO(entity.getArtistaOLD()));
         dto.setLocalidad(LocalidadMapper.toDTO(entity.getLocalidad()));
 
         return dto;
@@ -47,7 +46,7 @@ public class ConciertoMapper {
         dto.setLocal(entity.getLocal());
         dto.setDescripcion(entity.getDescripcion());
 
-        dto.setArtista(ArtistasMapper.toDTO(entity.getArtista()));
+        dto.setArtista(ArtistasMapperOLD.toDTO(entity.getArtistaOLD()));
         dto.setLocalidad(LocalidadMapper.toDTO(entity.getLocalidad()));
 
         return dto;
@@ -66,7 +65,7 @@ public class ConciertoMapper {
         dto.setDescripcion(entity.getDescripcion());
 
         // IMPORTANTE: aquí normalmente se envían IDs
-        dto.setArtistaId(entity.getArtista() != null ? entity.getArtista().getId() : null);
+        dto.setArtistaId(entity.getArtistaOLD() != null ? entity.getArtistaOLD().getId() : null);
         dto.setLocalidadId(entity.getLocalidad() != null ? entity.getLocalidad().getId() : null);
 
         return dto;

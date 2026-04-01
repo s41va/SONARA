@@ -1,16 +1,16 @@
 package com.dawm.sonara.controllers;
 
-import com.dawm.sonara.dtos.artistas.ArtistasCreateDTO;
-import com.dawm.sonara.dtos.artistas.ArtistasDTO;
-import com.dawm.sonara.dtos.artistas.ArtistasDetailDTO;
-import com.dawm.sonara.dtos.artistas.ArtistasUpdateDTO;
+import com.dawm.sonara.dtos.artistasOLD.ArtistasCreateDTO;
+import com.dawm.sonara.dtos.artistasOLD.ArtistasDTO;
+import com.dawm.sonara.dtos.artistasOLD.ArtistasDetailDTO;
+import com.dawm.sonara.dtos.artistasOLD.ArtistasUpdateDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import com.dawm.sonara.services.ArtistaService;
+import com.dawm.sonara.services.ArtistaServiceOLD;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,12 +27,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/artistas")
-public class ArtistasController {
+public class ArtistasControllerOLD {
 
-    private static final Logger logger = LoggerFactory.getLogger(ArtistasController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ArtistasControllerOLD.class);
 
     @Autowired
-    private ArtistaService artistaService;
+    private ArtistaServiceOLD artistaServiceOLD;
 
     @Operation(
             summary = "Obtener todos los artistas",
@@ -57,10 +57,10 @@ public class ArtistasController {
         logger.info("Solicitando lista de artistas... unpaged={}", unpaged);
 
         if (unpaged) {
-            return ResponseEntity.ok(artistaService.listAll(Sort.by("nombre").ascending()));
+            return ResponseEntity.ok(artistaServiceOLD.listAll(Sort.by("nombre").ascending()));
         }
 
-        return ResponseEntity.ok(artistaService.list(pageable));
+        return ResponseEntity.ok(artistaServiceOLD.list(pageable));
     }
 
     @Operation(
@@ -82,7 +82,7 @@ public class ArtistasController {
     @GetMapping("/{id}")
     public ResponseEntity<ArtistasDetailDTO> getArtistaById(@PathVariable Long id) {
         logger.info("Mostrando detalle del artista con ID {}", id);
-        ArtistasDetailDTO detailDTO = artistaService.getDetail(id);
+        ArtistasDetailDTO detailDTO = artistaServiceOLD.getDetail(id);
         return ResponseEntity.ok(detailDTO);
     }
 
@@ -102,7 +102,7 @@ public class ArtistasController {
     @PostMapping
     public ResponseEntity<ArtistasDTO> createArtista(@Valid @RequestBody ArtistasCreateDTO dto) {
         logger.info("Creando nuevo artista: {}", dto.getNombre_artistico());
-        ArtistasDTO created = artistaService.create(dto);
+        ArtistasDTO created = artistaServiceOLD.create(dto);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -127,7 +127,7 @@ public class ArtistasController {
                                                      @Valid @RequestBody ArtistasUpdateDTO dto) {
         logger.info("Actualizando artista con ID {}", id);
         dto.setId(id);
-        ArtistasDTO updated = artistaService.update(dto);
+        ArtistasDTO updated = artistaServiceOLD.update(dto);
         return ResponseEntity.ok(updated);
     }
 
@@ -142,7 +142,7 @@ public class ArtistasController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteArtista(@PathVariable Long id) {
         logger.info("Eliminando artista con ID {}", id);
-        artistaService.delete(id);
+        artistaServiceOLD.delete(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -150,7 +150,7 @@ public class ArtistasController {
     @GetMapping("/generos")
     public ResponseEntity<List<String>> getGeneros() {
         // Mapeamos la lista de objetos Genero a una lista de Strings usando el nombre
-        List<String> nombres = artistaService.findAllGeneros().stream()
+        List<String> nombres = artistaServiceOLD.findAllGeneros().stream()
                 .map(g -> g.getNombre()) // O el método que obtenga el nombre en tu entidad Genero
                 .toList();
 

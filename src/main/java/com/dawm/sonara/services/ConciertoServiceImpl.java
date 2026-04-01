@@ -4,7 +4,7 @@ import com.dawm.sonara.dtos.concierto.ConciertoCreateDTO;
 import com.dawm.sonara.dtos.concierto.ConciertoDTO;
 import com.dawm.sonara.dtos.concierto.ConciertoDetailDTO;
 import com.dawm.sonara.dtos.concierto.ConciertoUpdateDTO;
-import com.dawm.sonara.entities.Artista;
+import com.dawm.sonara.entities.ArtistaOLD;
 import com.dawm.sonara.entities.Concierto;
 import com.dawm.sonara.entities.Localidad;
 import com.dawm.sonara.exceptions.ResourceNotFoundException;
@@ -80,7 +80,7 @@ public class ConciertoServiceImpl implements ConciertoService {
     @Override
     public ConciertoDTO create(ConciertoCreateDTO dto) {
 
-        Artista artista = artistaRepository.findById(dto.getArtistaId())
+        ArtistaOLD artistaOLD = artistaRepository.findById(dto.getArtistaId())
                 .orElseThrow(() -> new ResourceNotFoundException("Artista", "id", dto.getArtistaId()));
 
         Localidad localidad = localidadRepository.findById(dto.getLocalidadId())
@@ -89,7 +89,7 @@ public class ConciertoServiceImpl implements ConciertoService {
         Concierto concierto = ConciertoMapper.toEntity(dto);
 
         // asignamos las relaciones
-        concierto.setArtista(artista);
+        concierto.setArtistaOLD(artistaOLD);
         concierto.setLocalidad(localidad);
 
         concierto = conciertoRepository.save(concierto);
@@ -105,7 +105,7 @@ public class ConciertoServiceImpl implements ConciertoService {
         Concierto concierto = conciertoRepository.findById(dto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Concierto", "id", dto.getId()));
 
-        Artista artista = artistaRepository.findById(dto.getArtistaId())
+        ArtistaOLD artistaOLD = artistaRepository.findById(dto.getArtistaId())
                 .orElseThrow(() -> new ResourceNotFoundException("Artista", "id", dto.getArtistaId()));
 
         Localidad localidad = localidadRepository.findById(dto.getLocalidadId())
@@ -115,7 +115,7 @@ public class ConciertoServiceImpl implements ConciertoService {
         ConciertoMapper.copyToExistingEntity(dto, concierto);
 
         // actualizamos relaciones
-        concierto.setArtista(artista);
+        concierto.setArtistaOLD(artistaOLD);
         concierto.setLocalidad(localidad);
 
         concierto = conciertoRepository.save(concierto);

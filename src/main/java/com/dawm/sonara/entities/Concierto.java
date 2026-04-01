@@ -21,7 +21,7 @@ public class Concierto {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artista_id")
-    private Artista artista;
+    private ArtistaOLD artistaOLD;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "localidad_id")

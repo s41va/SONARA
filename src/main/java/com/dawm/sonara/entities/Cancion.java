@@ -31,7 +31,7 @@ public class Cancion {
             joinColumns = @JoinColumn(name = "cancion_id"),
             inverseJoinColumns = @JoinColumn(name = "artista_id")
     )
-    private List<Artista> artistas = new ArrayList<>();
+    private List<ArtistaOLD> artistaOLDS = new ArrayList<>();
     // ---------------------------------------------------------
 
     @ManyToOne(fetch = FetchType.LAZY)

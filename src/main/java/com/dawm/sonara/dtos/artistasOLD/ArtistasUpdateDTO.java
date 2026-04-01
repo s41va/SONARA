@@ -1,4 +1,4 @@
-package com.dawm.sonara.dtos.artistas;
+package com.dawm.sonara.dtos.artistasOLD;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

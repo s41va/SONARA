@@ -1,97 +1,27 @@
 package com.dawm.sonara.services;
 
-import com.dawm.sonara.dtos.artistas.ArtistasCreateDTO;
-import com.dawm.sonara.dtos.artistas.ArtistasDTO;
-import com.dawm.sonara.dtos.artistas.ArtistasDetailDTO;
-import com.dawm.sonara.dtos.artistas.ArtistasUpdateDTO;
 import com.dawm.sonara.entities.Artista;
-import com.dawm.sonara.entities.Genero;
-import com.dawm.sonara.exceptions.DuplicateResourceException;
-import com.dawm.sonara.exceptions.ResourceNotFoundException;
-import com.dawm.sonara.mappers.ArtistasMapper;
-import com.dawm.sonara.repositories.ArtistasRepository;
-import com.dawm.sonara.repositories.GeneroRepository;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import com.dawm.sonara.response.ArtistaResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.web.client.RestTemplate;
 
 @Service
-@Transactional
-public class ArtistaServiceImpl implements ArtistaService{
+public class ArtistaServiceImpl implements ArtistaService {
 
-    @Autowired
-    private ArtistasRepository artistasRepository;
+    @Value("${theaudiodb.api.url}")
+    private String apiUrl;
 
-    @Autowired
-    private GeneroRepository generoRepository;
-
+    private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
-    public Page<ArtistasDTO> list(Pageable pageable) {
-        return artistasRepository.findAll(pageable).map(ArtistasMapper::toDTO);
-    }
+    public Artista buscarPorNombre(String nombre) {
+        String url = apiUrl + "/search.php?s=" + nombre;
+        ArtistaResponse response = restTemplate.getForObject(url, ArtistaResponse.class);
 
-    @Override
-    public ArtistasUpdateDTO getForEdit(Long id) {
-        Artista artista = artistasRepository.findById(id)
-                .orElseThrow(()-> new ResourceNotFoundException("user", "id", id));
-        return ArtistasMapper.toUpdateDTO(artista);
-    }
-
-    @Override
-    public ArtistasDTO create(ArtistasCreateDTO dto) {
-        if (artistasRepository.existsByNombre(dto.getNombre_artistico())){
-            throw new DuplicateResourceException("artista", "name", dto.getNombre_artistico());
+        if (response != null && response.getArtistas() != null && !response.getArtistas().isEmpty()) {
+            return new Artista(response.getArtistas().get(0));
         }
-        Artista artista = ArtistasMapper.toEntity(dto);
-        artista = artistasRepository.save(artista);
-        return ArtistasMapper.toDTO(artista);
-    }
-
-    @Override
-    public ArtistasDTO update(ArtistasUpdateDTO dto) {
-        if (artistasRepository.existsByNombreAndIdNot(dto.getNombre(), dto.getId())){
-            throw new DuplicateResourceException("artista", "name", dto.getNombre());
-        }
-        Artista artista = artistasRepository.findById(dto.getId())
-                .orElseThrow(()-> new ResourceNotFoundException("user", "id", dto.getId()));
-
-
-        ArtistasMapper.copyToExistingEntity(dto,artista);
-        artista = artistasRepository.save(artista);
-        return ArtistasMapper.toDTO(artista);
-    }
-
-    @Override
-    public void delete(Long id) {
-        if (!artistasRepository.existsById(id)){
-            throw new ResourceNotFoundException("artista", "id", id);
-        }
-        artistasRepository.deleteById(id);
-    }
-
-    @Override
-    public ArtistasDetailDTO getDetail(Long id) {
-        Artista artista = artistasRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("artista", "id", id));
-        return ArtistasMapper.toDetailDTO(artista);
-    }
-
-    @Override
-    public List<Genero> findAllGeneros() {
-        return generoRepository.findAll();
-    }
-
-    @Override
-    public List<ArtistasDTO> listAll(Sort name) {
-        return artistasRepository.findAll(name)
-                .stream()
-                .map(ArtistasMapper::toDTO)
-                .toList();
+        return null;
     }
 }

@@ -1,37 +1,28 @@
 package com.dawm.sonara.entities;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.dawm.sonara.response.ArtistaExterno;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Entity
-@Table(name = "artista")
 public class Artista {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "nombre", nullable = false, unique = true, length = 50)
+    private String id;
     private String nombre;
+    private String biografia;
+    private String foto;
+    private String web;
 
-    @Column(name = "pais_origen", nullable = false, length = 100)
-    private String pais;
-
-    @Column(name = "descripcion", nullable = false, length = 400)
-    private String descripcion;
-
-    @ManyToOne(fetch = FetchType.EAGER) // Generalmente se carga inmediatamente
-    @JoinColumn(name = "genero_id") // Esta es la columna FK en la tabla 'artista'
-    private Genero genero;
-
-
-    public Artista(String nombre_artistico, String pais, String descripcion) {
-        this.nombre = nombre_artistico;
-        this.pais = pais;
-        this.descripcion = descripcion;
+    // Constructor que recibe al "externo" y lo transforma
+    public Artista(ArtistaExterno externo) {
+        this.id = externo.idArtist;
+        this.nombre = externo.strArtist;
+        this.biografia = (externo.strBiographyES != null && !externo.strBiographyES.isEmpty())
+                ? externo.strBiographyES : externo.strBiographyEN;
+        this.foto = externo.strArtistThumb;
+        this.web = externo.strWebsite;
     }
+
+    // Getters y Setters...
+    public String getId() { return id; }
+    public String getNombre() { return nombre; }
+    public String getBiografia() { return biografia; }
+    public String getFoto() { return foto; }
+    public String getWeb() { return web; }
 }

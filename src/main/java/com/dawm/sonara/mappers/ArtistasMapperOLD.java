@@ -1,21 +1,21 @@
 package com.dawm.sonara.mappers;
 
-import com.dawm.sonara.dtos.artistas.ArtistasCreateDTO;
-import com.dawm.sonara.dtos.artistas.ArtistasDTO;
-import com.dawm.sonara.dtos.artistas.ArtistasDetailDTO;
-import com.dawm.sonara.dtos.artistas.ArtistasUpdateDTO;
-import com.dawm.sonara.entities.Artista;
+import com.dawm.sonara.dtos.artistasOLD.ArtistasCreateDTO;
+import com.dawm.sonara.dtos.artistasOLD.ArtistasDTO;
+import com.dawm.sonara.dtos.artistasOLD.ArtistasDetailDTO;
+import com.dawm.sonara.dtos.artistasOLD.ArtistasUpdateDTO;
+import com.dawm.sonara.entities.ArtistaOLD;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ArtistasMapper {
+public class ArtistasMapperOLD {
 
         /**
-         * Convierte una entidad {@link Artista} a {@link } (vista simple).
+         * Convierte una entidad {@link ArtistaOLD} a {@link } (vista simple).
          * Incluye campos de estado de la cuenta relevantes para una vista de lista.
          */
-        public static ArtistasDTO toDTO(Artista entity){
+        public static ArtistasDTO toDTO(ArtistaOLD entity){
             if (entity == null) return null;
             ArtistasDTO dto = new ArtistasDTO();
 
@@ -27,20 +27,20 @@ public class ArtistasMapper {
         }
 
         /**
-         * Convierte una lista de entidades {@link Artista} a {@link ArtistasDTO}.
+         * Convierte una lista de entidades {@link ArtistaOLD} a {@link ArtistasDTO}.
          */
-        public static List<ArtistasDTO> toDTOList(List<Artista> entities){
+        public static List<ArtistasDTO> toDTOList(List<ArtistaOLD> entities){
             if (entities == null) return List.of();
-            return entities.stream().map(ArtistasMapper::toDTO).collect(Collectors.toList());
+            return entities.stream().map(ArtistasMapperOLD::toDTO).collect(Collectors.toList());
         }
 
         //
         // Entity -> DTO (detalle con todos los campos de estado y seguridad)
         //
         /**
-         * Convierte una {@link Artista} a {@link ArtistasDetailDTO}, mapeando todos sus campos de seguridad y estado (incluyendo roles).
+         * Convierte una {@link ArtistaOLD} a {@link ArtistasDetailDTO}, mapeando todos sus campos de seguridad y estado (incluyendo roles).
          */
-        public static ArtistasDetailDTO toDetailDTO(Artista entity) {
+        public static ArtistasDetailDTO toDetailDTO(ArtistaOLD entity) {
             if (entity == null) return null;
 
             ArtistasDetailDTO dto = new ArtistasDetailDTO();
@@ -56,12 +56,12 @@ public class ArtistasMapper {
         // DTO -> Entity (Creación)
         //
         /**
-         * Convierte un DTO de creación {@link ArtistasCreateDTO} a la entidad {@link Artista}.
+         * Convierte un DTO de creación {@link ArtistasCreateDTO} a la entidad {@link ArtistaOLD}.
          * Solo mapea los campos que el usuario proporciona inicialmente (username y quizás la contraseña temporal).
          */
-        public static Artista toEntity(ArtistasCreateDTO dto){
+        public static ArtistaOLD toEntity(ArtistasCreateDTO dto){
             if (dto == null) return null;
-            Artista a = new Artista();
+            ArtistaOLD a = new ArtistaOLD();
             a.setNombre(dto.getNombre_artistico());
             a.setPais(dto.getPais());
             a.setDescripcion(dto.getDescripcion());
@@ -73,9 +73,9 @@ public class ArtistasMapper {
         //
         // Entity -> UpdateDTO
         //
-        public static Artista toEntity(ArtistasUpdateDTO dto){
+        public static ArtistaOLD toEntity(ArtistasUpdateDTO dto){
             if (dto == null) return null;
-            Artista a = new Artista();
+            ArtistaOLD a = new ArtistaOLD();
 
             a.setNombre(dto.getNombre());
             a.setPais(dto.getPais());
@@ -86,10 +86,10 @@ public class ArtistasMapper {
 
 
         /**
-         * Convierte una entidad {@link Artista} a {@link ArtistasUpdateDTO}.
+         * Convierte una entidad {@link ArtistaOLD} a {@link ArtistasUpdateDTO}.
          * Este DTO es útil para recuperar el estado actual para una edición.
          */
-        public static ArtistasUpdateDTO toUpdateDTO(Artista entity) {
+        public static ArtistasUpdateDTO toUpdateDTO(ArtistaOLD entity) {
             if (entity == null) return null;
             ArtistasUpdateDTO dto = new ArtistasUpdateDTO();
             dto.setNombre(dto.getNombre());
@@ -103,9 +103,9 @@ public class ArtistasMapper {
         // DTO -> Entity (Copia a entidad existente)
         //
         /**
-         * Copia las propiedades de un DTO de actualización {@link ArtistasUpdateDTO} a una entidad {@link Artista} **existente**.
+         * Copia las propiedades de un DTO de actualización {@link ArtistasUpdateDTO} a una entidad {@link ArtistaOLD} **existente**.
          */
-        public static void copyToExistingEntity(ArtistasUpdateDTO dto,Artista entity){
+        public static void copyToExistingEntity(ArtistasUpdateDTO dto, ArtistaOLD entity){
             if (dto == null || entity == null) return;
 
             entity.setNombre(dto.getNombre());
