@@ -20,7 +20,7 @@ public class Cancion {
     private String portada;
 
     public Cancion(CancionExterna ext) {
-        this.id = ext.idArtist; // La API a veces cruza IDs, pero idTrack es el correcto
+        this.id = ext.idTrack;
         this.titulo = ext.strTrack;
         this.album = ext.strAlbum;
         this.artista = ext.strArtist;
@@ -28,6 +28,4 @@ public class Cancion {
         this.videoUrl = ext.strMusicVid;
         this.portada = ext.strTrackThumb;
     }
-
-    // Getters y Setters...
 }
