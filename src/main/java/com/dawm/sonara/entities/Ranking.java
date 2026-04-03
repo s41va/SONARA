@@ -24,7 +24,7 @@ public class Ranking {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("cancionId") // Enlaza con el campo del RankingId
     @JoinColumn(name = "cancion_id")
-    private Cancion cancion;
+    private CancionOLD cancionOLD;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artista_id")

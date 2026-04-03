@@ -1,46 +1,33 @@
 package com.dawm.sonara.entities;
 
-import jakarta.persistence.*;
+import com.dawm.sonara.response.CancionExterna;
+import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
-@Data
 @AllArgsConstructor
+@Data
 @NoArgsConstructor
 @Entity
-@Table(name = "Cancion")
 public class Cancion {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cancion_id", nullable = false)
-    private Long id;
-
-    @Column(name = "titulo", nullable = false, length = 200)
+    private String id;
     private String titulo;
-
-    // --- CAMBIO AQUÍ: De artista único a lista de artistas ---
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "Cancion_Artista", // Nombre de la tabla intermedia en la DB
-            joinColumns = @JoinColumn(name = "cancion_id"),
-            inverseJoinColumns = @JoinColumn(name = "artista_id")
-    )
-    private List<ArtistaOLD> artistaOLDS = new ArrayList<>();
-    // ---------------------------------------------------------
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "genero_id")
-    private Genero genero;
-
-    @Column(name = "fecha_lanzamiento", nullable = false)
-    private LocalDate fecha_lanzamiento;
-
-    @Column(name = "album", length = 200)
     private String album;
+    private String artista;
+    private String genero;
+    private String videoUrl;
+    private String portada;
+
+    public Cancion(CancionExterna ext) {
+        this.id = ext.idArtist; // La API a veces cruza IDs, pero idTrack es el correcto
+        this.titulo = ext.strTrack;
+        this.album = ext.strAlbum;
+        this.artista = ext.strArtist;
+        this.genero = ext.strGenre;
+        this.videoUrl = ext.strMusicVid;
+        this.portada = ext.strTrackThumb;
+    }
+
+    // Getters y Setters...
 }

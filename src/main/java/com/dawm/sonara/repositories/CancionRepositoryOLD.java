@@ -1,14 +1,14 @@
 package com.dawm.sonara.repositories;
 
-import com.dawm.sonara.entities.Cancion;
+import com.dawm.sonara.entities.CancionOLD;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface CancionRepository extends JpaRepository<Cancion, Long> {
+public interface CancionRepositoryOLD extends JpaRepository<CancionOLD, Long> {
 
     @Override
-    Optional<Cancion> findById(Long id);
+    Optional<CancionOLD> findById(Long id);
 }

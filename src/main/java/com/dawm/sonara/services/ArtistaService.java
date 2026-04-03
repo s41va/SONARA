@@ -1,7 +1,7 @@
 package com.dawm.sonara.services;
 
-import com.dawm.sonara.entities.Artista;
+import com.dawm.sonara.dtos.artista.ArtistaDTO;
 
 public interface ArtistaService {
-    Artista buscarPorNombre(String nombre);
+    ArtistaDTO buscarPorNombre(String nombre);
 }

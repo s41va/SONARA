@@ -1,5 +1,6 @@
 package com.dawm.sonara.services;
 
+import com.dawm.sonara.dtos.artista.ArtistaDTO;
 import com.dawm.sonara.entities.Artista;
 import com.dawm.sonara.response.ArtistaResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,12 +16,16 @@ public class ArtistaServiceImpl implements ArtistaService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
-    public Artista buscarPorNombre(String nombre) {
+    public ArtistaDTO buscarPorNombre(String nombre) {
         String url = apiUrl + "/search.php?s=" + nombre;
+
+        // 1. Recibimos el Response (el envoltorio)
         ArtistaResponse response = restTemplate.getForObject(url, ArtistaResponse.class);
 
+        // 2. Si hay datos, extraemos el primero y lo convertimos a DTO
         if (response != null && response.getArtistas() != null && !response.getArtistas().isEmpty()) {
-            return new Artista(response.getArtistas().get(0));
+            // Usamos el constructor que creamos en el DTO
+            return new ArtistaDTO(response.getArtistas().get(0));
         }
         return null;
     }
