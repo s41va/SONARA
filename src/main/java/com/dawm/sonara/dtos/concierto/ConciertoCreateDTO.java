@@ -11,26 +11,22 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ConciertoCreateDTO {
+    @NotBlank(message = "El ID del artista es obligatorio")
+    private String artistaId; // String para la API
 
-    private Long id;
-
-    @NotNull(message = "{msg.concierto.artista.notNull}")
-    private Long artistaId;
-
-    @NotNull(message = "{msg.concierto.localidad.notNull}")
+    @NotNull(message = "La localidad es obligatoria")
     private Long localidadId;
 
-    @NotNull(message = "{msg.concierto.fechaHora.notNull}")
+    @NotNull(message = "La fecha es obligatoria")
     private LocalDateTime fechaHora;
 
-    @NotBlank(message = "{msg.concierto.local.notEmpty}")
+    @NotBlank(message = "El local es obligatorio")
     private String local;
 
-    @NotBlank(message = "{msg.concierto.descripcion.notEmpty}")
-    @Size(max = 600, message = "{msg.concierto.descripcion.size}")
+    @Size(max = 600)
     private String descripcion;
 }

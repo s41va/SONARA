@@ -11,17 +11,19 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "Concierto")
+@Table(name = "conciertos") // Minúsculas es mejor práctica en DB
 public class Concierto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "concierto_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "artista_id")
-    private ArtistaOLD artistaOLD;
+    // Guardamos los datos clave de la API para no tener que consultarla siempre
+    @Column(name = "artista_id")
+    private String artistaId;
+
+    @Column(name = "artista_nombre")
+    private String artistaNombre;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "localidad_id")
@@ -30,9 +32,8 @@ public class Concierto {
     @Column(name = "fecha_hora")
     private LocalDateTime fechaHora;
 
-    @Column(name = "local", length = 200)
     private String local;
 
-    @Column(name = "descripcion", columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String descripcion;
 }

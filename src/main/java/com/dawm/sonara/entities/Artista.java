@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
-@Entity
+//@Entity (Sin entity pq no esta en la base de datos)
 public class Artista {
     private String id;
     private String nombre;

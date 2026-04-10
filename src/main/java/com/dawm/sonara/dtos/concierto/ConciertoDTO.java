@@ -1,6 +1,6 @@
 package com.dawm.sonara.dtos.concierto;
 
-import com.dawm.sonara.dtos.artistasOLD.ArtistasDTO;
+import com.dawm.sonara.dtos.artista.ArtistaDTO;
 import com.dawm.sonara.dtos.localidad.LocalidadDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class ConciertoDTO {
 
     private Long id;
-    private ArtistasDTO artista;
+    private ArtistaDTO artista;
     private LocalidadDTO localidad;
     private LocalDateTime fechaHora;
     private String local;

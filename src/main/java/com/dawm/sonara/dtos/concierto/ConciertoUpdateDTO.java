@@ -20,7 +20,7 @@ public class ConciertoUpdateDTO {
     private Long id;
 
     @NotNull(message = "{msg.concierto.artista.notNull}")
-    private Long artistaId;
+    private String artistaId;
 
     @NotNull(message = "{msg.concierto.localidad.notNull}")
     private Long localidadId;

@@ -4,12 +4,10 @@ import com.dawm.sonara.dtos.concierto.ConciertoCreateDTO;
 import com.dawm.sonara.dtos.concierto.ConciertoDTO;
 import com.dawm.sonara.dtos.concierto.ConciertoDetailDTO;
 import com.dawm.sonara.dtos.concierto.ConciertoUpdateDTO;
-import com.dawm.sonara.entities.ArtistaOLD;
 import com.dawm.sonara.entities.Concierto;
 import com.dawm.sonara.entities.Localidad;
 import com.dawm.sonara.exceptions.ResourceNotFoundException;
 import com.dawm.sonara.mappers.ConciertoMapper;
-import com.dawm.sonara.repositories.ArtistaRepository;
 import com.dawm.sonara.repositories.ConciertoRepository;
 import com.dawm.sonara.repositories.LocalidadRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,17 +27,25 @@ public class ConciertoServiceImpl implements ConciertoService {
     private ConciertoRepository conciertoRepository;
 
     @Autowired
-    private ArtistaRepository artistaRepository;
-
-    @Autowired
     private LocalidadRepository localidadRepository;
 
+    @Autowired
+    private ArtistaService artistaApiService; // El que conecta con TheAudioDB
+
     // ===============================
-    // Listados
+    // Listados (Rápidos - Solo DB)
     // ===============================
     @Override
     public List<ConciertoDTO> listAll() {
         return conciertoRepository.findAll()
+                .stream()
+                .map(ConciertoMapper::toDTO)
+                .toList();
+    }
+
+    @Override
+    public List<ConciertoDTO> listAll(Sort sort) {
+        return conciertoRepository.findAll(sort)
                 .stream()
                 .map(ConciertoMapper::toDTO)
                 .toList();
@@ -52,15 +58,12 @@ public class ConciertoServiceImpl implements ConciertoService {
     }
 
     @Override
-    public List<ConciertoDTO> listAll(Sort sort) {
-        return conciertoRepository.findAll(sort)
-                .stream()
-                .map(ConciertoMapper::toDTO)
-                .toList();
+    public Page<ConciertoDTO> list(Pageable pageable) {
+        return listPage(pageable);
     }
 
     // ===============================
-    // Buscar por ID
+    // Búsqueda y Detalle
     // ===============================
     @Override
     public Concierto findById(Long id) {
@@ -70,30 +73,43 @@ public class ConciertoServiceImpl implements ConciertoService {
 
     @Override
     public ConciertoDetailDTO getDetail(Long id) {
+        // 1. Buscamos el concierto en nuestra DB local
         Concierto concierto = findById(id);
-        return ConciertoMapper.toDetailDTO(concierto);
+
+        // 2. Mapeamos a DetailDTO (lo básico)
+        ConciertoDetailDTO detail = ConciertoMapper.toDetailDTO(concierto);
+
+        // 3. ENRIQUECER: Llamamos a la API externa para traer biografía, foto, etc.
+        // Usamos el artistaNombre que guardamos en la DB
+        detail.setArtista(artistaApiService.buscarPorNombre(concierto.getArtistaNombre()));
+
+        return detail;
     }
 
     // ===============================
-    // Crear
+    // Crear (Híbrido - DB + API)
     // ===============================
     @Override
     public ConciertoDTO create(ConciertoCreateDTO dto) {
-
-        ArtistaOLD artistaOLD = artistaRepository.findById(dto.getArtistaId())
-                .orElseThrow(() -> new ResourceNotFoundException("Artista", "id", dto.getArtistaId()));
-
+        // 1. Verificar localidad en nuestra DB
         Localidad localidad = localidadRepository.findById(dto.getLocalidadId())
                 .orElseThrow(() -> new ResourceNotFoundException("Localidad", "id", dto.getLocalidadId()));
 
+        // 2. Obtener datos oficiales del artista de la API
+        // Buscamos por el ID que nos manda Angular para asegurar que es el artista correcto
+        var artistaExterno = artistaApiService.buscarPorNombre(dto.getArtistaId());
+
+        if (artistaExterno == null) {
+            throw new ResourceNotFoundException("Artista", "idExterno", dto.getArtistaId());
+        }
+
+        // 3. Crear entidad y setear datos
         Concierto concierto = ConciertoMapper.toEntity(dto);
-
-        // asignamos las relaciones
-        concierto.setArtistaOLD(artistaOLD);
         concierto.setLocalidad(localidad);
+        concierto.setArtistaNombre(artistaExterno.getNombre()); // Nombre oficial de la API
+        concierto.setArtistaId(artistaExterno.getId());       // ID oficial de la API
 
-        concierto = conciertoRepository.save(concierto);
-        return ConciertoMapper.toDTO(concierto);
+        return ConciertoMapper.toDTO(conciertoRepository.save(concierto));
     }
 
     // ===============================
@@ -101,25 +117,23 @@ public class ConciertoServiceImpl implements ConciertoService {
     // ===============================
     @Override
     public ConciertoDTO update(ConciertoUpdateDTO dto) {
-
-        Concierto concierto = conciertoRepository.findById(dto.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Concierto", "id", dto.getId()));
-
-        ArtistaOLD artistaOLD = artistaRepository.findById(dto.getArtistaId())
-                .orElseThrow(() -> new ResourceNotFoundException("Artista", "id", dto.getArtistaId()));
+        Concierto concierto = findById(dto.getId());
 
         Localidad localidad = localidadRepository.findById(dto.getLocalidadId())
                 .orElseThrow(() -> new ResourceNotFoundException("Localidad", "id", dto.getLocalidadId()));
 
-        // copiamos campos simples
-        ConciertoMapper.copyToExistingEntity(dto, concierto);
+        // Si el artistaId ha cambiado, actualizamos el nombre consultando la API
+        if (!concierto.getArtistaId().equals(dto.getArtistaId())) {
+            var artistaExterno = artistaApiService.buscarPorNombre(dto.getArtistaId());
+            if (artistaExterno != null) {
+                concierto.setArtistaNombre(artistaExterno.getNombre());
+            }
+        }
 
-        // actualizamos relaciones
-        concierto.setArtistaOLD(artistaOLD);
+        ConciertoMapper.copyToExistingEntity(dto, concierto);
         concierto.setLocalidad(localidad);
 
-        concierto = conciertoRepository.save(concierto);
-        return ConciertoMapper.toDTO(concierto);
+        return ConciertoMapper.toDTO(conciertoRepository.save(concierto));
     }
 
     // ===============================
