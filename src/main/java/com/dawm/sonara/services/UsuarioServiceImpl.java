@@ -37,9 +37,6 @@ public class UsuarioServiceImpl implements UsuarioService {
     private ArtistaRepository artistaRepository;
 
     @Autowired
-    private CancionRepository cancionRepository;
-
-    @Autowired
     private RolesRepository rolesRepository;
 
     @Autowired
