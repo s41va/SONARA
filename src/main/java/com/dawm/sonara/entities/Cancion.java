@@ -1,31 +1,33 @@
 package com.dawm.sonara.entities;
 
-import com.dawm.sonara.response.CancionExterna;
-import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
-@AllArgsConstructor
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
-//@Entity (Sin entity pq no esta en la base de datos)
+@Entity
+@Table(name = "cancion")
 public class Cancion {
-    private String id;
-    private String titulo;
-    private String album;
-    private String artista;
-    private String genero;
-    private String videoUrl;
-    private String portada;
 
-    public Cancion(CancionExterna ext) {
-        this.id = ext.idTrack;
-        this.titulo = ext.strTrack;
-        this.album = ext.strAlbum;
-        this.artista = ext.strArtist;
-        this.genero = ext.strGenre;
-        this.videoUrl = ext.strMusicVid;
-        this.portada = ext.strTrackThumb;
-    }
+    @Id
+    @Column(name = "cancion_id")
+    private Integer cancionId; // El idTrack de la API
+
+    private String titulo;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "artista_id")
+    private Artista artista; // Relación real con tu tabla Artista
+
+    @Column(name = "reproducciones_locales")
+    private Integer reproduccionesLocales = 0;
+
+    // Campos volátiles (solo de la API, no en DB)
+    @Transient
+    private String album;
+    @Transient
+    private String videoUrl;
+    @Transient
+    private String portada;
 }

@@ -35,11 +35,6 @@ public class Usuario {
     @Column(name = "fecha_nacimiento", nullable = false)
     private LocalDate fechaNacimiento;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "usuario_generos_favoritos", joinColumns = @JoinColumn(name = "usuario_id"))
-    @Column(name = "genero_favorito", length = 50)
-    private Set<String> generosFavoritos;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "localidad_id", nullable = false)
     private Localidad localidad;
@@ -55,5 +50,19 @@ public class Usuario {
     )
     private Set<Roles> roles = new HashSet<>();
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "usuario_generos_favoritos", joinColumns = @JoinColumn(name = "usuario_id"))
+    @Column(name = "genero_favorito", length = 50)
+    private Set<String> generosFavoritos;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "usuario_artistas_favoritos_ids", joinColumns = @JoinColumn(name = "usuario_id"))
+    @Column(name = "artista_externo_id")
+    private Set<String> artistasFavoritosIds = new HashSet<>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "usuario_canciones_favoritas_ids", joinColumns = @JoinColumn(name = "usuario_id"))
+    @Column(name = "cancion_externa_id")
+    private Set<String> cancionesFavoritasIds = new HashSet<>();
 
 }

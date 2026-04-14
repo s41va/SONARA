@@ -1,5 +1,6 @@
 package com.dawm.sonara.dtos.artista;
 
+import com.dawm.sonara.entities.Artista;
 import com.dawm.sonara.response.ArtistaExterno;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,6 +15,15 @@ public class ArtistaDTO {
     private String biografia;
     private String foto;
     private String web;
+    private Integer votosRanking; // Nuevo: Para el ranking
+
+    // Constructor para convertir la Entidad local -> DTO (Ranking)
+    public ArtistaDTO(Artista entidad) {
+        this.id = entidad.getId().toString();
+        this.nombre = entidad.getNombre();
+        this.votosRanking = entidad.getVotosRanking();
+        // Los campos de la API se quedan null o vacíos en el ranking
+    }
 
     // Constructor de conversión
     public ArtistaDTO(ArtistaExterno externo) {
