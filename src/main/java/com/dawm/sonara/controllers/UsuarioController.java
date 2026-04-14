@@ -31,7 +31,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -53,11 +52,6 @@ public class UsuarioController {
 
     @Autowired
     private LocalidadRepository localidadRepository;
-
-    //Esto ira en la entidad generos
-    private List<String> getAllGeneros() {
-        return List.of("Rock", "Pop", "Jazz", "Clásica", "Trap", "Reggaeton", "R&B", "Breakbeat", "Hip-Hop");
-    }
 
     /*@GetMapping
     public ResponseEntity<Page<UsuarioDTO>> listUsuarios(

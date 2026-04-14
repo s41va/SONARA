@@ -21,6 +21,8 @@ public class UsuarioMapper {
         dto.setFechaNacimiento(entity.getFechaNacimiento());
         dto.setFechaRegistro(entity.getFechaRegistro());
         dto.setGenerosFavoritos(entity.getGenerosFavoritos());
+        dto.setArtistasFavoritosIds(entity.getArtistasFavoritosIds());
+        dto.setCancionesFavoritasIds(entity.getCancionesFavoritasIds());
         dto.setLocalidadNombre(entity.getLocalidad() != null ? entity.getLocalidad().getNombreCiudad() : null);
 
         if (entity.getRoles() != null) {
@@ -53,6 +55,8 @@ public class UsuarioMapper {
         dto.setFechaNacimiento(entity.getFechaNacimiento());
         dto.setFechaRegistro(entity.getFechaRegistro());
         dto.setGenerosFavoritos(entity.getGenerosFavoritos());
+        dto.setArtistasFavoritosIds(entity.getArtistasFavoritosIds());
+        dto.setCancionesFavoritasIds(entity.getCancionesFavoritasIds());
         dto.setLocalidadNombre(entity.getLocalidad() != null ? entity.getLocalidad().getNombreCiudad() : null);
 
         if (entity.getRoles() != null) {
@@ -144,6 +148,8 @@ public class UsuarioMapper {
             entity.setFechaRegistro(dto.getFechaRegistro());
         }
         entity.setGenerosFavoritos(dto.getGenerosFavoritos());
+        entity.setArtistasFavoritosIds(dto.getArtistasFavoritosIds());
+        entity.setCancionesFavoritasIds(dto.getCancionesFavoritasIds());
         entity.setRoles(roles);
         // Localidad se debe setear en el service o controller
     }

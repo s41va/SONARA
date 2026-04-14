@@ -1,29 +1,31 @@
 package com.dawm.sonara.entities;
 
-import com.dawm.sonara.response.ArtistaExterno;
-import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
-@AllArgsConstructor
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
-//@Entity (Sin entity pq no esta en la base de datos)
+@Entity
+@Table(name = "artista")
 public class Artista {
-    private String id;
-    private String nombre;
-    private String biografia;
-    private String foto;
-    private String web;
 
-    // Constructor que recibe al "externo" y lo transforma
-    public Artista(ArtistaExterno externo) {
-        this.id = externo.idArtist;
-        this.nombre = externo.strArtist;
-        this.biografia = (externo.strBiographyES != null && !externo.strBiographyES.isEmpty())
-                ? externo.strBiographyES : externo.strBiographyEN;
-        this.foto = externo.strArtistThumb;
-        this.web = externo.strWebsite;
-    }
+    @Id
+    private Integer id; // Usaremos el idArtist de la API
+
+    private String nombre;
+
+    @Column(name = "genero_id")
+    private Integer generoId;
+
+    @Column(name = "votos_ranking")
+    private Integer votosRanking = 0;
+
+    // Campos temporales (No se guardan en la DB local, solo para la API)
+    @Transient
+    private String biografia;
+    @Transient
+    private String foto;
+    @Transient
+    private String web;
 }

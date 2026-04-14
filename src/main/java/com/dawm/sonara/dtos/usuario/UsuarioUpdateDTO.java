@@ -45,4 +45,6 @@ public class UsuarioUpdateDTO {
     @NotEmpty(message = "{msg.user.roles.notempty}")
     private Set<Long> rolesIds = new HashSet<>();
 
+    private Set<String> artistasFavoritosIds;
+    private Set<String> cancionesFavoritasIds;
 }

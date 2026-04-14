@@ -11,6 +11,7 @@ import com.dawm.sonara.entities.Usuario;
 import com.dawm.sonara.exceptions.DuplicateResourceException;
 import com.dawm.sonara.exceptions.ResourceNotFoundException;
 import com.dawm.sonara.mappers.UsuarioMapper;
+import com.dawm.sonara.repositories.ArtistaRepository;
 import com.dawm.sonara.repositories.LocalidadRepository;
 import com.dawm.sonara.repositories.RolesRepository;
 import com.dawm.sonara.repositories.UsuarioRepository;
@@ -32,6 +33,11 @@ import java.util.Set;
 @Transactional
 public class UsuarioServiceImpl implements UsuarioService {
 
+    @Autowired
+    private ArtistaRepository artistaRepository;
+
+    @Autowired
+    private CancionRepository cancionRepository;
 
     @Autowired
     private RolesRepository rolesRepository;
@@ -93,37 +99,31 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public UsuarioDTO update(UsuarioUpdateDTO dto, Set<Roles> roles) {
-
+        // 1. Validaciones básicas
         if (usuarioRepository.existsByEmailAndIdNot(dto.getEmail(), dto.getId())) {
             throw new DuplicateResourceException("Usuario", "email", dto.getEmail());
         }
         validarFechaNacimiento(dto.getFechaNacimiento());
 
+        // 2. Buscar usuario
         Usuario usuario = usuarioRepository.findById(dto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", dto.getId()));
 
-        // Validar Localidad
-        Long localidadId = dto.getLocalidadId();
-        Localidad localidad = localidadRepository.findById(localidadId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "localidad", "id", localidadId
-                ));
+        // 3. Localidad
+        Localidad localidad = localidadRepository.findById(dto.getLocalidadId())
+                .orElseThrow(() -> new ResourceNotFoundException("localidad", "id", dto.getLocalidadId()));
         usuario.setLocalidad(localidad);
 
-        if (dto.getRolesIds() != null) {
-            roles = new HashSet<>(rolesRepository.findAllById(dto.getRolesIds()));
-        }
-        usuario.setRoles(roles);
-
-
+        // 4. Actualizar campos con el Mapper
+        // (Importante: copyToExistingEntity ahora también copia los IDs de artistas/canciones)
         UsuarioMapper.copyToExistingEntity(dto, usuario, roles);
 
+        // 5. Password
         if (dto.getContrasenaHash() != null && !dto.getContrasenaHash().isBlank()) {
             usuario.setContrasenaHash(passwordEncoder.encode(dto.getContrasenaHash()));
         }
 
-        usuario = usuarioRepository.save(usuario);
-        return UsuarioMapper.toDTO(usuario);
+        return UsuarioMapper.toDTO(usuarioRepository.save(usuario));
     }
 
     @Override
