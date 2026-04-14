@@ -97,6 +97,9 @@ public class SecurityConfig {
                         //.requestMatchers("/api/localidad**").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers("/api/profile**").hasRole("USER")                    // Solo USER
                         // Lo demas requiere token valido
+
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/manager/**").hasRole("MANAGER")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
