@@ -28,6 +28,6 @@
         private LocalDateTime fechaRegistro;
 
         private Set<String> roles;
-        private Set<ArtistaDTO> artistasFavoritos;
-        private Set<CancionDTO> cancionesFavoritas;
+        private Set<String> artistasFavoritosIds;
+        private Set<String> cancionesFavoritasIds;
     }

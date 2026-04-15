@@ -26,4 +26,6 @@ public class UsuarioDTO {
 
     private Set<String> roles;
 
+    private Set<String> artistasFavoritosIds;
+    private Set<String> cancionesFavoritasIds;
 }
