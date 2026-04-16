@@ -2,6 +2,7 @@
 
     import com.dawm.sonara.dtos.artista.ArtistaDTO;
     import com.dawm.sonara.dtos.cancion.CancionDTO;
+    import com.dawm.sonara.entities.Genero;
     import jakarta.validation.constraints.NotEmpty;
     import lombok.AllArgsConstructor;
     import lombok.Builder;
@@ -23,7 +24,7 @@
         private String email;
         private String contrasena;
         private LocalDate fechaNacimiento;
-        private Set<String> generosFavoritos;
+        private Set<Long> generosFavoritosIds;
         private String localidadNombre;
         private LocalDateTime fechaRegistro;
 

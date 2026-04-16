@@ -1,5 +1,6 @@
 package com.dawm.sonara.dtos.usuario;
 
+import com.dawm.sonara.entities.Genero;
 import com.dawm.sonara.entities.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

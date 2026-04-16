@@ -50,10 +50,9 @@ public class Usuario {
     )
     private Set<Roles> roles = new HashSet<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "usuario_generos_favoritos", joinColumns = @JoinColumn(name = "usuario_id"))
-    @Column(name = "genero_favorito", length = 50)
-    private Set<String> generosFavoritos;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "usuario_generos_favoritos", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "genero_id"))
+    private Set<Genero> generosFavoritos = new HashSet<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "usuario_artistas_favoritos_ids", joinColumns = @JoinColumn(name = "usuario_id"))

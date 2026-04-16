@@ -4,11 +4,13 @@ import com.dawm.sonara.dtos.usuario.UsuarioCreateDTO;
 import com.dawm.sonara.dtos.usuario.UsuarioDTO;
 import com.dawm.sonara.dtos.usuario.UsuarioDetailDTO;
 import com.dawm.sonara.dtos.usuario.UsuarioUpdateDTO;
+import com.dawm.sonara.entities.Genero;
 import com.dawm.sonara.entities.Roles;
 import com.dawm.sonara.entities.Usuario;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class UsuarioMapper {
     // Entity -> DTO (listado/tabla básico)
@@ -20,7 +22,11 @@ public class UsuarioMapper {
         dto.setEmail(entity.getEmail());
         dto.setFechaNacimiento(entity.getFechaNacimiento());
         dto.setFechaRegistro(entity.getFechaRegistro());
-        dto.setGenerosFavoritos(entity.getGenerosFavoritos());
+        dto.setGenerosFavoritos(
+                entity.getGenerosFavoritos().stream()
+                        .map(Genero::getNombre)
+                        .collect(Collectors.toSet())
+        );
         dto.setArtistasFavoritosIds(entity.getArtistasFavoritosIds());
         dto.setCancionesFavoritasIds(entity.getCancionesFavoritasIds());
         dto.setLocalidadNombre(entity.getLocalidad() != null ? entity.getLocalidad().getNombreCiudad() : null);
@@ -35,8 +41,6 @@ public class UsuarioMapper {
         } else {
             dto.setRoles(Set.of());
         }
-
-
         return dto;
     }
 
@@ -54,7 +58,11 @@ public class UsuarioMapper {
         dto.setEmail(entity.getEmail());
         dto.setFechaNacimiento(entity.getFechaNacimiento());
         dto.setFechaRegistro(entity.getFechaRegistro());
-        dto.setGenerosFavoritos(entity.getGenerosFavoritos());
+        dto.setGenerosFavoritosIds(
+                entity.getGenerosFavoritos().stream()
+                        .map(Genero::getId)
+                        .collect(Collectors.toSet())
+        );
         dto.setArtistasFavoritosIds(entity.getArtistasFavoritosIds());
         dto.setCancionesFavoritasIds(entity.getCancionesFavoritasIds());
         dto.setLocalidadNombre(entity.getLocalidad() != null ? entity.getLocalidad().getNombreCiudad() : null);
@@ -81,7 +89,11 @@ public class UsuarioMapper {
         dto.setEmail(entity.getEmail());
         dto.setFechaRegistro(entity.getFechaRegistro());
         dto.setFechaNacimiento(entity.getFechaNacimiento());
-        dto.setGenerosFavoritos(entity.getGenerosFavoritos());
+        dto.setGenerosFavoritosIds(
+    entity.getGenerosFavoritos().stream()
+          .map(Genero::getId)
+          .collect(Collectors.toSet())
+);
         dto.setLocalidadId(entity.getLocalidad() != null ? entity.getLocalidad().getId() : null);
 
         if (entity.getRoles() != null) {
@@ -104,7 +116,7 @@ public class UsuarioMapper {
         e.setContrasenaHash(dto.getContrasenaHash());
         e.setFechaNacimiento(dto.getFechaNacimiento());
         e.setFechaRegistro(dto.getFechaRegistro());
-        e.setGenerosFavoritos(dto.getGenerosFavoritos());
+        dto.setGenerosFavoritosIds(dto.getGenerosFavoritosIds());
         // Localidad se debe setear en el service o controller con la entidad correspondiente
         return e;
     }
@@ -118,8 +130,15 @@ public class UsuarioMapper {
         e.setContrasenaHash(dto.getContrasenaHash());
         e.setFechaNacimiento(dto.getFechaNacimiento());
         e.setFechaRegistro(dto.getFechaRegistro());
-        e.setGenerosFavoritos(dto.getGenerosFavoritos());
-        // Localidad se debe setear en el service o controller con la entidad correspondiente
+        if (dto.getGenerosFavoritosIds() != null) {
+            e.setGenerosFavoritos(dto.getGenerosFavoritosIds().stream()
+                    .map(id -> {
+                        Genero g = new Genero();
+                        g.setId(id);
+                        return g;
+                    })
+                    .collect(Collectors.toSet()));
+        }
         return e;
     }
 
@@ -130,7 +149,6 @@ public class UsuarioMapper {
         e.setNombre(dto.getNombre());
         e.setEmail(dto.getEmail());
         e.setFechaNacimiento(dto.getFechaNacimiento());
-        e.setGenerosFavoritos(dto.getGenerosFavoritos());
         e.setFechaRegistro(dto.getFechaRegistro());
         // Localidad se debe setear en el service o controller
         return e;
@@ -147,7 +165,15 @@ public class UsuarioMapper {
         if (dto.getFechaRegistro() != null) {
             entity.setFechaRegistro(dto.getFechaRegistro());
         }
-        entity.setGenerosFavoritos(dto.getGenerosFavoritos());
+        if (dto.getGenerosFavoritosIds() != null) {
+            entity.setGenerosFavoritos(dto.getGenerosFavoritosIds().stream()
+                    .map(id -> {
+                        Genero g = new Genero();
+                        g.setId(id);
+                        return g;
+                    })
+                    .collect(Collectors.toSet()));
+        }
         entity.setArtistasFavoritosIds(dto.getArtistasFavoritosIds());
         entity.setCancionesFavoritasIds(dto.getCancionesFavoritasIds());
         entity.setRoles(roles);

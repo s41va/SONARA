@@ -1,5 +1,6 @@
 package com.dawm.sonara.dtos.usuario;
 
+import com.dawm.sonara.entities.Genero;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,12 +33,11 @@ public class UsuarioUpdateDTO {
     private String contrasenaHash;
 
     @NotNull(message = "{msg.usuario.fechaNacimiento.notNull}")
+    @Past(message = "{msg.usuario.fechaNacimiento.past}")
     private LocalDate fechaNacimiento;
 
-    @NotNull(message = "{msg.usuario.generosFavoritos.notNull}")
-    private Set<@NotBlank(message = "{msg.usuario.generosFavoritos.notEmpty}") String> generosFavoritos;
+    private Set<Long> generosFavoritosIds;
 
-    @NotNull(message = "{msg.usuario.localidadId.notNull}")
     private Long localidadId;
 
     private LocalDateTime fechaRegistro;

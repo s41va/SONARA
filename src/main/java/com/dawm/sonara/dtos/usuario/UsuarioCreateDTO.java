@@ -1,5 +1,6 @@
 package com.dawm.sonara.dtos.usuario;
 
+import com.dawm.sonara.entities.Genero;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,9 +34,8 @@ public class UsuarioCreateDTO {
     @Past(message = "{msg.usuario.fechaNacimiento.past}")
     private LocalDate fechaNacimiento;
 
-    private Set<String> generosFavoritos;
+    private Set<Long> generosFavoritosIds;
 
-    @NotNull(message = "{msg.usuario.localidadId.notNull}")
     private Long localidadId;
 
     private LocalDateTime fechaRegistro;
