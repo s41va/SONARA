@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,17 +15,19 @@ public class ArtistaDTO {
     private String id;
     private String nombre;
     private String biografia;
-    private Integer generoId;
+    private String genero;
     private String foto;
     private String web;
+    private LocalDateTime ultimaSincronizacion;
     private Integer votosRanking; // Nuevo: Para el ranking
 
     // Constructor para convertir la Entidad local -> DTO (Ranking)
     public ArtistaDTO(Artista entidad) {
         this.id = entidad.getId().toString();
         this.nombre = entidad.getNombre();
-        this.generoId = entidad.getGeneroId();
+        this.genero = entidad.getGenero();
         this.votosRanking = entidad.getVotosRanking();
+        this.ultimaSincronizacion = entidad.getUltimaSincronizacion();
         // Los campos de la API se quedan null o vacíos en el ranking
     }
 

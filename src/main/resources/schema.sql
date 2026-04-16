@@ -26,10 +26,9 @@ CREATE TABLE IF NOT EXISTS localidad (
 CREATE TABLE IF NOT EXISTS artista (
     id INT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
-    genero_id INT,
+    genero VARCHAR(50),
     votos_ranking INT DEFAULT 0,
-    ultima_sincronizacion DATETIME DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_artista_genero FOREIGN KEY (genero_id) REFERENCES genero(id) ON DELETE SET NULL
+    ultima_sincronizacion DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 -- ==========================

@@ -98,20 +98,20 @@ public class ArtistaServiceImpl implements ArtistaService {
 
     @Override
     public void votarArtista(Integer id, String nombre) {
-        // 1. Buscamos si ya existe en nuestra DB
-        Artista artista = artistaRepository.findById(id).orElse(null);
+        Artista artista = artistaRepository.findById(id).orElseGet(() -> {
+            // Si no existe, lo buscamos en la API para traer sus datos reales
+            ArtistaDTO datosApi = buscarPorNombre(nombre);
 
-        if (artista == null) {
-            // 2. Si no existe, lo creamos (Lazy Insert)
-            artista = new Artista();
-            artista.setId(id);
-            artista.setNombre(nombre);
-            artista.setVotosRanking(1);
-        } else {
-            // 3. Si existe, sumamos voto
-            artista.setVotosRanking(artista.getVotosRanking() + 1);
-        }
+            Artista nuevo = new Artista();
+            nuevo.setId(id);
+            nuevo.setNombre(nombre);
+            // AQUÍ LA MAGIA: Guardamos el String que viene de la API
+            nuevo.setGenero(datosApi.getGenero());
+            nuevo.setVotosRanking(0);
+            return nuevo;
+        });
 
+        artista.setVotosRanking(artista.getVotosRanking() + 1);
         artistaRepository.save(artista);
     }
 }

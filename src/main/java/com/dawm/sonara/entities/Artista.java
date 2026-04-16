@@ -3,6 +3,8 @@ package com.dawm.sonara.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,8 +17,10 @@ public class Artista {
 
     private String nombre;
 
-    @Column(name = "genero_id")
-    private Integer generoId;
+    private String genero;
+
+    @Column(name = "ultima_sincronizacion")
+    private LocalDateTime ultimaSincronizacion = LocalDateTime.now();
 
     @Column(name = "votos_ranking")
     private Integer votosRanking = 0;
