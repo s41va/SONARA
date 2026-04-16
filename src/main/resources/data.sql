@@ -78,9 +78,7 @@ INSERT IGNORE INTO usuario_roles (usuario_id, rol_id) VALUES
 INSERT IGNORE INTO usuario_generos_favoritos (usuario_id, genero_id) VALUES
 (1, 4), (2, 1), (3, 2), (4, 2), (5, 1);
 
--- ==========================
--- CONCIERTOS (Ejemplo de uso con Localidad)
--- ==========================
+
 -- ==========================
 -- CONCIERTOS (20 Registros)
 -- ==========================
@@ -105,3 +103,42 @@ INSERT IGNORE INTO conciertos (artista_id, artista_nombre, localidad_id, fecha_h
 ('111306', 'The Killers', 31, '2026-07-10 23:00:00', 'Recinto de Festivales', 'Festival San Fermín Especial'),
 ('111514', 'Radiohead', 28, '2026-10-01 20:00:00', 'WiZink Center', 'A Moon Shaped Pool Anniversary'),
 ('111394', 'Gorillaz', 8, '2026-06-05 22:30:00', 'Parc del Fòrum', 'Primavera Sound Headliner');
+
+-- ==========================
+-- ARTISTAS FAVORITOS DE USUARIOS
+-- ==========================
+INSERT IGNORE INTO usuario_artistas_favoritos_ids (usuario_id, artista_externo_id) VALUES
+(1, '111239'), -- Ana García gusta de Eminem
+(1, '111516'), -- Ana García gusta de Coldplay
+(2, '134722'), -- Carlos López gusta de Bad Bunny
+(3, '112045'), -- María Pérez gusta de Taylor Swift
+(5, '114381'); -- Lucía Fernández gusta de The Weeknd
+
+-- ==========================
+-- CANCIONES FAVORITAS DE USUARIOS
+-- ==========================
+INSERT IGNORE INTO usuario_canciones_favoritas_ids (usuario_id, cancion_externa_id) VALUES
+(1, '32724562'), -- IDs de ejemplo de la API
+(2, '32890123'),
+(4, '32724562');
+
+-- ==========================
+-- CANCIONES (Referencial a TheAudioDB)
+-- ==========================
+INSERT IGNORE INTO cancion (cancion_id, titulo, artista_id, reproducciones_locales) VALUES
+(32724562, 'Lose Yourself', 111239, 500),   -- Eminem
+(32890123, 'Monaco', 134722, 1200),        -- Bad Bunny
+(34125678, 'Anti-Hero', 112045, 850),      -- Taylor Swift
+(35678901, 'Despechá', 142144, 980),       -- Rosalía
+(31234567, 'Yellow', 111516, 450);         -- Coldplay
+
+-- ==========================
+-- PERFILES DE USUARIO (Relación 1:1 con Usuario)
+-- ==========================
+INSERT IGNORE INTO usuario_profiles (usuario_id, first_name, last_name, phone_number, bio, locale) VALUES
+(1, 'Ana', 'García Pelayo', '600111222', 'Amante del rock y el pop clásico.', 'es'),
+(2, 'Carlos', 'López Iturbe', '611222333', 'Produciendo beats desde el 85.', 'es'),
+(3, 'María', 'Pérez Sodupe', '622333444', 'Melómana empedernida.', 'es'),
+(4, 'Jorge', 'Martínez de Quel', '633444555', 'Fan de los festivales de verano.', 'es'),
+(5, 'Lucía', 'Fernández Sanz', '644555666', 'Ingeniera de sonido en mis ratos libres.', 'es');
+
