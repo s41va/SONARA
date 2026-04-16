@@ -13,6 +13,7 @@ public class ArtistaDTO {
     private String id;
     private String nombre;
     private String biografia;
+    private Integer generoId;
     private String foto;
     private String web;
     private Integer votosRanking; // Nuevo: Para el ranking
@@ -21,6 +22,7 @@ public class ArtistaDTO {
     public ArtistaDTO(Artista entidad) {
         this.id = entidad.getId().toString();
         this.nombre = entidad.getNombre();
+        this.generoId = entidad.getGeneroId();
         this.votosRanking = entidad.getVotosRanking();
         // Los campos de la API se quedan null o vacíos en el ranking
     }
