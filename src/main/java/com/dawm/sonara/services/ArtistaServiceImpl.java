@@ -4,8 +4,10 @@ import com.dawm.sonara.dtos.artista.ArtistaDTO;
 import com.dawm.sonara.entities.Artista;
 import com.dawm.sonara.repositories.ArtistaRepository;
 import com.dawm.sonara.response.ArtistaResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -47,6 +49,51 @@ public class ArtistaServiceImpl implements ArtistaService {
         return entidades.stream()
                 .map(ArtistaDTO::new) // Usa el nuevo constructor ArtistaDTO(Artista entidad)
                 .collect(Collectors.toList());
+    }
+    @Override
+    public List<ArtistaDTO> obtenerTodosOrdenados(String campo, String direccion) {
+        Sort sort = direccion.equalsIgnoreCase("asc")
+                ? Sort.by(campo).ascending()
+                : Sort.by(campo).descending();
+
+        return artistaRepository.findAll(sort).stream()
+                .map(ArtistaDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public ArtistaDTO obtenerPorIdCompleto(Integer id) {
+        // 1. Buscamos primero en nuestra DB para tener el nombre correcto
+        Artista local = artistaRepository.findById(id).orElse(null);
+        if (local == null) return null;
+
+        // 2. Llamamos a la API usando el nombre que tenemos guardado
+        String url = apiUrl + "/search.php?s=" + local.getNombre();
+        ArtistaResponse response = restTemplate.getForObject(url, ArtistaResponse.class);
+
+        if (response != null && !response.getArtistas().isEmpty()) {
+            // 3. Convertimos la info de la API a DTO
+            ArtistaDTO dto = new ArtistaDTO(response.getArtistas().get(0));
+            // 4. Le inyectamos los votos que tenemos en nuestra DB local
+            dto.setVotosRanking(local.getVotosRanking());
+            return dto;
+        }
+
+        // Si la API no lo encuentra, devolvemos al menos lo que tenemos local
+        return new ArtistaDTO(local);
+    }
+
+    @Override
+    public void eliminar(Integer id) {
+        // 1. Verificamos si existe antes de intentar borrar
+        if (artistaRepository.existsById(id)) {
+            // 2. Borramos de la base de datos local
+            artistaRepository.deleteById(id);
+        } else {
+            // Opcional: Podrías lanzar una excepción personalizada aquí
+            // throw new EntityNotFoundException("El artista con ID " + id + " no existe.");
+            System.out.println("Intento de borrar artista inexistente: " + id);
+        }
     }
 
     @Override
