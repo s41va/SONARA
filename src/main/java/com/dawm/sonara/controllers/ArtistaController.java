@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/artistas")
-@CrossOrigin(origins = "*") // Permite que Angular conecte sin problemas de CORS
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")// Permite que Angular conecte sin problemas de CORS
 public class ArtistaController {
 
     @Autowired
@@ -24,7 +24,7 @@ public class ArtistaController {
      * Obtiene el detalle de un artista desde la API externa (TheAudioDB).
      * Se usa para la página de "Perfil de Artista".
      */
-    @GetMapping("/{nombre}")
+    @GetMapping("/nombre/{nombre}")
     public ResponseEntity<ArtistaDTO> obtener(@PathVariable String nombre) {
         ArtistaDTO dto = artistaService.buscarPorNombre(nombre);
 

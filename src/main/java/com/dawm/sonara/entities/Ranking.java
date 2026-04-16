@@ -15,7 +15,6 @@ public class Ranking {
     @EmbeddedId
     private RankingId id;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("localidadId") // Enlaza con el campo del RankingId
     @JoinColumn(name = "localidad_id")
