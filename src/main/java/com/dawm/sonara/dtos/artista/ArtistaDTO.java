@@ -35,6 +35,7 @@ public class ArtistaDTO {
     public ArtistaDTO(ArtistaExterno externo) {
         this.id = externo.idArtist;
         this.nombre = externo.strArtist;
+        this.genero = externo.strGenre;
         this.biografia = (externo.strBiographyES != null && !externo.strBiographyES.isEmpty())
                 ? externo.strBiographyES : externo.strBiographyEN;
         this.foto = externo.strArtistThumb;

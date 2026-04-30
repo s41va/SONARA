@@ -1,13 +1,13 @@
 -- ==========================
 -- GENEROS
 -- ==========================
-INSERT IGNORE INTO genero (id, nombre, descripcion) VALUES
-(1, 'Rap', 'Género emergente de EEUU alrededor de los años 70, por la cultura afroamericana'),
-(2, 'Pop', 'El género Popular procedente del rock and roll'),
-(3, 'Reggaeton', 'Caribeño surgido alrededor de los principios de los 90 en Puerto Rico y Panamá'),
-(4, 'Rock', 'Género musical surgido en los años 40 y 50, caracterizado por un ritmo enérgico.'),
-(5, 'Electrónica', 'Música creada con instrumentos y tecnología electrónica.'),
-(6, 'R&B', 'Rhythm and Blues. Género afroamericano que combina jazz, góspel y blues.');
+--INSERT IGNORE INTO genero (id, nombre, descripcion) VALUES
+--(1, 'Rap', 'Género emergente de EEUU alrededor de los años 70, por la cultura afroamericana'),
+--(2, 'Pop', 'El género Popular procedente del rock and roll'),
+--(3, 'Reggaeton', 'Caribeño surgido alrededor de los principios de los 90 en Puerto Rico y Panamá'),
+--(4, 'Rock', 'Género musical surgido en los años 40 y 50, caracterizado por un ritmo enérgico.'),
+--(5, 'Electrónica', 'Música creada con instrumentos y tecnología electrónica.'),
+--(6, 'R&B', 'Rhythm and Blues. Género afroamericano que combina jazz, góspel y blues.');
 
 -- ==========================
 -- LOCALIDADES
