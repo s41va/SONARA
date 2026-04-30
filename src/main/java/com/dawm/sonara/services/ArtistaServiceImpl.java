@@ -114,4 +114,32 @@ public class ArtistaServiceImpl implements ArtistaService {
         artista.setVotosRanking(artista.getVotosRanking() + 1);
         artistaRepository.save(artista);
     }
+
+    public ArtistaDTO guardarArtistaLocal(ArtistaDTO dto) {
+        // 2. Buscamos si ya existe en la base de datos local
+        return artistaRepository.findById(dto.getId())
+                .map(existente -> {
+                    // Si existe, usamos tu constructor: new ArtistaDTO(entidad)
+                    return new ArtistaDTO(existente);
+                })
+                .orElseGet(() -> {
+                    // 3. Si no existe, creamos la entidad con los datos del DTO
+                    Artista nuevoArtista = new Artista();
+
+                    nuevoArtista.setId(dto.getId()); // Seteamos el ID ya convertido a int
+                    nuevoArtista.setNombre(dto.getNombre());
+                    nuevoArtista.setBiografia(dto.getBiografia());
+                    nuevoArtista.setGenero(dto.getGenero());
+                    nuevoArtista.setFoto(dto.getFoto());
+                    nuevoArtista.setWeb(dto.getWeb());
+                    nuevoArtista.setVotosRanking(0);
+
+                    // 4. Guardamos en la base de datos local
+                    Artista guardado = artistaRepository.save(nuevoArtista);
+
+                    // 5. Devolvemos el DTO usando tu constructor de conversión
+                    return new ArtistaDTO(guardado);
+                });
+    }
+
 }

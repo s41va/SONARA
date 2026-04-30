@@ -84,6 +84,23 @@ public class ArtistaController {
     }
 
     @Operation(
+            summary = "Crear/Importar un artista",
+            description = "Guarda un artista en la base de datos local tras haber sido validado externamente."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Artista creado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos de artista inválidos"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    @PostMapping
+    public ResponseEntity<ArtistaDTO> crear(@RequestBody ArtistaDTO artistaDTO) {
+        // Asumiendo que tu ArtistaService tiene un método para guardar o que puedes usar votarArtista adaptado
+        // Si no tienes un método save, podrías implementar uno sencillo en el service
+        ArtistaDTO guardado = artistaService.guardarArtistaLocal(artistaDTO);
+        return ResponseEntity.status(201).body(guardado);
+    }
+
+    @Operation(
             summary = "Eliminar un artista",
             description = "Elimina un artista de la base de datos local mediante su ID."
     )

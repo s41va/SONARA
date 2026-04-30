@@ -11,4 +11,5 @@ public interface ArtistaService {
     List<ArtistaDTO> obtenerTodosOrdenados(String campo, String direccion);
     void eliminar(String id);
     ArtistaDTO obtenerPorIdCompleto(String id);
+    ArtistaDTO guardarArtistaLocal(ArtistaDTO dto);
 }
