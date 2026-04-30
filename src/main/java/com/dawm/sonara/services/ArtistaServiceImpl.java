@@ -62,7 +62,7 @@ public class ArtistaServiceImpl implements ArtistaService {
     }
 
     @Override
-    public ArtistaDTO obtenerPorIdCompleto(Integer id) {
+    public ArtistaDTO obtenerPorIdCompleto(String id) {
         // 1. Buscamos primero en nuestra DB para tener el nombre correcto
         Artista local = artistaRepository.findById(id).orElse(null);
         if (local == null) return null;
@@ -84,7 +84,7 @@ public class ArtistaServiceImpl implements ArtistaService {
     }
 
     @Override
-    public void eliminar(Integer id) {
+    public void eliminar(String id) {
         // 1. Verificamos si existe antes de intentar borrar
         if (artistaRepository.existsById(id)) {
             // 2. Borramos de la base de datos local
@@ -97,7 +97,7 @@ public class ArtistaServiceImpl implements ArtistaService {
     }
 
     @Override
-    public void votarArtista(Integer id, String nombre) {
+    public void votarArtista(String id, String nombre) {
         Artista artista = artistaRepository.findById(id).orElseGet(() -> {
             // Si no existe, lo buscamos en la API para traer sus datos reales
             ArtistaDTO datosApi = buscarPorNombre(nombre);

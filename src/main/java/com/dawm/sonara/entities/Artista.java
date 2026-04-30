@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 public class Artista {
 
     @Id
-    private Integer id; // Usaremos el idArtist de la API
+    @Column(name = "id")
+    private String id; // Usaremos el idArtist de la API
 
     private String nombre;
 

@@ -36,13 +36,13 @@ INSERT IGNORE INTO localidad (pais, nombre_ciudad, codigo_postal) VALUES
 -- ARTISTAS (Usando IDs reales de TheAudioDB)
 -- ==========================
 INSERT IGNORE INTO artista (id, nombre, genero, votos_ranking) VALUES
-(111239, 'Eminem', 'Rap', 150),
-(134722, 'Bad Bunny', 'Reggaeton', 230),
-(112045, 'Taylor Swift', 'Pop', 190),
-(142144, 'Rosalía', 'Pop', 120),
-(111516, 'Coldplay', 'Rock', 85),
-(114381, 'The Weeknd', 'R&B', 110),
-(111304, 'Arctic Monkeys', 'Indie Rock', 95);
+('111239', 'Eminem', 'Rap', 150),
+('134722', 'Bad Bunny', 'Reggaeton', 230),
+('112045', 'Taylor Swift', 'Pop', 190),
+('142144', 'Rosalía', 'Pop', 120),
+('111516', 'Coldplay', 'Rock', 85),
+('114381', 'The Weeknd', 'R&B', 110),
+('111304', 'Arctic Monkeys', 'Indie Rock', 95);
 
 -- ==========================
 -- USUARIOS

@@ -75,7 +75,7 @@ public class ArtistaController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<ArtistaDTO> obtenerDetalle(@PathVariable Integer id) {
+    public ResponseEntity<ArtistaDTO> obtenerDetalle(@PathVariable String id) {
         ArtistaDTO detalle = artistaService.obtenerPorIdCompleto(id);
 
         return (detalle != null)
@@ -93,7 +93,7 @@ public class ArtistaController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
+    public ResponseEntity<Void> eliminar(@PathVariable String id) {
         if (artistaRepository.existsById(id)) {
             artistaService.eliminar(id);
             return ResponseEntity.noContent().build();
@@ -133,14 +133,11 @@ public class ArtistaController {
     })
     @PostMapping("/votar/{id}")
     public ResponseEntity<Void> votar(
-            @PathVariable String id,
+            @PathVariable String id, // RECIBIDO COMO STRING
             @RequestParam String nombre) {
-        try {
-            Integer idNumerico = Integer.parseInt(id);
-            artistaService.votarArtista(idNumerico, nombre);
-            return ResponseEntity.ok().build();
-        } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().build();
-        }
+
+        // ELIMINADO EL PARSEINT: Ya no es necesario convertir a número
+        artistaService.votarArtista(id, nombre);
+        return ResponseEntity.ok().build();
     }
 }
