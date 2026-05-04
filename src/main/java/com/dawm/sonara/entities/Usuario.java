@@ -64,4 +64,6 @@ public class Usuario {
     @Column(name = "cancion_externa_id")
     private Set<String> cancionesFavoritasIds = new HashSet<>();
 
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
+    private UsuarioPerfil perfil;
 }
