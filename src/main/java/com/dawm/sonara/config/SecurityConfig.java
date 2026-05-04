@@ -89,14 +89,16 @@ public class SecurityConfig {
                 // 5. Autorizacion por rutas
                 .authorizeHttpRequests(auth -> auth
                         // Endpoints publicos
+                        .requestMatchers("/api/usuarios").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/error", "/error/**").permitAll()
+                        .requestMatchers("/api/localidad/**").permitAll()
 
                         // Ejemplos por roles
                         .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
-                        .requestMatchers("/api/usuarios/perfil").hasAnyRole("ADMIN", "MANAGER", "USER")
+                        .requestMatchers("/api/profile/perfil").hasAnyRole("ADMIN", "MANAGER", "USER")
                         //.requestMatchers("/api/localidad**").hasAnyRole("ADMIN", "MANAGER")
-                        .requestMatchers("/api/profile**").hasRole("USER")                    // Solo USER
+                        //.requestMatchers("/api/profile**").hasRole("USER")                    // Solo USER
                         // Lo demas requiere token valido
 
                         .requestMatchers("/admin/**").hasRole("ADMIN")

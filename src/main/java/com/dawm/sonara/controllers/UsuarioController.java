@@ -206,7 +206,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioDetailDTO> getRegionById(@PathVariable Long id) {
+    public ResponseEntity<UsuarioDetailDTO> getUsuarioById(@PathVariable Long id) {
         logger.info("Mostrando detalle del usuario con ID {}", id);
 
         UsuarioDetailDTO usuarioDetailDTO = usuarioService.getDetail(id);
