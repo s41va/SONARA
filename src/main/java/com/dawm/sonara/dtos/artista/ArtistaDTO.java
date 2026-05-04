@@ -1,7 +1,9 @@
 package com.dawm.sonara.dtos.artista;
 
 import com.dawm.sonara.entities.Artista;
+import com.dawm.sonara.repositories.ArtistaRepository;
 import com.dawm.sonara.response.ArtistaExterno;
+import com.dawm.sonara.services.ArtistaService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +14,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ArtistaDTO {
+
+    private ArtistaRepository artistaRepository;
+
     private String id;
     private String nombre;
     private String biografia;
@@ -20,6 +25,8 @@ public class ArtistaDTO {
     private String web;
     private LocalDateTime ultimaSincronizacion;
     private Integer votosRanking; // Nuevo: Para el ranking
+
+
 
     // Constructor para convertir la Entidad local -> DTO (Ranking)
     public ArtistaDTO(Artista entidad) {
@@ -35,9 +42,13 @@ public class ArtistaDTO {
     public ArtistaDTO(ArtistaExterno externo) {
         this.id = externo.idArtist;
         this.nombre = externo.strArtist;
+        this.genero = externo.strGenre;
         this.biografia = (externo.strBiographyES != null && !externo.strBiographyES.isEmpty())
                 ? externo.strBiographyES : externo.strBiographyEN;
         this.foto = externo.strArtistThumb;
         this.web = externo.strWebsite;
     }
+
+
+
 }

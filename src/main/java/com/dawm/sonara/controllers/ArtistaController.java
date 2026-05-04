@@ -75,12 +75,29 @@ public class ArtistaController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<ArtistaDTO> obtenerDetalle(@PathVariable Integer id) {
+    public ResponseEntity<ArtistaDTO> obtenerDetalle(@PathVariable String id) {
         ArtistaDTO detalle = artistaService.obtenerPorIdCompleto(id);
 
         return (detalle != null)
                 ? ResponseEntity.ok(detalle)
                 : ResponseEntity.notFound().build();
+    }
+
+    @Operation(
+            summary = "Crear/Importar un artista",
+            description = "Guarda un artista en la base de datos local tras haber sido validado externamente."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Artista creado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos de artista inválidos"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    @PostMapping
+    public ResponseEntity<ArtistaDTO> crear(@RequestBody ArtistaDTO artistaDTO) {
+        // Asumiendo que tu ArtistaService tiene un método para guardar o que puedes usar votarArtista adaptado
+        // Si no tienes un método save, podrías implementar uno sencillo en el service
+        ArtistaDTO guardado = artistaService.guardarArtistaLocal(artistaDTO);
+        return ResponseEntity.status(201).body(guardado);
     }
 
     @Operation(
@@ -93,7 +110,7 @@ public class ArtistaController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
+    public ResponseEntity<Void> eliminar(@PathVariable String id) {
         if (artistaRepository.existsById(id)) {
             artistaService.eliminar(id);
             return ResponseEntity.noContent().build();
@@ -133,14 +150,11 @@ public class ArtistaController {
     })
     @PostMapping("/votar/{id}")
     public ResponseEntity<Void> votar(
-            @PathVariable String id,
+            @PathVariable String id, // RECIBIDO COMO STRING
             @RequestParam String nombre) {
-        try {
-            Integer idNumerico = Integer.parseInt(id);
-            artistaService.votarArtista(idNumerico, nombre);
-            return ResponseEntity.ok().build();
-        } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().build();
-        }
+
+        // ELIMINADO EL PARSEINT: Ya no es necesario convertir a número
+        artistaService.votarArtista(id, nombre);
+        return ResponseEntity.ok().build();
     }
 }

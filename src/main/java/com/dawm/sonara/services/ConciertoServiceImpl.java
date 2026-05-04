@@ -96,18 +96,19 @@ public class ConciertoServiceImpl implements ConciertoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Localidad", "id", dto.getLocalidadId()));
 
         // 2. Obtener datos oficiales del artista de la API
-        // Buscamos por el ID que nos manda Angular para asegurar que es el artista correcto
-        var artistaExterno = artistaApiService.buscarPorNombre(dto.getArtistaId());
+        // CAMBIO: Usamos obtenerPorIdCompleto porque dto.getArtistaId() es el ID ("112045"), no el nombre.
+        var artistaExterno = artistaApiService.obtenerPorIdCompleto(dto.getArtistaId());
 
         if (artistaExterno == null) {
-            throw new ResourceNotFoundException("Artista", "idExterno", dto.getArtistaId());
+            // CAMBIO: El field debe ser "id" para coincidir con tu nueva entidad Artista
+            throw new ResourceNotFoundException("Artista", "id", dto.getArtistaId());
         }
 
         // 3. Crear entidad y setear datos
         Concierto concierto = ConciertoMapper.toEntity(dto);
         concierto.setLocalidad(localidad);
-        concierto.setArtistaNombre(artistaExterno.getNombre()); // Nombre oficial de la API
-        concierto.setArtistaId(artistaExterno.getId());       // ID oficial de la API
+        concierto.setArtistaNombre(artistaExterno.getNombre()); // Nombre oficial (Taylor Swift)
+        concierto.setArtistaId(artistaExterno.getId());       // ID oficial (112045)
 
         return ConciertoMapper.toDTO(conciertoRepository.save(concierto));
     }
@@ -124,9 +125,13 @@ public class ConciertoServiceImpl implements ConciertoService {
 
         // Si el artistaId ha cambiado, actualizamos el nombre consultando la API
         if (!concierto.getArtistaId().equals(dto.getArtistaId())) {
-            var artistaExterno = artistaApiService.buscarPorNombre(dto.getArtistaId());
+            // CAMBIO: Usar el método de ID, no el de nombre
+            var artistaExterno = artistaApiService.obtenerPorIdCompleto(dto.getArtistaId());
             if (artistaExterno != null) {
                 concierto.setArtistaNombre(artistaExterno.getNombre());
+                concierto.setArtistaId(artistaExterno.getId());
+            } else {
+                throw new ResourceNotFoundException("Artista", "id", dto.getArtistaId());
             }
         }
 

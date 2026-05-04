@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS localidad (
 -- ARTISTAS (Usando IDs reales de TheAudioDB como ejemplo)
 -- ==========================
 CREATE TABLE IF NOT EXISTS artista (
-    id INT PRIMARY KEY,
+    id VARCHAR(50) PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     genero VARCHAR(50),
     votos_ranking INT DEFAULT 0,
@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS usuario_canciones_favoritas_ids (
 CREATE TABLE IF NOT EXISTS cancion (
     cancion_id INT PRIMARY KEY,
     titulo VARCHAR(200) NOT NULL,
-    artista_id INT,
+    artista_id VARCHAR(50),
     reproducciones_locales INT DEFAULT 0,
     CONSTRAINT fk_cancion_artista FOREIGN KEY (artista_id) REFERENCES artista(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -151,3 +151,4 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens (
 ) ENGINE=InnoDB;
 
 SET FOREIGN_KEY_CHECKS = 1;
+

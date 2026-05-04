@@ -128,7 +128,7 @@ public class ConciertoController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ConciertoDTO> updateUsuario(@PathVariable Long id,
+    public ResponseEntity<ConciertoDTO> updateConcierto(@PathVariable Long id,
                                                       @Valid @RequestBody ConciertoUpdateDTO conciertoDTO) {
         logger.info("Actualizando concierto con ID {}", conciertoDTO.getId());
 
@@ -175,7 +175,7 @@ public class ConciertoController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<ConciertoDetailDTO> getRegionById(@PathVariable Long id) {
+    public ResponseEntity<ConciertoDetailDTO> getConciertoById(@PathVariable Long id) {
         logger.info("Mostrando detalles del concierto con ID {}", id);
 
         ConciertoDetailDTO conciertoDetailDTO = conciertoService.getDetail(id);

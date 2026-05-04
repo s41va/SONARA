@@ -62,7 +62,7 @@ public class ArtistaServiceImpl implements ArtistaService {
     }
 
     @Override
-    public ArtistaDTO obtenerPorIdCompleto(Integer id) {
+    public ArtistaDTO obtenerPorIdCompleto(String id) {
         // 1. Buscamos primero en nuestra DB para tener el nombre correcto
         Artista local = artistaRepository.findById(id).orElse(null);
         if (local == null) return null;
@@ -84,7 +84,7 @@ public class ArtistaServiceImpl implements ArtistaService {
     }
 
     @Override
-    public void eliminar(Integer id) {
+    public void eliminar(String id) {
         // 1. Verificamos si existe antes de intentar borrar
         if (artistaRepository.existsById(id)) {
             // 2. Borramos de la base de datos local
@@ -97,7 +97,7 @@ public class ArtistaServiceImpl implements ArtistaService {
     }
 
     @Override
-    public void votarArtista(Integer id, String nombre) {
+    public void votarArtista(String id, String nombre) {
         Artista artista = artistaRepository.findById(id).orElseGet(() -> {
             // Si no existe, lo buscamos en la API para traer sus datos reales
             ArtistaDTO datosApi = buscarPorNombre(nombre);
@@ -114,4 +114,32 @@ public class ArtistaServiceImpl implements ArtistaService {
         artista.setVotosRanking(artista.getVotosRanking() + 1);
         artistaRepository.save(artista);
     }
+
+    public ArtistaDTO guardarArtistaLocal(ArtistaDTO dto) {
+        // 2. Buscamos si ya existe en la base de datos local
+        return artistaRepository.findById(dto.getId())
+                .map(existente -> {
+                    // Si existe, usamos tu constructor: new ArtistaDTO(entidad)
+                    return new ArtistaDTO(existente);
+                })
+                .orElseGet(() -> {
+                    // 3. Si no existe, creamos la entidad con los datos del DTO
+                    Artista nuevoArtista = new Artista();
+
+                    nuevoArtista.setId(dto.getId()); // Seteamos el ID ya convertido a int
+                    nuevoArtista.setNombre(dto.getNombre());
+                    nuevoArtista.setBiografia(dto.getBiografia());
+                    nuevoArtista.setGenero(dto.getGenero());
+                    nuevoArtista.setFoto(dto.getFoto());
+                    nuevoArtista.setWeb(dto.getWeb());
+                    nuevoArtista.setVotosRanking(0);
+
+                    // 4. Guardamos en la base de datos local
+                    Artista guardado = artistaRepository.save(nuevoArtista);
+
+                    // 5. Devolvemos el DTO usando tu constructor de conversión
+                    return new ArtistaDTO(guardado);
+                });
+    }
+
 }
