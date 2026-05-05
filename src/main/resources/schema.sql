@@ -141,6 +141,19 @@ CREATE TABLE IF NOT EXISTS usuario_profiles (
 ) ENGINE=InnoDB;
 
 -- ==========================
+-- VOTOS
+-- ==========================
+CREATE TABLE votos (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id BIGINT NOT NULL,
+    artista_id VARCHAR(50) NOT NULL, -- Referencia a TU tabla artista
+    localidad VARCHAR(100) NOT NULL,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_voto_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(id),
+    CONSTRAINT fk_voto_artista FOREIGN KEY (artista_id) REFERENCES artista(id)
+);
+
+-- ==========================
 -- TOKENS PARA PASSWORD RESET
 -- ==========================
 CREATE TABLE IF NOT EXISTS password_reset_tokens (

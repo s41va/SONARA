@@ -2,13 +2,14 @@ package com.dawm.sonara.services;
 
 import com.dawm.sonara.dtos.artista.ArtistaDTO;
 import com.dawm.sonara.entities.Artista;
+import com.dawm.sonara.exceptions.ResourceNotFoundException;
 import com.dawm.sonara.repositories.ArtistaRepository;
 import com.dawm.sonara.response.ArtistaResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class ArtistaServiceImpl implements ArtistaService {
     private ArtistaRepository artistaRepository;
 
     @Autowired
-    private GeneroService generoService; // Inyectamos el servicio de géneros
+    private GeneroService generoService;
 
     @Value("${theaudiodb.api.url}")
     private String apiUrl;
@@ -31,34 +32,17 @@ public class ArtistaServiceImpl implements ArtistaService {
     @Override
     public ArtistaDTO buscarPorNombre(String nombre) {
         String url = apiUrl + "/search.php?s=" + nombre;
-
-        // 1. Recibimos el Response (el envoltorio)
         ArtistaResponse response = restTemplate.getForObject(url, ArtistaResponse.class);
 
-        // 2. Si hay datos, extraemos el primero y lo convertimos a DTO
         if (response != null && response.getArtistas() != null && !response.getArtistas().isEmpty()) {
-            // Usamos el constructor que creamos en el DTO
             return new ArtistaDTO(response.getArtistas().get(0));
         }
         return null;
     }
 
     @Override
-    public List<ArtistaDTO> obtenerRanking() {
-        // 1. Obtenemos las entidades de la DB
-        List<Artista> entidades = artistaRepository.findTop10ByOrderByVotosRankingDesc();
-
-        // 2. Convertimos a DTOs usando Stream
-        return entidades.stream()
-                .map(ArtistaDTO::new) // Usa el nuevo constructor ArtistaDTO(Artista entidad)
-                .collect(Collectors.toList());
-    }
-    @Override
     public List<ArtistaDTO> obtenerTodosOrdenados(String campo, String direccion) {
-        Sort sort = direccion.equalsIgnoreCase("asc")
-                ? Sort.by(campo).ascending()
-                : Sort.by(campo).descending();
-
+        Sort sort = direccion.equalsIgnoreCase("asc") ? Sort.by(campo).ascending() : Sort.by(campo).descending();
         return artistaRepository.findAll(sort).stream()
                 .map(ArtistaDTO::new)
                 .collect(Collectors.toList());
@@ -66,88 +50,49 @@ public class ArtistaServiceImpl implements ArtistaService {
 
     @Override
     public ArtistaDTO obtenerPorIdCompleto(String id) {
-        // 1. Buscamos primero en nuestra DB para tener el nombre correcto
-        Artista local = artistaRepository.findById(id).orElse(null);
-        if (local == null) return null;
+        Artista local = artistaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("artista", "id", id));
 
-        // 2. Llamamos a la API usando el nombre que tenemos guardado
-        String url = apiUrl + "/search.php?s=" + local.getNombre();
-        ArtistaResponse response = restTemplate.getForObject(url, ArtistaResponse.class);
+        // Intentamos enriquecer con la API externa usando el nombre
+        ArtistaDTO dtoApi = buscarPorNombre(local.getNombre());
 
-        if (response != null && !response.getArtistas().isEmpty()) {
-            // 3. Convertimos la info de la API a DTO
-            ArtistaDTO dto = new ArtistaDTO(response.getArtistas().get(0));
-            // 4. Le inyectamos los votos que tenemos en nuestra DB local
-            dto.setVotosRanking(local.getVotosRanking());
-            return dto;
+        if (dtoApi != null) {
+            dtoApi.setVotosRanking(local.getVotosRanking());
+            return dtoApi;
         }
-
-        // Si la API no lo encuentra, devolvemos al menos lo que tenemos local
         return new ArtistaDTO(local);
     }
 
     @Override
+    @Transactional
     public void eliminar(String id) {
-        // 1. Verificamos si existe antes de intentar borrar
-        if (artistaRepository.existsById(id)) {
-            // 2. Borramos de la base de datos local
-            artistaRepository.deleteById(id);
-        } else {
-            // Opcional: Podrías lanzar una excepción personalizada aquí
-            // throw new EntityNotFoundException("El artista con ID " + id + " no existe.");
-            System.out.println("Intento de borrar artista inexistente: " + id);
+        if (!artistaRepository.existsById(id)) {
+            throw new ResourceNotFoundException("artista", "id", id);
         }
+        artistaRepository.deleteById(id);
     }
 
     @Override
-    public void votarArtista(String id, String nombre) {
-        Artista artista = artistaRepository.findById(id).orElseGet(() -> {
-            ArtistaDTO datosApi = buscarPorNombre(nombre);
-
-            Artista nuevo = new Artista();
-            nuevo.setId(id);
-            nuevo.setNombre(nombre);
-            nuevo.setGenero(datosApi.getGenero());
-
-            // Si la API dice que el género es "Reggaeton", nos aseguramos
-            // de que "Reggaeton" aparezca en nuestra lista de géneros para el perfil.
-            if (datosApi.getGenero() != null) {
-                generoService.ensureExists(datosApi.getGenero());
-            }
-
-            nuevo.setVotosRanking(0);
-            return nuevo;
-        });
-
-        artista.setVotosRanking(artista.getVotosRanking() + 1);
-        artistaRepository.save(artista);
-    }
-
+    @Transactional
     public ArtistaDTO guardarArtistaLocal(ArtistaDTO dto) {
-        // 2. Buscamos si ya existe en la base de datos local
         return artistaRepository.findById(dto.getId())
-                .map(existente -> {
-                    // Si existe, usamos tu constructor: new ArtistaDTO(entidad)
-                    return new ArtistaDTO(existente);
-                })
+                .map(ArtistaDTO::new)
                 .orElseGet(() -> {
-                    // 3. Si no existe, creamos la entidad con los datos del DTO
-                    Artista nuevoArtista = new Artista();
+                    Artista nuevo = new Artista();
+                    nuevo.setId(dto.getId());
+                    nuevo.setNombre(dto.getNombre());
+                    nuevo.setBiografia(dto.getBiografia());
+                    nuevo.setGenero(dto.getGenero());
+                    nuevo.setFoto(dto.getFoto());
+                    nuevo.setWeb(dto.getWeb());
+                    nuevo.setVotosRanking(0);
 
-                    nuevoArtista.setId(dto.getId()); // Seteamos el ID ya convertido a int
-                    nuevoArtista.setNombre(dto.getNombre());
-                    nuevoArtista.setBiografia(dto.getBiografia());
-                    nuevoArtista.setGenero(dto.getGenero());
-                    nuevoArtista.setFoto(dto.getFoto());
-                    nuevoArtista.setWeb(dto.getWeb());
-                    nuevoArtista.setVotosRanking(0);
+                    // Aseguramos que el género exista en nuestra tabla de géneros
+                    if (dto.getGenero() != null) {
+                        generoService.ensureExists(dto.getGenero());
+                    }
 
-                    // 4. Guardamos en la base de datos local
-                    Artista guardado = artistaRepository.save(nuevoArtista);
-
-                    // 5. Devolvemos el DTO usando tu constructor de conversión
-                    return new ArtistaDTO(guardado);
+                    return new ArtistaDTO(artistaRepository.save(nuevo));
                 });
     }
-
 }

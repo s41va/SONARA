@@ -158,3 +158,12 @@ INSERT IGNORE INTO usuario_profiles (usuario_id, first_name, last_name, phone_nu
 (4, 'Jorge', 'Martínez de Quel', '633444555', 'Fan de los festivales de verano.', 'es'),
 (5, 'Lucía', 'Fernández Sanz', '644555666', 'Ingeniera de sonido en mis ratos libres.', 'es');
 
+-- ==========================
+-- VOTOS
+-- ==========================
+INSERT INTO votos (usuario_id, artista_id, localidad) VALUES
+(1, '111239', 'Sevilla'), -- Eminem en Sevilla
+(2, '111239', 'Sevilla'), -- Eminem otro voto en Sevilla
+(3, '134722', 'Madrid'),  -- Bad Bunny en Madrid
+(4, '112045', 'Madrid'),  -- Taylor Swift en Madrid
+(5, '111239', 'Sevilla'); -- Eminem ya lleva 3 en Sevilla
