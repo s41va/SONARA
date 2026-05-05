@@ -1,106 +1,63 @@
 package com.dawm.sonara.mappers;
 
-import com.dawm.sonara.dtos.generos.GenerosCreateDTO;
 import com.dawm.sonara.dtos.generos.GenerosDTO;
-import com.dawm.sonara.dtos.generos.GenerosDetailDTO;
-import com.dawm.sonara.dtos.generos.GenerosUpdateDTO;
 import com.dawm.sonara.entities.Genero;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Mapper para convertir entre la entidad {@link Genero} y su DTO {@link GenerosDTO}.
+ */
 public class GeneroMapper {
 
+    /**
+     * Convierte una entidad de Género a su representación DTO.
+     * @param entity Entidad de base de datos.
+     * @return DTO con los datos del género.
+     */
     public static GenerosDTO toDTO(Genero entity){
         if (entity == null) return null;
         GenerosDTO dto = new GenerosDTO();
 
         dto.setId(entity.getId());
         dto.setNombre(entity.getNombre());
-        dto.setDescripcion(entity.getDescripcion());
 
         return dto;
     }
 
-
+    /**
+     * Convierte una lista de entidades a una lista de DTOs.
+     * @param entities Lista de géneros de la base de datos.
+     * @return Lista de DTOs mapeados.
+     */
     public static List<GenerosDTO> toDTOList(List<Genero> entities){
         if (entities == null) return List.of();
         return entities.stream().map(GeneroMapper::toDTO).collect(Collectors.toList());
     }
 
-
-    //
-    // Entity -> DTO (detalle con todos los campos de estado y seguridad)
-    //
     /**
-     * Convierte una {@link Genero} a {@link GenerosDetailDTO}, mapeando todos sus campos de seguridad y estado (incluyendo roles).
+     * Convierte un DTO en una nueva entidad de Género.
+     * @param dto DTO proveniente de la vista.
+     * @return Nueva entidad lista para ser persistida.
      */
-    public static GenerosDetailDTO toDetailDTO(Genero entity) {
-        if (entity == null) return null;
-
-        GenerosDetailDTO dto = new GenerosDetailDTO();
-        dto.setId(entity.getId());
-        dto.setNombre(entity.getNombre());
-        dto.setDescripcion(entity.getDescripcion());
-        return dto;
-    }
-
-    //
-    // DTO -> Entity (Creación)
-    //
-    /**
-     * Convierte un DTO de creación {@link GenerosCreateDTO} a la entidad {@link Genero}.
-     * Solo mapea los campos que el usuario proporciona inicialmente (username y quizás la contraseña temporal).
-     */
-    public static Genero toEntity(GenerosCreateDTO dto){
-        if (dto == null) return null;
-        Genero g  = new Genero();
-        g.setNombre(dto.getNombre());
-        g.setDescripcion(dto.getDescripcion());
-
-
-        return g;
-    }
-
-    //
-    // Entity -> UpdateDTO
-    //
-    public static Genero toEntity(GenerosUpdateDTO dto){
+    public static Genero toEntity(GenerosDTO dto){
         if (dto == null) return null;
         Genero g = new Genero();
-
+        // El ID no se suele setear al crear para dejar que la DB use AUTO_INCREMENT
         g.setNombre(dto.getNombre());
-        g.setDescripcion(dto.getDescripcion());
 
         return g;
     }
 
-
     /**
-     * Convierte una entidad {@link Genero} a {@link GenerosUpdateDTO}.
-     * Este DTO es útil para recuperar el estado actual para una edición.
+     * Copia las propiedades de un DTO a una entidad existente para su actualización.
+     * @param dto DTO con los nuevos datos.
+     * @param entity Entidad recuperada de la base de datos.
      */
-    public static GenerosUpdateDTO toUpdateDTO(Genero entity) {
-        if (entity == null) return null;
-
-        GenerosUpdateDTO dto = new GenerosUpdateDTO();
-        dto.setNombre(entity.getNombre());
-        dto.setDescripcion(entity.getDescripcion());
-
-        return dto;
-    }
-
-    //
-    // DTO -> Entity (Copia a entidad existente)
-    //
-    /**
-     * Copia las propiedades de un DTO de actualización {@link GenerosUpdateDTO} a una entidad {@link Genero} **existente**.
-     */
-    public static void copyToExistingEntity(GenerosUpdateDTO dto,Genero entity){
+    public static void copyToExistingEntity(GenerosDTO dto, Genero entity){
         if (dto == null || entity == null) return;
 
         entity.setNombre(dto.getNombre());
-        entity.setDescripcion(dto.getDescripcion());
-
     }
 }

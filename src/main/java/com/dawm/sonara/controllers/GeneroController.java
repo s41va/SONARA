@@ -1,9 +1,6 @@
 package com.dawm.sonara.controllers;
 
-import com.dawm.sonara.dtos.generos.GenerosCreateDTO;
 import com.dawm.sonara.dtos.generos.GenerosDTO;
-import com.dawm.sonara.dtos.generos.GenerosDetailDTO;
-import com.dawm.sonara.dtos.generos.GenerosUpdateDTO;
 import com.dawm.sonara.services.GeneroService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -24,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/generos")
@@ -66,7 +64,7 @@ public class GeneroController {
             @ApiResponse(responseCode = "404", description = "Género no encontrado")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<GenerosDetailDTO> getGeneroById(@PathVariable Long id) {
+    public ResponseEntity<GenerosDTO> getGeneroById(@PathVariable Long id) {
         logger.info("Obteniendo detalle del género ID: {}", id);
         return ResponseEntity.ok(generoService.getDetail(id));
     }
@@ -81,7 +79,7 @@ public class GeneroController {
             @ApiResponse(responseCode = "409", description = "El nombre del género ya existe")
     })
     @PostMapping
-    public ResponseEntity<GenerosDTO> createGenero(@Valid @RequestBody GenerosCreateDTO dto) {
+    public ResponseEntity<GenerosDTO> createGenero(@Valid @RequestBody GenerosDTO dto) {
         logger.info("Creando nuevo género: {}", dto.getNombre());
         GenerosDTO created = generoService.create(dto);
 
@@ -105,7 +103,7 @@ public class GeneroController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<GenerosDTO> updateGenero(@PathVariable Long id,
-                                                   @Valid @RequestBody GenerosUpdateDTO dto) {
+                                                   @Valid @RequestBody GenerosDTO dto) {
         logger.info("Actualizando género ID: {}", id);
         dto.setId(id);
         GenerosDTO updated = generoService.update(dto);
@@ -125,5 +123,12 @@ public class GeneroController {
         logger.info("Eliminando género ID: {}", id);
         generoService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+    @Operation(summary = "Obtener lista simple de géneros", description = "Devuelve todos los géneros sin paginación para selectores.")
+    @GetMapping("/all")
+    public ResponseEntity<List<GenerosDTO>> listAll() {
+        logger.info("Listando todos los géneros para selector");
+        // Tendrás que crear este método en el service que devuelva List en vez de Page
+        return ResponseEntity.ok(generoService.listAllPlain());
     }
 }

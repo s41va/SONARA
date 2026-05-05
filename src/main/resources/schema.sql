@@ -5,8 +5,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ==========================
 CREATE TABLE IF NOT EXISTS genero (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL UNIQUE,
-    descripcion VARCHAR(400)
+    nombre VARCHAR(50) NOT NULL UNIQUE
 ) ENGINE=InnoDB;
 
 -- ==========================

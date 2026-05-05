@@ -15,7 +15,4 @@ public class GenerosDTO {
     @NotEmpty(message = "msg.genero.nombre.notEmpty")
     @Size(message = "msg.genero.nombre.size", max = 50)
     private String nombre;
-    @NotEmpty(message = "{msg.genero.descripcion.notEmpty}")
-    @Size(message = "{msg.genero.descripcion.size}", max = 400)
-    private String descripcion;
 }

@@ -20,6 +20,9 @@ public class ArtistaServiceImpl implements ArtistaService {
     @Autowired
     private ArtistaRepository artistaRepository;
 
+    @Autowired
+    private GeneroService generoService; // Inyectamos el servicio de géneros
+
     @Value("${theaudiodb.api.url}")
     private String apiUrl;
 
@@ -99,14 +102,19 @@ public class ArtistaServiceImpl implements ArtistaService {
     @Override
     public void votarArtista(String id, String nombre) {
         Artista artista = artistaRepository.findById(id).orElseGet(() -> {
-            // Si no existe, lo buscamos en la API para traer sus datos reales
             ArtistaDTO datosApi = buscarPorNombre(nombre);
 
             Artista nuevo = new Artista();
             nuevo.setId(id);
             nuevo.setNombre(nombre);
-            // AQUÍ LA MAGIA: Guardamos el String que viene de la API
             nuevo.setGenero(datosApi.getGenero());
+
+            // Si la API dice que el género es "Reggaeton", nos aseguramos
+            // de que "Reggaeton" aparezca en nuestra lista de géneros para el perfil.
+            if (datosApi.getGenero() != null) {
+                generoService.ensureExists(datosApi.getGenero());
+            }
+
             nuevo.setVotosRanking(0);
             return nuevo;
         });
