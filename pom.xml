@@ -45,6 +45,11 @@
 			<version>3.0.1</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
 		<!-- Dependencia del sistema de templates thymeleaf usado para las plantillas de email -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

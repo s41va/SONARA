@@ -43,8 +43,8 @@ public class Usuario {
     private Localidad localidad;
 
     // Nuevo campo para seguridad
-    @Column(name = "enabled", nullable = false)
-    private boolean enabled = true;
+    @Column(name = "activada", nullable = false)
+    private boolean activada = true;
 
     @Column(name = "fecha_registro", nullable = false)
     private LocalDateTime fechaRegistro = LocalDateTime.now();

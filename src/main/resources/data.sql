@@ -47,7 +47,7 @@ INSERT IGNORE INTO artista (id, nombre, genero, votos_ranking) VALUES
 -- ==========================
 -- USUARIOS
 -- ==========================
-INSERT IGNORE INTO usuario (usuario_id, nombre, email, contrasena_hash, fecha_nacimiento, fecha_registro, localidad_id, enabled) VALUES
+INSERT IGNORE INTO usuario (usuario_id, nombre, email, contrasena_hash, fecha_nacimiento, fecha_registro, localidad_id, activada) VALUES
 (1, 'Ana García', 'ana.garcia@example.com', '$2a$12$23zzGOK04oE9CyVMx/viPucEO8relsSV.8Av205WULOoI18s/ciRG', '1990-04-12', '2025-12-15 10:30:00', 1, TRUE),
 (2, 'Carlos López', 'carlos.lopez@example.com', '$2a$12$23zzGOK04oE9CyVMx/viPucEO8relsSV.8Av205WULOoI18s/ciRG', '1985-07-23', '2025-12-14 09:00:00', 5, TRUE),
 (3, 'María Pérez', 'maria.perez@example.com', '$2a$12$23zzGOK04oE9CyVMx/viPucEO8relsSV.8Av205WULOoI18s/ciRG', '1992-11-05', '2025-12-15 11:45:00', 3, TRUE),

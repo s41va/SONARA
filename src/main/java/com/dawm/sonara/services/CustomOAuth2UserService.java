@@ -40,7 +40,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             Usuario nuevoUsuario = new Usuario();
             nuevoUsuario.setEmail(email);
             nuevoUsuario.setNombre(oAuth2User.getAttribute("given_name"));
-            nuevoUsuario.setEnabled(true);
+            nuevoUsuario.setActivada(true);
             nuevoUsuario.setFechaRegistro(LocalDateTime.now());
 
             // 2. ASIGNAR ROL POR DEFECTO (Busca el rol 'ROLE_USER' en tu DB)
