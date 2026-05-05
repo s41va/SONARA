@@ -22,7 +22,8 @@ INSERT IGNORE INTO genero (id, nombre) VALUES
 (18, 'Funk'),
 (19, 'House'),
 (20, 'Techno'),
-(20, 'Trap');
+(21, 'Trap'),
+(22, 'Dembow');
 
 -- ==========================
 -- LOCALIDADES
