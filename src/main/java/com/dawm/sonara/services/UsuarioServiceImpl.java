@@ -86,7 +86,7 @@ public class UsuarioServiceImpl implements UsuarioService {
             usuario.setRoles(new HashSet<>(rolesRepository.findAllById(dto.getRolesIds())));
         }
 
-        // 5. CREAR PERFIL PROVISIONAL (La clave del éxito)
+        // 5. CREAR PERFIL PROVISIONAL
         UsuarioPerfil perfil = new UsuarioPerfil();
         perfil.setFirstName(usuario.getNombre());
         perfil.setLastName(""); // Para cumplir con el NOT NULL de la DB sin inventar datos
