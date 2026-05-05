@@ -29,18 +29,25 @@ public class Usuario {
     @Column(name = "email", nullable = false, unique = true, length = 150)
     private String email;
 
-    @Column(name = "contrasenaHash", nullable = false, length = 100)
+    // Cambiado a nullable = true para soportar OAuth2
+    @Column(name = "contrasena_hash", nullable = true, length = 100)
     private String contrasenaHash;
 
-    @Column(name = "fecha_nacimiento", nullable = false)
+    // Cambiado a nullable = true para soportar OAuth2
+    @Column(name = "fecha_nacimiento", nullable = true)
     private LocalDate fechaNacimiento;
 
+    // Cambiado a nullable = true para soportar OAuth2
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "localidad_id", nullable = false)
+    @JoinColumn(name = "localidad_id", nullable = true)
     private Localidad localidad;
 
+    // Nuevo campo para seguridad
+    @Column(name = "enabled", nullable = false)
+    private boolean enabled = true;
+
     @Column(name = "fecha_registro", nullable = false)
-    private LocalDateTime fechaRegistro;
+    private LocalDateTime fechaRegistro = LocalDateTime.now();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

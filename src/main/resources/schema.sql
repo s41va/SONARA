@@ -32,15 +32,20 @@ CREATE TABLE IF NOT EXISTS artista (
 ) ENGINE=InnoDB;
 
 -- ==========================
--- USUARIOS
+-- USUARIOS (Actualizado para OAuth2)
 -- ==========================
 CREATE TABLE IF NOT EXISTS usuario (
     usuario_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
-    contrasena_hash VARCHAR(100) NOT NULL,
+    -- Quitamos el NOT NULL: los usuarios de Google no tienen contraseña en nuestra DB
+    contrasena_hash VARCHAR(100),
+    -- Quitamos el NOT NULL: Google no siempre devuelve la fecha de nacimiento
     fecha_nacimiento DATE,
+    -- Quitamos el NOT NULL: Al registrarse con Google, aún no sabemos su localidad
     localidad_id BIGINT,
+    -- Añadimos el interruptor de cuenta activa
+    enabled BOOLEAN DEFAULT TRUE,
     fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_usuario_localidad FOREIGN KEY (localidad_id) REFERENCES localidad(localidad_id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
