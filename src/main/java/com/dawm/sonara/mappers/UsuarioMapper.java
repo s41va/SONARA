@@ -27,7 +27,14 @@ public class UsuarioMapper {
                         .map(Genero::getNombre)
                         .collect(Collectors.toSet())
         );
-        dto.setArtistasFavoritosIds(entity.getArtistasFavoritosIds());
+        //Covertimos ID en Artista
+        dto.setArtistasFavoritosIds(
+                entity.getArtistasFavoritos() != null
+                        ? entity.getArtistasFavoritos().stream()
+                          .map(artista -> artista.getId()) // Extraemos el String ID
+                          .collect(Collectors.toSet())
+                        : Set.of()
+        );
         dto.setCancionesFavoritasIds(entity.getCancionesFavoritasIds());
         dto.setLocalidadNombre(entity.getLocalidad() != null ? entity.getLocalidad().getNombreCiudad() : null);
 
@@ -63,7 +70,14 @@ public class UsuarioMapper {
                         .map(Genero::getId)
                         .collect(Collectors.toSet())
         );
-        dto.setArtistasFavoritosIds(entity.getArtistasFavoritosIds());
+        //Covertimos ID en Artista
+        dto.setArtistasFavoritosIds(
+                entity.getArtistasFavoritos() != null
+                        ? entity.getArtistasFavoritos().stream()
+                          .map(artista -> artista.getId()) // Extraemos el String ID
+                          .collect(Collectors.toSet())
+                        : Set.of()
+        );
         dto.setCancionesFavoritasIds(entity.getCancionesFavoritasIds());
         dto.setLocalidadNombre(entity.getLocalidad() != null ? entity.getLocalidad().getNombreCiudad() : null);
 
@@ -174,10 +188,20 @@ public class UsuarioMapper {
                     })
                     .collect(Collectors.toSet()));
         }
-        entity.setArtistasFavoritosIds(dto.getArtistasFavoritosIds());
+        // Dentro de copyToExistingEntity
+        if (dto.getArtistasFavoritosIds() != null) {
+            entity.setArtistasFavoritos(
+                    dto.getArtistasFavoritosIds().stream()
+                            .map(id -> {
+                                com.dawm.sonara.entities.Artista a = new com.dawm.sonara.entities.Artista();
+                                a.setId(id);
+                                return a;
+                            })
+                            .collect(Collectors.toSet())
+            );
+        }
         entity.setCancionesFavoritasIds(dto.getCancionesFavoritasIds());
         entity.setRoles(roles);
-        // Localidad se debe setear en el service o controller
     }
 
 }

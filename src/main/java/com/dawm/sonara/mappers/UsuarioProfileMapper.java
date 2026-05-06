@@ -1,10 +1,12 @@
 package com.dawm.sonara.mappers;
 
 import com.dawm.sonara.dtos.perfil.UsuarioProfileDTO;
+import com.dawm.sonara.entities.Artista;
 import com.dawm.sonara.entities.Genero;
 import com.dawm.sonara.entities.Usuario;
 import com.dawm.sonara.entities.UsuarioPerfil;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,7 +31,12 @@ public class UsuarioProfileMapper {
                 // Mapeo de datos del Usuario
                 .localidadNombre(user.getLocalidad() != null ? user.getLocalidad().getNombreCiudad() : null)
                 .generosFavoritos(mapGeneros(user.getGenerosFavoritos()))
-                .artistasFavoritosIds(user.getArtistasFavoritosIds())
+                // Transformamos el Set<Artista> en Set<String> (IDs)
+                .artistasFavoritosIds(
+                        user.getArtistasFavoritos() != null
+                                ? user.getArtistasFavoritos().stream().map(Artista::getId).collect(Collectors.toSet())
+                                : new HashSet<>()
+                )
                 .cancionesFavoritasIds(user.getCancionesFavoritasIds())
                 .build();
     }

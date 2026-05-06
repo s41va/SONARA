@@ -24,6 +24,9 @@ public class UsuarioProfileServiceImpl implements UsuarioProfileService {
     @Autowired
     private GeneroRepository generoRepository;
 
+    @Autowired
+    private ArtistaRepository artistaRepository;
+
     @Override
     @Transactional(readOnly = true)
     public UsuarioProfileDTO obtenerPerfilPorEmail(String email) {
@@ -63,11 +66,14 @@ public class UsuarioProfileServiceImpl implements UsuarioProfileService {
             usuario.setGenerosFavoritos(new HashSet<>(generoRepository.findAllById(dto.getGenerosFavoritosIds())));
         }
 
-        // Artistas y Canciones (IDs externos de Spotify/API)
+        // Artistas Favoritos (Conversión de IDs a Entidades)
         if (dto.getArtistasFavoritosIds() != null) {
-            usuario.setArtistasFavoritosIds(dto.getArtistasFavoritosIds());
+            // Buscamos en nuestra base de datos todos los artistas cuyos IDs coincidan con los del DTO
+            // Esto es mucho más rápido que buscarlos uno por uno en un bucle
+            usuario.setArtistasFavoritos(new HashSet<>(artistaRepository.findAllById(dto.getArtistasFavoritosIds())));
         }
 
+        // Canciones Favoritas (Se mantiene igual porque siguen siendo Strings) (Sin uso todavia)
         if (dto.getCancionesFavoritasIds() != null) {
             usuario.setCancionesFavoritasIds(dto.getCancionesFavoritasIds());
         }
