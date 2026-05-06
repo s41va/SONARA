@@ -3,6 +3,7 @@ package com.dawm.sonara.repositories;
 import com.dawm.sonara.entities.Usuario;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -15,4 +16,7 @@ public interface UsuarioRepository  extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByEmail(String email);
 
     Optional<Usuario> findByEmailIgnoreCase(String email);
+
+    @Query("SELECT u FROM Usuario u LEFT JOIN FETCH u.artistasFavoritos WHERE u.email = :email")
+    Optional<Usuario> findByEmailConFavoritos(String email);
 }

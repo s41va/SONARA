@@ -99,14 +99,16 @@ CREATE TABLE IF NOT EXISTS conciertos (
 -- ==========================
 -- ARTISTAS FAVORITOS DE USUARIOS
 -- ==========================
-CREATE TABLE IF NOT EXISTS usuario_artistas_favoritos_ids (
+CREATE TABLE IF NOT EXISTS usuario_artistas_favoritos (
     usuario_id BIGINT NOT NULL,
-    artista_externo_id VARCHAR(255), -- ID que viene de TheAudioDB
-    CONSTRAINT fk_uaf_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE
-) ENGINE=InnoDB;
+    artista_id VARCHAR(50) NOT NULL,
+    PRIMARY KEY (usuario_id, artista_id),
+    CONSTRAINT fk_uaf_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE,
+    CONSTRAINT fk_uaf_artista FOREIGN KEY (artista_id) REFERENCES artista(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB;
 
 -- ==========================
--- CANCIONES FAVORITAS DE USUARIOS
+-- CANCIONES FAVORITAS DE USUARIOS (Sin de momento)
 -- ==========================
 CREATE TABLE IF NOT EXISTS usuario_canciones_favoritas_ids (
     usuario_id BIGINT NOT NULL,

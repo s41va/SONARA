@@ -61,16 +61,20 @@ public class Usuario {
     @JoinTable(name = "usuario_generos_favoritos", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "genero_id"))
     private Set<Genero> generosFavoritos = new HashSet<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "usuario_artistas_favoritos_ids", joinColumns = @JoinColumn(name = "usuario_id"))
-    @Column(name = "artista_externo_id")
-    private Set<String> artistasFavoritosIds = new HashSet<>();
+    @ManyToMany
+    @JoinTable(
+            name = "usuario_artistas_favoritos",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "artista_id")
+    )
+    private Set<Artista> artistasFavoritos = new HashSet<>();
 
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
+    private UsuarioPerfil perfil;
+
+    //Sin uso todavia
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "usuario_canciones_favoritas_ids", joinColumns = @JoinColumn(name = "usuario_id"))
     @Column(name = "cancion_externa_id")
     private Set<String> cancionesFavoritasIds = new HashSet<>();
-
-    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
-    private UsuarioPerfil perfil;
 }

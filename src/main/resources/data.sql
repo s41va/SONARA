@@ -123,15 +123,15 @@ INSERT IGNORE INTO conciertos (artista_id, artista_nombre, localidad_id, fecha_h
 -- ==========================
 -- ARTISTAS FAVORITOS DE USUARIOS
 -- ==========================
-INSERT IGNORE INTO usuario_artistas_favoritos_ids (usuario_id, artista_externo_id) VALUES
-(1, '111239'), -- Ana García gusta de Eminem
-(1, '111516'), -- Ana García gusta de Coldplay
-(2, '134722'), -- Carlos López gusta de Bad Bunny
-(3, '112045'), -- María Pérez gusta de Taylor Swift
-(5, '114381'); -- Lucía Fernández gusta de The Weeknd
+INSERT IGNORE INTO usuario_artistas_favoritos (usuario_id, artista_id) VALUES
+(1, '111239'), -- Ana García -> Eminem
+(1, '111516'), -- Ana García -> Coldplay
+(2, '134722'), -- Carlos López -> Bad Bunny
+(3, '112045'), -- María Pérez -> Taylor Swift
+(5, '114381'); -- Lucía Fernández -> The Weeknd
 
 -- ==========================
--- CANCIONES FAVORITAS DE USUARIOS
+-- CANCIONES FAVORITAS DE USUARIOS (Sin uso de momento)
 -- ==========================
 INSERT IGNORE INTO usuario_canciones_favoritas_ids (usuario_id, cancion_externa_id) VALUES
 (1, '32724562'), -- IDs de ejemplo de la API
