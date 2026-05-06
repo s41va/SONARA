@@ -26,11 +26,12 @@ public class Artista {
     @Column(name = "votos_ranking")
     private Integer votosRanking = 0;
 
+    private String foto;
+
     // Campos temporales (No se guardan en la DB local, solo para la API)
     @Transient
     private String biografia;
-    @Transient
-    private String foto;
+
     @Transient
     private String web;
 }

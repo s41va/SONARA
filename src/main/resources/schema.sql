@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS artista (
     id VARCHAR(50) PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     genero VARCHAR(50),
+    foto VARCHAR(255),
     votos_ranking INT DEFAULT 0,
     ultima_sincronizacion DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
@@ -143,58 +144,34 @@ CREATE TABLE IF NOT EXISTS usuario_profiles (
 -- ==========================
 -- VOTOS
 -- ==========================
-CREATE TABLE votos (
+CREATE TABLE IF NOT EXISTS votos (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     usuario_id BIGINT NOT NULL,
-    artista_id VARCHAR(50) NOT NULL, -- Referencia a TU tabla artista
+    artista_id VARCHAR(50) NOT NULL,
     localidad VARCHAR(100) NOT NULL,
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_voto_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(id),
-    CONSTRAINT fk_voto_artista FOREIGN KEY (artista_id) REFERENCES artista(id)
-);
+
+    CONSTRAINT fk_voto_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE,
+    CONSTRAINT fk_voto_artista FOREIGN KEY (artista_id) REFERENCES artista(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB;
 
 -- ==========================
 -- TOKENS PARA PASSWORD RESET
 -- ==========================
 CREATE TABLE IF NOT EXISTS password_reset_tokens (
- -- Clave primaria autoincremental. Identificador interno del registro de token.
- id BIGINT AUTO_INCREMENT PRIMARY KEY,
- -- Usuario al que pertenece el token.
- -- Relación N:1 (un usuario puede generar varios tokens a lo largo del tiempo).
- user_id BIGINT NOT NULL,
- -- Hash del token (NO el token en claro).
- -- Recomendación profesional: guardar SHA-256 en hexadecimal (64 chars) o similar.
- -- Así, aunque alguien lea la BD, no puede usar directamente el token para resetear.
- token_hash VARCHAR(64) NOT NULL,
- -- Momento exacto de caducidad del token (TTL).
- -- Buenas prácticas: 30–60 minutos. Tokens con caducidad corta reducen impacto ante robo del enlace.
- expires_at DATETIME NOT NULL,
- -- Momento en el que el token se consume (one-time token).
- -- Si used_at != NULL => token ya usado, cualquier intento posterior debe fallar.
- used_at DATETIME NULL,
- -- Momento de creación del token.
- -- Útil para auditoría y para detectar patrones anómalos (spam de solicitudes).
- created_at DATETIME NOT NULL,
- -- IP desde la que se solicitó el reset.
- -- Útil para auditoría y para correlación en incidentes (p.ej. detectar abuso por IP).
- -- VARCHAR(45) cubre IPv4 e IPv6.
- request_ip VARCHAR(45) NULL,
- -- User-Agent del cliente que solicitó el reset (navegador/dispositivo).
- -- Útil para auditoría y detección de bots, pero NO es un dato fiable para “seguridad dura”.
- user_agent VARCHAR(255) NULL,
- -- Clave foránea: garantiza integridad referencial (no puede haber tokens sin usuario existente).
- CONSTRAINT fk_prt_user FOREIGN KEY (user_id) REFERENCES users(id),
- -- Índice por user_id:
- -- Acelera operaciones típicas como invalidar tokens activos de un usuario o listar tokens por usuario.
- INDEX idx_prt_user_id (user_id),
- -- Índice por token_hash:
- -- Acelera la validación del token cuando el usuario llega con ?token=... (se busca por hash).
- INDEX idx_prt_token_hash (token_hash),
- -- Índice por expires_at:
- -- Acelera tareas de limpieza (borrar tokens caducados) y consultas por expiración.
- INDEX idx_prt_expires_at (expires_at)
-);
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    token_hash VARCHAR(64) NOT NULL,
+    expires_at DATETIME NOT NULL,
+    used_at DATETIME NULL,
+    created_at DATETIME NOT NULL,
+    request_ip VARCHAR(45) NULL,
+    user_agent VARCHAR(255) NULL,
 
-
+    CONSTRAINT fk_prt_user FOREIGN KEY (user_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE,
+    INDEX idx_prt_user_id (user_id),
+    INDEX idx_prt_token_hash (token_hash),
+    INDEX idx_prt_expires_at (expires_at)
+    ) ENGINE=InnoDB;
 SET FOREIGN_KEY_CHECKS = 1;
 
