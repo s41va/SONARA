@@ -2,6 +2,7 @@ package com.dawm.sonara.controllers;
 
 import com.dawm.sonara.dtos.artista.ArtistaRankingDTO;
 import com.dawm.sonara.entities.Usuario;
+import com.dawm.sonara.repositories.UsuarioRepository;
 import com.dawm.sonara.services.VotoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,12 +14,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/ranking")
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 @Tag(name = "Ranking y Votos", description = "Controlador para gestionar los votos y visualizar rankings locales y globales")
 public class RankingController {
 
     @Autowired
     private VotoService votoService;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     // --- SECCIÓN DE CONSULTAS (RANKING) ---
 
@@ -39,16 +42,20 @@ public class RankingController {
     @Operation(summary = "Votar Artista", description = "Registra un voto único de un usuario para un artista")
     @PostMapping("/votar/{artistaId}")
     public ResponseEntity<?> votar(@PathVariable String artistaId) {
-        // NOTA: Cuando implementes JWT, obtendrás el usuario del SecurityContext.
-        // Por ahora, necesitamos una forma de saber quién vota para probarlo.
-        // Simulamos un usuario para la lógica (necesitarás inyectar tu UserService aquí)
-
         try {
-            // Usuario usuarioLogueado = userService.getObjetoUsuarioLogueado();
-            // votoService.votar(artistaId, usuarioLogueado);
+            // 1. Extraer el email del usuario autenticado (del JWT)
+            String email = org.springframework.security.core.context.SecurityContextHolder
+                    .getContext().getAuthentication().getName();
+
+            // 2. Buscar al usuario en la DB
+            Usuario usuarioLogueado = usuarioRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            // 3. EJECUTAR la lógica
+            votoService.votar(artistaId, usuarioLogueado);
+
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
-            // Devuelve el mensaje "Ya has votado a este artista" o "Artista no encontrado"
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

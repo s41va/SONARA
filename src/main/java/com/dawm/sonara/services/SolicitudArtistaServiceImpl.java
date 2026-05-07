@@ -16,9 +16,18 @@ import java.util.stream.Collectors;
 @Service
 public class SolicitudArtistaServiceImpl implements SolicitudArtistaService {
 
-    @Autowired private SolicitudArtistaRepository solicitudRepository;
-    @Autowired private ArtistaRepository artistaRepository;
-    @Autowired private UsuarioRepository usuarioRepository;
+    @Autowired
+    private SolicitudArtistaRepository solicitudRepository;
+
+    @Autowired
+    private ArtistaRepository artistaRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private GeneroRepository generoRepository;
+
 
     @Override
     @Transactional
@@ -50,26 +59,33 @@ public class SolicitudArtistaServiceImpl implements SolicitudArtistaService {
     public void actualizarYAprobar(Long id, SolicitudArtistaUpdateDTO dto) {
         SolicitudArtista s = solicitudRepository.findById(id).orElseThrow();
 
-        // 1. Creamos el Artista real (Solo con los campos que sí guardamos)
-        Artista artistaOficial = new Artista();
-        artistaOficial.setId("LOC_" + UUID.randomUUID().toString().substring(0, 8));
-        artistaOficial.setNombre(dto.getNombreArtista());
-        artistaOficial.setGenero(dto.getGeneroSugerido());
-        artistaOficial.setFoto(dto.getFotoUrl());
-        artistaOficial.setVotosRanking(0);
+        // 1. Solo creamos el artista si NO existe ya uno con ese nombre
+        if (!artistaRepository.existsByNombre(dto.getNombreArtista())) {
+            Artista artistaOficial = new Artista();
+            artistaOficial.setId("LOC_" + UUID.randomUUID().toString().substring(0, 8));
+            artistaOficial.setNombre(dto.getNombreArtista());
+            artistaOficial.setGenero(dto.getGeneroSugerido());
+            artistaOficial.setFoto(dto.getFotoUrl());
+            artistaOficial.setVotosRanking(0);
 
-        artistaRepository.save(artistaOficial);
+            artistaRepository.save(artistaOficial);
+        }
 
-        // 2. Cerramos la solicitud
+        // 2. Marcamos como aprobada (independientemente de si ya existía el artista)
         s.setEstado(EstadoSolicitud.APROBADA);
         solicitudRepository.save(s);
     }
 
     @Override
-    @Transactional // 3. Añadido Transactional
+    @Transactional
     public void rechazarSolicitud(Long id) {
-        SolicitudArtista s = solicitudRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+        SolicitudArtista s = solicitudRepository.findById(id).orElseThrow();
+
+        if (s.getEstado() == EstadoSolicitud.APROBADA) {
+            artistaRepository.findByNombre(s.getNombreArtista())
+                    .ifPresent(artistaRepository::delete);
+        }
+
         s.setEstado(EstadoSolicitud.RECHAZADA);
         solicitudRepository.save(s);
     }

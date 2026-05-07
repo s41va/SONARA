@@ -4,6 +4,7 @@ import com.dawm.sonara.dtos.artista.ArtistaRankingDTO;
 import com.dawm.sonara.entities.Artista;
 import com.dawm.sonara.entities.Usuario;
 import com.dawm.sonara.entities.Voto;
+import com.dawm.sonara.mappers.RankingMapper;
 import com.dawm.sonara.repositories.ArtistaRepository;
 import com.dawm.sonara.repositories.VotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class VotoServiceImpl implements VotoService {
     @Autowired
     private ArtistaRepository artistaRepository;
 
+    @Autowired
+    private RankingMapper rankingMapper;
+
     @Override
     @Transactional
     public void votar(String artistaId, Usuario usuario) {
@@ -29,47 +33,45 @@ public class VotoServiceImpl implements VotoService {
             throw new RuntimeException("Ya has votado a este artista anteriormente.");
         }
 
-        // 2. Buscar el artista
+        // 2. Buscar el artista (Para asegurar que existe antes de votar)
         Artista artista = artistaRepository.findById(artistaId)
                 .orElseThrow(() -> new RuntimeException("Artista no encontrado con ID: " + artistaId));
 
-        // 3. Crear y guardar el voto con la localidad del usuario
+        // 3. Crear el registro del voto
         Voto voto = new Voto();
         voto.setArtista(artista);
         voto.setUsuario(usuario);
-        // Usamos la localidad que el usuario tiene asignada en su perfil
-        voto.setLocalidad(usuario.getLocalidad().getNombreCiudad());
+
+        // Seguridad: Si el usuario no tiene localidad, evitamos que pete el sistema
+        if (usuario.getLocalidad() != null) {
+            voto.setLocalidad(usuario.getLocalidad().getNombreCiudad());
+        } else {
+            // Valor por defecto para no romper los rankings si el perfil está incompleto
+            voto.setLocalidad("Desconocida");
+        }
+
         votoRepository.save(voto);
 
-        // 4. Actualizar la caché de votos en la entidad Artista para consultas rápidas
+        // 4. Actualizar el contador en la tabla Artista (Caché para el Ranking Global)
         artista.setVotosRanking(artista.getVotosRanking() + 1);
         artistaRepository.save(artista);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ArtistaRankingDTO> getRankingLocal(String ciudad) {
+        // Obtenemos los Object[] crudos del repositorio
         List<Object[]> resultados = votoRepository.findRankingByLocalidad(ciudad);
-        return convertirARankingDTO(resultados);
+        // El mapper se encarga de convertirlos a DTOs limpios
+        return rankingMapper.toDTOList(resultados);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ArtistaRankingDTO> getRankingGlobal() {
+        // Obtenemos los Object[] crudos del repositorio
         List<Object[]> resultados = votoRepository.findRankingGlobal();
-        return convertirARankingDTO(resultados);
-    }
-
-    /**
-     * Convierte la respuesta cruda de la base de datos (Object[]) al DTO que entiende Angular.
-     * Estructura del array: [0:id, 1:nombre, 2:foto, 3:totalVotos]
-     */
-    private List<ArtistaRankingDTO> convertirARankingDTO(List<Object[]> resultados) {
-        return resultados.stream()
-                .map(res -> new ArtistaRankingDTO(
-                        (String) res[0],
-                        (String) res[1],
-                        (String) res[2],
-                        (Long) res[3]
-                ))
-                .toList();
+        // El mapper se encarga de convertirlos a DTOs limpios
+        return rankingMapper.toDTOList(resultados);
     }
 }
