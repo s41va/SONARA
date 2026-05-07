@@ -18,11 +18,7 @@ public class Genero {
     @Column(name = "nombre", nullable = false, length = 50)
     private String nombre;
 
-    @Column(name = "descripcion", nullable = true, length = 400)
-    private String descripcion;
-
-    public Genero(String nombre, String descripcion) {
+    public Genero(String nombre) {
         this.nombre = nombre;
-        this.descripcion = descripcion;
     }
 }

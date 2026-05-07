@@ -23,7 +23,7 @@ public class SolicitudArtista {
 
     private String fotoUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id")
     private Usuario usuarioSolicitante;
 
