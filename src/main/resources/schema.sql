@@ -158,6 +158,21 @@ CREATE TABLE IF NOT EXISTS votos (
     ) ENGINE=InnoDB;
 
 -- ==========================
+-- SOLICITUDES DE NUEVOS ARTISTAS
+-- ==========================
+CREATE TABLE IF NOT EXISTS solicitudes_artistas (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre_artista VARCHAR(100) NOT NULL,
+    genero_sugerido VARCHAR(50),
+    descripcion TEXT, -- Aquí el usuario explica quién es el artista
+    foto_url VARCHAR(255),
+    usuario_id BIGINT,
+    estado VARCHAR(20) DEFAULT 'PENDIENTE', -- PENDIENTE, APROBADA, RECHAZADA
+    fecha_solicitud DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_solicitud_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(usuario_id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+-- ==========================
 -- TOKENS PARA PASSWORD RESET
 -- ==========================
 CREATE TABLE IF NOT EXISTS password_reset_tokens (

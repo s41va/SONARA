@@ -24,7 +24,7 @@ public class ArtistaDTO {
     private String foto;
     private String web;
     private LocalDateTime ultimaSincronizacion;
-    private Integer votosRanking; // Nuevo: Para el ranking
+    private Integer votosRanking;
 
 
 
