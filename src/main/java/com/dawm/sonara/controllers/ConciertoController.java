@@ -21,11 +21,14 @@ import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDate;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/api/concierto")
@@ -78,6 +81,32 @@ public class ConciertoController {
         }
 
         return ResponseEntity.ok(conciertoService.list(pageable));
+    }
+
+    @Operation(
+            summary = "Buscar conciertos con filtros",
+            description = "Devuelve una lista paginada de conciertos filtrados por nombre, fecha y/o ubicación."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista filtrada recuperada exitosamente",
+                    content = @Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = ConciertoDTO.class))
+                    )
+            ),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    @GetMapping("/search")
+    public ResponseEntity<?> searchConciertos(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date,
+            @RequestParam(required = false) String location,
+            @PageableDefault(size = 10, sort = "date") Pageable pageable) {
+
+        // Nota: El service debería manejar la lógica de qué filtros aplicar si vienen nulos
+        return ResponseEntity.ok(conciertoService.findByFilters(name, date, location, pageable));
     }
 
     @Operation(

@@ -1,3 +1,4 @@
+SET FOREIGN_KEY_CHECKS = 0;
 -- ==========================
 -- GENEROS
 -- ==========================
@@ -189,3 +190,5 @@ INSERT INTO votos (usuario_id, artista_id, localidad) VALUES
 (81, '111516', 'Barcelona'), (82, '111516', 'Madrid'),
 (83, '114381', 'Madrid'), (84, '114381', 'Barcelona'),
 (85, '111304', 'Bilbao'), (86, '111304', 'Madrid');
+
+SET FOREIGN_KEY_CHECKS = 1;

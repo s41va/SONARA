@@ -14,9 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -139,6 +142,22 @@ public class ConciertoServiceImpl implements ConciertoService {
         concierto.setLocalidad(localidad);
 
         return ConciertoMapper.toDTO(conciertoRepository.save(concierto));
+    }
+
+    @Override
+    public Page<ConciertoDTO> findByFilters(String name, Date date, String location, Pageable pageable) {
+        // 1. Buscamos las entidades en la base de datos usando filtros
+        // Se asume que el repositorio maneja los parámetros opcionales
+        Page<Concierto> conciertosPage = conciertoRepository.findByFilters(name, date, location, pageable);
+
+        // 2. Si necesitas lanzar una excepción en caso de que la página venga vacía (opcional)
+        if (conciertosPage.isEmpty()) {
+            throw new ResourceNotFoundException("Conciertos", "filtros", name + ", " + location);
+        }
+
+        // 3. Mapeamos la página de entidades a una página de DTOs
+        // Usamos el método de referencia del Mapper que ya tienes definido
+        return conciertosPage.map(ConciertoMapper::toDTO);
     }
 
     // ===============================

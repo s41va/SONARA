@@ -97,6 +97,8 @@ public class SecurityConfig {
                         // Ejemplos por roles
                         .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
                         .requestMatchers("/api/profile/perfil").hasAnyRole("ADMIN", "MANAGER", "USER")
+                        .requestMatchers("/api/concierto/**").hasRole("ADMIN")
+                        .requestMatchers("/api/concierto").authenticated()
                         //.requestMatchers("/api/localidad**").hasAnyRole("ADMIN", "MANAGER")
                         //.requestMatchers("/api/profile**").hasRole("USER")                    // Solo USER
                         // Lo demas requiere token valido
