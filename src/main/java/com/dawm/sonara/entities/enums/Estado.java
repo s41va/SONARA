@@ -1,5 +1,5 @@
 package com.dawm.sonara.entities.enums;
 
-public enum EstadoSolicitud {
+public enum Estado {
     PENDIENTE, APROBADA, RECHAZADA
 }

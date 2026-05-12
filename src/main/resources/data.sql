@@ -96,30 +96,14 @@ INSERT IGNORE INTO usuario_generos_favoritos (usuario_id, genero_id) VALUES
 
 
 -- ==========================
--- CONCIERTOS (20 Registros)
+-- CONCIERTOS
 -- ==========================
-INSERT IGNORE INTO conciertos (artista_id, artista_nombre, localidad_id, fecha_hora, local, descripcion) VALUES
-('111516', 'Coldplay', 8, '2026-06-15 21:00:00', 'Estadi Olímpic', 'Gira Music of the Spheres'),
-('142144', 'Rosalía', 28, '2026-07-20 22:00:00', 'WiZink Center', 'Presentación nuevo álbum'),
-('111239', 'Eminem', 8, '2026-08-10 20:30:00', 'Palau Sant Jordi', 'The Eminem Show Revival Tour'),
-('134722', 'Bad Bunny', 41, '2026-05-12 21:30:00', 'Estadio La Cartuja', 'Most Wanted Tour España'),
-('112045', 'Taylor Swift', 28, '2026-09-05 20:00:00', 'Estadio Santiago Bernabéu', 'The Eras Tour (Extended)'),
-('114381', 'The Weeknd', 29, '2026-07-15 22:00:00', 'Estadio La Rosaleda', 'After Hours Til Dawn'),
-('111304', 'Arctic Monkeys', 48, '2026-10-12 21:00:00', 'Bizkaia Arena BEC', 'The Car Tour'),
-('127051', 'Quevedo', 35, '2026-04-20 20:00:00', 'Estadio Gran Canaria', 'DQE Tour Final'),
-('111247', 'Metallica', 28, '2026-07-07 21:00:00', 'Estadio Metropolitano', 'M72 World Tour'),
-('111279', 'Iron Maiden', 30, '2026-06-30 19:30:00', 'Estadio Nueva Condomina', 'The Future Past Tour'),
-('112035', 'Lady Gaga', 8, '2026-11-20 21:00:00', 'Palau Sant Jordi', 'Chromatica Ball Return'),
-('111391', 'Imagine Dragons', 46, '2026-08-25 21:30:00', 'Estadio Ciudad de Valencia', 'Mercury World Tour'),
-('111318', 'Muse', 15, '2026-07-12 22:00:00', 'Estadio de Riazor', 'Will of the People Tour'),
-('114364', 'Harry Styles', 28, '2026-05-28 20:45:00', 'WiZink Center', 'Love on Tour 2026'),
-('135315', 'Karol G', 41, '2026-06-10 21:30:00', 'Estadio Benito Villamarín', 'Mañana será Bonito Tour'),
-('111564', 'Dua Lipa', 8, '2026-09-18 21:00:00', 'Palau Sant Jordi', 'Future Nostalgia Deluxe'),
-('111259', 'Red Hot Chili Peppers', 41, '2026-07-03 22:00:00', 'Estadio de la Cartuja', 'Unlimited Love Tour'),
-('111306', 'The Killers', 31, '2026-07-10 23:00:00', 'Recinto de Festivales', 'Festival San Fermín Especial'),
-('111514', 'Radiohead', 28, '2026-10-01 20:00:00', 'WiZink Center', 'A Moon Shaped Pool Anniversary'),
-('111394', 'Gorillaz', 8, '2026-06-05 22:30:00', 'Parc del Fòrum', 'Primavera Sound Headliner');
-
+INSERT IGNORE INTO conciertos (id, artista_id, artista_nombre, localidad_id, fecha_hora, local, descripcion, precio, stock) VALUES
+(1, '111516', 'Coldplay', 8, '2026-06-15 21:00:00', 'Estadi Olímpic', 'Gira Music of the Spheres', 75.00, 500),
+(2, '142144', 'Rosalía', 28, '2026-07-20 22:00:00', 'WiZink Center', 'Presentación nuevo álbum', 60.00, 300),
+(3, '111239', 'Eminem', 8, '2026-08-10 20:30:00', 'Palau Sant Jordi', 'The Eminem Show Revival Tour', 90.00, 200),
+(4, '134722', 'Bad Bunny', 41, '2026-05-12 21:30:00', 'Estadio La Cartuja', 'Most Wanted Tour España', 85.50, 150),
+(5, '112045', 'Taylor Swift', 28, '2026-09-05 20:00:00', 'Estadio Santiago Bernabéu', 'The Eras Tour (Extended)', 120.00, 50);
 -- ==========================
 -- ARTISTAS FAVORITOS DE USUARIOS
 -- ==========================

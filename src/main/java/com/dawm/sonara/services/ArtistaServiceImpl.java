@@ -25,38 +25,44 @@ public class ArtistaServiceImpl implements ArtistaService {
     @Autowired
     private GeneroService generoService;
 
-    @Autowired // Inyectado como Bean (debes tener el @Bean en una Config class)
+    @Autowired
     private RestTemplate restTemplate;
 
     @Value("${theaudiodb.api.url}")
     private String apiUrl;
 
-    /**
-     * Busca un artista en la API externa.
-     * Si lo encuentra, devuelve un DTO listo para ser usado o guardado.
-     */
+    // --- MÉTODOS DE BÚSQUEDA EXTERNA ---
+
     @Override
     public ArtistaDTO buscarPorNombre(String nombre) {
-        // Construimos la URL: ej. https://theaudiodb.com/api/v1/json/3/search.php?s=Eminem
         String url = apiUrl + "/search.php?s=" + nombre;
-
         try {
             ArtistaResponse response = restTemplate.getForObject(url, ArtistaResponse.class);
-
             if (response != null && response.getArtistas() != null && !response.getArtistas().isEmpty()) {
-                // Devolvemos el primer resultado mapeado a DTO
                 return new ArtistaDTO(response.getArtistas().get(0));
             }
         } catch (Exception e) {
-            // Loguear el error si la API falla, pero no romper la app
-            System.err.println("Error llamando a la API de AudioDB: " + e.getMessage());
+            System.err.println("Error buscando por nombre en AudioDB: " + e.getMessage());
         }
         return null;
     }
 
-    /**
-     * Obtiene los artistas de nuestra base de datos local.
-     */
+    @Override
+    public ArtistaDTO buscarPorIdExterno(String id) {
+        String url = apiUrl + "/artist.php?i=" + id;
+        try {
+            ArtistaResponse response = restTemplate.getForObject(url, ArtistaResponse.class);
+            if (response != null && response.getArtistas() != null && !response.getArtistas().isEmpty()) {
+                return new ArtistaDTO(response.getArtistas().get(0));
+            }
+        } catch (Exception e) {
+            System.err.println("Error buscando por ID en AudioDB: " + e.getMessage());
+        }
+        return null;
+    }
+
+    // --- MÉTODOS DE BASE DE DATOS LOCAL ---
+
     @Override
     public List<ArtistaDTO> obtenerTodosOrdenados(String campo, String direccion) {
         Sort sort = direccion.equalsIgnoreCase("asc") ? Sort.by(campo).ascending() : Sort.by(campo).descending();
@@ -65,25 +71,16 @@ public class ArtistaServiceImpl implements ArtistaService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Busca en local y añade información extra de la API (como biografía o web)
-     * que no guardamos por ahorrar espacio.
-     */
     @Override
     public ArtistaDTO obtenerPorIdCompleto(String id) {
         Artista local = artistaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("artista", "id", id));
 
-        // Enriquecemos con datos frescos de la API
         ArtistaDTO dtoApi = buscarPorNombre(local.getNombre());
-
         if (dtoApi != null) {
-            // Respetamos los votos que ya tenemos en nuestra base de datos
             dtoApi.setVotosRanking(local.getVotosRanking());
             return dtoApi;
         }
-
-        // Si la API falla, devolvemos lo que tenemos en local
         return new ArtistaDTO(local);
     }
 
@@ -96,32 +93,22 @@ public class ArtistaServiceImpl implements ArtistaService {
         artistaRepository.deleteById(id);
     }
 
-    /**
-     * El "Puente": Si el artista no existe en local, lo crea usando los datos del DTO
-     * (incluyendo la foto que ahora sí persiste).
-     */
     @Override
     @Transactional
     public ArtistaDTO guardarArtistaLocal(ArtistaDTO dto) {
+        // AQUÍ BUSCA PRIMERO: Si ya está en la DB local, no hace nada más
         return artistaRepository.findById(dto.getId())
-                .map(ArtistaDTO::new) // Si ya existe, lo devuelve
+                .map(ArtistaDTO::new)
                 .orElseGet(() -> {
+                    // Solo si NO está, lo crea de cero
                     Artista nuevo = new Artista();
                     nuevo.setId(dto.getId());
                     nuevo.setNombre(dto.getNombre());
                     nuevo.setGenero(dto.getGenero());
-
-                    // persistimos la foto en la columna VARCHAR que añadimos
                     nuevo.setFoto(dto.getFoto());
-
-                    // Estos se mantienen @Transient en la Entidad (no se guardan en DB)
-                    nuevo.setBiografia(dto.getBiografia());
-                    nuevo.setWeb(dto.getWeb());
-
                     nuevo.setVotosRanking(0);
                     nuevo.setUltimaSincronizacion(LocalDateTime.now());
 
-                    // Mantenemos la integridad de géneros
                     if (dto.getGenero() != null) {
                         generoService.ensureExists(dto.getGenero());
                     }

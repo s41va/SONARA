@@ -2,9 +2,8 @@ package com.dawm.sonara.services;
 
 import com.dawm.sonara.dtos.solicitudArtista.*;
 import com.dawm.sonara.entities.*;
-import com.dawm.sonara.entities.enums.EstadoSolicitud;
+import com.dawm.sonara.entities.enums.Estado;
 import com.dawm.sonara.repositories.*;
-import com.dawm.sonara.services.SolicitudArtistaService;
 import com.dawm.sonara.mappers.SolicitudArtistaMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,7 +47,7 @@ public class SolicitudArtistaServiceImpl implements SolicitudArtistaService {
     @Override
     @Transactional(readOnly = true)
     public List<SolicitudArtistaDTO> obtenerPendientes() {
-        return solicitudRepository.findByEstado(EstadoSolicitud.PENDIENTE)
+        return solicitudRepository.findByEstado(Estado.PENDIENTE)
                 .stream()
                 .map(SolicitudArtistaMapper::toDTO)
                 .collect(Collectors.toList());
@@ -72,7 +71,7 @@ public class SolicitudArtistaServiceImpl implements SolicitudArtistaService {
         }
 
         // 2. Marcamos como aprobada (independientemente de si ya existía el artista)
-        s.setEstado(EstadoSolicitud.APROBADA);
+        s.setEstado(Estado.APROBADA);
         solicitudRepository.save(s);
     }
 
@@ -81,12 +80,12 @@ public class SolicitudArtistaServiceImpl implements SolicitudArtistaService {
     public void rechazarSolicitud(Long id) {
         SolicitudArtista s = solicitudRepository.findById(id).orElseThrow();
 
-        if (s.getEstado() == EstadoSolicitud.APROBADA) {
+        if (s.getEstado() == Estado.APROBADA) {
             artistaRepository.findByNombre(s.getNombreArtista())
                     .ifPresent(artistaRepository::delete);
         }
 
-        s.setEstado(EstadoSolicitud.RECHAZADA);
+        s.setEstado(Estado.RECHAZADA);
         solicitudRepository.save(s);
     }
 }

@@ -14,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/ranking")
-@Tag(name = "Ranking y Votos", description = "Controlador para gestionar los votos y visualizar rankings locales y globales")
 public class RankingController {
 
     @Autowired

@@ -87,12 +87,14 @@ CREATE TABLE IF NOT EXISTS usuario_generos_favoritos (
 -- ==========================
 CREATE TABLE IF NOT EXISTS conciertos (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    artista_id VARCHAR(50), -- Guardamos el ID de la API (idArtist)
+    artista_id VARCHAR(50),
     artista_nombre VARCHAR(100),
     localidad_id BIGINT,
     fecha_hora DATETIME,
     local VARCHAR(150),
     descripcion TEXT,
+    precio DECIMAL(10,2) DEFAULT 45.00,
+    stock INT DEFAULT 100,
     CONSTRAINT fk_concierto_localidad FOREIGN KEY (localidad_id) REFERENCES localidad(localidad_id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
@@ -192,3 +194,18 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens (
     ) ENGINE=InnoDB;
 SET FOREIGN_KEY_CHECKS = 1;
 
+
+-- ==========================
+-- INFORMACION PAGO (Stripe)
+-- ==========================
+CREATE TABLE IF NOT EXISTS informacion_pago (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id BIGINT NOT NULL,
+    concierto_id BIGINT NOT NULL,
+    id_transaccion_stripe VARCHAR(255),
+    monto_pago DECIMAL(10,2),
+    fecha_pago DATETIME DEFAULT CURRENT_TIMESTAMP,
+    estado_pago VARCHAR(50), -- PENDING, SUCCESS, FAILED
+    CONSTRAINT fk_pago_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE,
+    CONSTRAINT fk_pago_concierto FOREIGN KEY (concierto_id) REFERENCES conciertos(id) ON DELETE CASCADE
+) ENGINE=InnoDB;

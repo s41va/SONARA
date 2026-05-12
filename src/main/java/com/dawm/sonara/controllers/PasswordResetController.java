@@ -19,8 +19,7 @@ import java.util.Map;
  * Controlador REST para el flujo de recuperación de contraseña con Angular.
  */
 @RestController
-@RequestMapping("/api/auth") // Añadimos /api por convención REST
-@CrossOrigin(origins = "http://localhost:4200") // Permitir peticiones desde Angular
+@RequestMapping("/api/auth")
 public class PasswordResetController {
 
     @Autowired

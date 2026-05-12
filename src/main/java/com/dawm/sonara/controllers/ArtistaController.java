@@ -12,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/artistas")
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 @Tag(name = "Artistas", description = "Gestión del catálogo de artistas e importación desde TheAudioDB")
 public class ArtistaController {
 

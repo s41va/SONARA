@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/canciones")
-@Tag(name = "Canciones", description = "Controlador para la búsqueda y gestión de canciones")
 public class CancionController {
 
     @Autowired

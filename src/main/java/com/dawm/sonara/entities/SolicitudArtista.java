@@ -1,6 +1,6 @@
 package com.dawm.sonara.entities;
 
-import com.dawm.sonara.entities.enums.EstadoSolicitud;
+import com.dawm.sonara.entities.enums.Estado;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -28,7 +28,7 @@ public class SolicitudArtista {
     private Usuario usuarioSolicitante;
 
     @Enumerated(EnumType.STRING)
-    private EstadoSolicitud estado = EstadoSolicitud.PENDIENTE;
+    private Estado estado = Estado.PENDIENTE;
 
     private LocalDateTime fechaSolicitud = LocalDateTime.now();
 }
