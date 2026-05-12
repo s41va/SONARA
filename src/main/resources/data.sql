@@ -52,13 +52,14 @@ INSERT IGNORE INTO localidad (pais, nombre_ciudad, codigo_postal) VALUES
 -- ARTISTAS (Usando IDs reales de TheAudioDB)
 -- ==========================
 INSERT IGNORE INTO artista (id, nombre, genero, foto, votos_ranking) VALUES
-('111239', 'Eminem', 'Rap', NULL, 150),
-('134722', 'Bad Bunny', 'Reggaeton', NULL, 230),
-('112045', 'Taylor Swift', 'Pop', NULL, 190),
-('142144', 'Rosalía', 'Pop', NULL, 120),
-('111516', 'Coldplay', 'Rock', NULL, 85),
-('114381', 'The Weeknd', 'R&B', NULL, 110),
-('111304', 'Arctic Monkeys', 'Indie Rock', NULL, 95);
+('111239', 'Eminem', 'Rap', NULL, 6),
+('134722', 'Bad Bunny', 'Reggaeton', NULL, 6),
+('112045', 'Taylor Swift', 'Pop', NULL, 6),
+('142144', 'Rosalía', 'Pop', NULL, 5),
+('111516', 'Coldplay', 'Rock', NULL, 6),
+('114381', 'The Weeknd', 'R&B', NULL, 6),
+('111304', 'Arctic Monkeys', 'Indie Rock', NULL, 6),
+('LOC_0a4b8056', 'Yung Beef', 'Trap', NULL, 57);
 
 -- ==========================
 -- USUARIOS
@@ -93,7 +94,6 @@ INSERT IGNORE INTO usuario_roles (usuario_id, rol_id) VALUES
 -- ==========================
 INSERT IGNORE INTO usuario_generos_favoritos (usuario_id, genero_id) VALUES
 (1, 4), (2, 1), (3, 2), (4, 2), (5, 1);
-
 
 -- ==========================
 -- CONCIERTOS
@@ -143,11 +143,49 @@ INSERT IGNORE INTO usuario_profiles (usuario_id, first_name, last_name, phone_nu
 (5, 'Lucía', 'Fernández Sanz', '644555666', 'Ingeniera de sonido en mis ratos libres.', 'es');
 
 -- ==========================
--- VOTOS
+-- VOTOS (Cobertura Total Nacional + Demanda Masiva)
 -- ==========================
 INSERT INTO votos (usuario_id, artista_id, localidad) VALUES
-(1, '111239', 'Sevilla'), -- Eminem en Sevilla
-(2, '111239', 'Sevilla'), -- Eminem otro voto en Sevilla
-(3, '134722', 'Madrid'),  -- Bad Bunny en Madrid
-(4, '112045', 'Madrid'),  -- Taylor Swift en Madrid
-(5, '111239', 'Sevilla'); -- Eminem ya lleva 3 en Sevilla
+-- YUNG BEEF (LOC_0a4b8056) - Cobertura de las 52 provincias
+(1, 'LOC_0a4b8056', 'Vitoria-Gasteiz'), (2, 'LOC_0a4b8056', 'Albacete'), (3, 'LOC_0a4b8056', 'Alicante'),
+(4, 'LOC_0a4b8056', 'Almería'), (5, 'LOC_0a4b8056', 'Ávila'), (6, 'LOC_0a4b8056', 'Badajoz'),
+(7, 'LOC_0a4b8056', 'Palma'), (8, 'LOC_0a4b8056', 'Barcelona'), (9, 'LOC_0a4b8056', 'Burgos'),
+(10, 'LOC_0a4b8056', 'Cáceres'), (11, 'LOC_0a4b8056', 'Cádiz'), (12, 'LOC_0a4b8056', 'Castellón de la Plana'),
+(13, 'LOC_0a4b8056', 'Ciudad Real'), (14, 'LOC_0a4b8056', 'Córdoba'), (15, 'LOC_0a4b8056', 'A Coruña'),
+(16, 'LOC_0a4b8056', 'Cuenca'), (17, 'LOC_0a4b8056', 'Girona'), (18, 'LOC_0a4b8056', 'Granada'),
+(19, 'LOC_0a4b8056', 'Guadalajara'), (20, 'LOC_0a4b8056', 'San Sebastián'), (21, 'LOC_0a4b8056', 'Huelva'),
+(22, 'LOC_0a4b8056', 'Huesca'), (23, 'LOC_0a4b8056', 'Jaén'), (24, 'LOC_0a4b8056', 'León'),
+(25, 'LOC_0a4b8056', 'Lleida'), (26, 'LOC_0a4b8056', 'Logroño'), (27, 'LOC_0a4b8056', 'Lugo'),
+(28, 'LOC_0a4b8056', 'Madrid'), (29, 'LOC_0a4b8056', 'Málaga'), (30, 'LOC_0a4b8056', 'Murcia'),
+(31, 'LOC_0a4b8056', 'Pamplona'), (32, 'LOC_0a4b8056', 'Ourense'), (33, 'LOC_0a4b8056', 'Oviedo'),
+(34, 'LOC_0a4b8056', 'Palencia'), (35, 'LOC_0a4b8056', 'Las Palmas de Gran Canaria'),
+(36, 'LOC_0a4b8056', 'Pontevedra'), (37, 'LOC_0a4b8056', 'Salamanca'), (38, 'LOC_0a4b8056', 'Santa Cruz de Tenerife'),
+(39, 'LOC_0a4b8056', 'Santander'), (40, 'LOC_0a4b8056', 'Segovia'), (41, 'LOC_0a4b8056', 'Sevilla'),
+(42, 'LOC_0a4b8056', 'Soria'), (43, 'LOC_0a4b8056', 'Tarragona'), (44, 'LOC_0a4b8056', 'Teruel'),
+(45, 'LOC_0a4b8056', 'Toledo'), (46, 'LOC_0a4b8056', 'Valencia'), (47, 'LOC_0a4b8056', 'Valladolid'),
+(48, 'LOC_0a4b8056', 'Bilbao'), (49, 'LOC_0a4b8056', 'Zamora'), (50, 'LOC_0a4b8056', 'Zaragoza'),
+(51, 'LOC_0a4b8056', 'Ceuta'), (52, 'LOC_0a4b8056', 'Melilla'),
+-- Refuerzo Yung Beef en sus feudos
+(53, 'LOC_0a4b8056', 'Granada'), (54, 'LOC_0a4b8056', 'Granada'), (55, 'LOC_0a4b8056', 'Granada'),
+(56, 'LOC_0a4b8056', 'Madrid'), (57, 'LOC_0a4b8056', 'Madrid'),
+
+-- EMINEM (111239)
+(58, '111239', 'Sevilla'), (59, '111239', 'Sevilla'), (60, '111239', 'Sevilla'), (61, '111239', 'Sevilla'),
+(62, '111239', 'Barcelona'), (63, '111239', 'Barcelona'),
+
+-- BAD BUNNY (134722)
+(64, '134722', 'Madrid'), (65, '134722', 'Madrid'), (66, '134722', 'Madrid'), (67, '134722', 'Valencia'),
+(68, '134722', 'Valencia'), (69, '134722', 'Valencia'),
+
+-- TAYLOR SWIFT (112045)
+(70, '112045', 'Madrid'), (71, '112045', 'Madrid'), (72, '112045', 'Madrid'), (73, '112045', 'Madrid'),
+(74, '112045', 'Barcelona'), (75, '112045', 'Barcelona'),
+
+-- ROSALÍA (142144)
+(76, '142144', 'Barcelona'), (77, '142144', 'Barcelona'), (78, '142144', 'Barcelona'), (79, '142144', 'Málaga'),
+(80, '142144', 'Málaga'),
+
+-- COLDPLAY, THE WEEKND, ARCTIC MONKEYS
+(81, '111516', 'Barcelona'), (82, '111516', 'Madrid'),
+(83, '114381', 'Madrid'), (84, '114381', 'Barcelona'),
+(85, '111304', 'Bilbao'), (86, '111304', 'Madrid');
