@@ -148,44 +148,44 @@ INSERT IGNORE INTO usuario_profiles (usuario_id, first_name, last_name, phone_nu
 INSERT INTO votos (usuario_id, artista_id, localidad) VALUES
 -- YUNG BEEF (LOC_0a4b8056) - Cobertura de las 52 provincias
 (1, 'LOC_0a4b8056', 'Vitoria-Gasteiz'), (2, 'LOC_0a4b8056', 'Albacete'), (3, 'LOC_0a4b8056', 'Alicante'),
-(4, 'LOC_0a4b8056', 'Almería'), (5, 'LOC_0a4b8056', 'Ávila'), (6, 'LOC_0a4b8056', 'Badajoz'),
-(7, 'LOC_0a4b8056', 'Palma'), (8, 'LOC_0a4b8056', 'Barcelona'), (9, 'LOC_0a4b8056', 'Burgos'),
-(10, 'LOC_0a4b8056', 'Cáceres'), (11, 'LOC_0a4b8056', 'Cádiz'), (12, 'LOC_0a4b8056', 'Castellón de la Plana'),
-(13, 'LOC_0a4b8056', 'Ciudad Real'), (14, 'LOC_0a4b8056', 'Córdoba'), (15, 'LOC_0a4b8056', 'A Coruña'),
-(16, 'LOC_0a4b8056', 'Cuenca'), (17, 'LOC_0a4b8056', 'Girona'), (18, 'LOC_0a4b8056', 'Granada'),
-(19, 'LOC_0a4b8056', 'Guadalajara'), (20, 'LOC_0a4b8056', 'San Sebastián'), (21, 'LOC_0a4b8056', 'Huelva'),
-(22, 'LOC_0a4b8056', 'Huesca'), (23, 'LOC_0a4b8056', 'Jaén'), (24, 'LOC_0a4b8056', 'León'),
-(25, 'LOC_0a4b8056', 'Lleida'), (26, 'LOC_0a4b8056', 'Logroño'), (27, 'LOC_0a4b8056', 'Lugo'),
-(28, 'LOC_0a4b8056', 'Madrid'), (29, 'LOC_0a4b8056', 'Málaga'), (30, 'LOC_0a4b8056', 'Murcia'),
-(31, 'LOC_0a4b8056', 'Pamplona'), (32, 'LOC_0a4b8056', 'Ourense'), (33, 'LOC_0a4b8056', 'Oviedo'),
-(34, 'LOC_0a4b8056', 'Palencia'), (35, 'LOC_0a4b8056', 'Las Palmas de Gran Canaria'),
-(36, 'LOC_0a4b8056', 'Pontevedra'), (37, 'LOC_0a4b8056', 'Salamanca'), (38, 'LOC_0a4b8056', 'Santa Cruz de Tenerife'),
-(39, 'LOC_0a4b8056', 'Santander'), (40, 'LOC_0a4b8056', 'Segovia'), (41, 'LOC_0a4b8056', 'Sevilla'),
-(42, 'LOC_0a4b8056', 'Soria'), (43, 'LOC_0a4b8056', 'Tarragona'), (44, 'LOC_0a4b8056', 'Teruel'),
-(45, 'LOC_0a4b8056', 'Toledo'), (46, 'LOC_0a4b8056', 'Valencia'), (47, 'LOC_0a4b8056', 'Valladolid'),
-(48, 'LOC_0a4b8056', 'Bilbao'), (49, 'LOC_0a4b8056', 'Zamora'), (50, 'LOC_0a4b8056', 'Zaragoza'),
-(51, 'LOC_0a4b8056', 'Ceuta'), (52, 'LOC_0a4b8056', 'Melilla'),
--- Refuerzo Yung Beef en sus feudos
-(53, 'LOC_0a4b8056', 'Granada'), (54, 'LOC_0a4b8056', 'Granada'), (55, 'LOC_0a4b8056', 'Granada'),
-(56, 'LOC_0a4b8056', 'Madrid'), (57, 'LOC_0a4b8056', 'Madrid'),
+(4, 'LOC_0a4b8056', 'Almería'), (5, 'LOC_0a4b8056', 'Ávila'), (1, 'LOC_0a4b8056', 'Badajoz'),
+(2, 'LOC_0a4b8056', 'Palma'), (3, 'LOC_0a4b8056', 'Barcelona'), (4, 'LOC_0a4b8056', 'Burgos'),
+(5, 'LOC_0a4b8056', 'Cáceres'), (1, 'LOC_0a4b8056', 'Cádiz'), (2, 'LOC_0a4b8056', 'Castellón de la Plana'),
+(3, 'LOC_0a4b8056', 'Ciudad Real'), (4, 'LOC_0a4b8056', 'Córdoba'), (5, 'LOC_0a4b8056', 'A Coruña'),
+(1, 'LOC_0a4b8056', 'Cuenca'), (2, 'LOC_0a4b8056', 'Girona'), (3, 'LOC_0a4b8056', 'Granada'),
+(4, 'LOC_0a4b8056', 'Guadalajara'), (5, 'LOC_0a4b8056', 'San Sebastián'), (1, 'LOC_0a4b8056', 'Huelva'),
+(2, 'LOC_0a4b8056', 'Huesca'), (3, 'LOC_0a4b8056', 'Jaén'), (4, 'LOC_0a4b8056', 'León'),
+(5, 'LOC_0a4b8056', 'Lleida'), (1, 'LOC_0a4b8056', 'Logroño'), (2, 'LOC_0a4b8056', 'Lugo'),
+(3, 'LOC_0a4b8056', 'Madrid'), (4, 'LOC_0a4b8056', 'Málaga'), (5, 'LOC_0a4b8056', 'Murcia'),
+(1, 'LOC_0a4b8056', 'Pamplona'), (2, 'LOC_0a4b8056', 'Ourense'), (3, 'LOC_0a4b8056', 'Oviedo'),
+(4, 'LOC_0a4b8056', 'Palencia'), (5, 'LOC_0a4b8056', 'Las Palmas de Gran Canaria'),
+(1, 'LOC_0a4b8056', 'Pontevedra'), (2, 'LOC_0a4b8056', 'Salamanca'), (3, 'LOC_0a4b8056', 'Santa Cruz de Tenerife'),
+(4, 'LOC_0a4b8056', 'Santander'), (5, 'LOC_0a4b8056', 'Segovia'), (1, 'LOC_0a4b8056', 'Sevilla'),
+(2, 'LOC_0a4b8056', 'Soria'), (3, 'LOC_0a4b8056', 'Tarragona'), (4, 'LOC_0a4b8056', 'Teruel'),
+(5, 'LOC_0a4b8056', 'Toledo'), (1, 'LOC_0a4b8056', 'Valencia'), (2, 'LOC_0a4b8056', 'Valladolid'),
+(3, 'LOC_0a4b8056', 'Bilbao'), (4, 'LOC_0a4b8056', 'Zamora'), (5, 'LOC_0a4b8056', 'Zaragoza'),
+(1, 'LOC_0a4b8056', 'Ceuta'), (2, 'LOC_0a4b8056', 'Melilla'),
+-- Refuerzo Yung Beef
+(3, 'LOC_0a4b8056', 'Granada'), (4, 'LOC_0a4b8056', 'Granada'), (5, 'LOC_0a4b8056', 'Granada'),
+(1, 'LOC_0a4b8056', 'Madrid'), (2, 'LOC_0a4b8056', 'Madrid'),
 
 -- EMINEM (111239)
-(58, '111239', 'Sevilla'), (59, '111239', 'Sevilla'), (60, '111239', 'Sevilla'), (61, '111239', 'Sevilla'),
-(62, '111239', 'Barcelona'), (63, '111239', 'Barcelona'),
+(3, '111239', 'Sevilla'), (4, '111239', 'Sevilla'), (5, '111239', 'Sevilla'), (1, '111239', 'Sevilla'),
+(2, '111239', 'Barcelona'), (3, '111239', 'Barcelona'),
 
 -- BAD BUNNY (134722)
-(64, '134722', 'Madrid'), (65, '134722', 'Madrid'), (66, '134722', 'Madrid'), (67, '134722', 'Valencia'),
-(68, '134722', 'Valencia'), (69, '134722', 'Valencia'),
+(4, '134722', 'Madrid'), (5, '134722', 'Madrid'), (1, '134722', 'Madrid'), (2, '134722', 'Valencia'),
+(3, '134722', 'Valencia'), (4, '134722', 'Valencia'),
 
 -- TAYLOR SWIFT (112045)
-(70, '112045', 'Madrid'), (71, '112045', 'Madrid'), (72, '112045', 'Madrid'), (73, '112045', 'Madrid'),
-(74, '112045', 'Barcelona'), (75, '112045', 'Barcelona'),
+(5, '112045', 'Madrid'), (1, '112045', 'Madrid'), (2, '112045', 'Madrid'), (3, '112045', 'Madrid'),
+(4, '112045', 'Barcelona'), (5, '112045', 'Barcelona'),
 
 -- ROSALÍA (142144)
-(76, '142144', 'Barcelona'), (77, '142144', 'Barcelona'), (78, '142144', 'Barcelona'), (79, '142144', 'Málaga'),
-(80, '142144', 'Málaga'),
+(1, '142144', 'Barcelona'), (2, '142144', 'Barcelona'), (3, '142144', 'Barcelona'), (4, '142144', 'Málaga'),
+(5, '142144', 'Málaga'),
 
--- COLDPLAY, THE WEEKND, ARCTIC MONKEYS
-(81, '111516', 'Barcelona'), (82, '111516', 'Madrid'),
-(83, '114381', 'Madrid'), (84, '114381', 'Barcelona'),
-(85, '111304', 'Bilbao'), (86, '111304', 'Madrid');
+-- OTROS
+(1, '111516', 'Barcelona'), (2, '111516', 'Madrid'),
+(3, '114381', 'Madrid'), (4, '114381', 'Barcelona'),
+(5, '111304', 'Bilbao'), (1, '111304', 'Madrid');

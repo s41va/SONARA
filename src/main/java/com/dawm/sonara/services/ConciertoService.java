@@ -17,7 +17,7 @@ public interface ConciertoService {
     List<ConciertoDTO> listAll(Sort sort);
     Page<ConciertoDTO> listPage(Pageable pageable);
     Page<ConciertoDTO> list(Pageable pageable);
-
+    Page<ConciertoDTO> list(String nombre, String localidad, String fecha, Pageable pageable);
     Concierto findById(Long id);
     ConciertoDetailDTO getDetail(Long id);
 

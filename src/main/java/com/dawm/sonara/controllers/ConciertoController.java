@@ -53,9 +53,8 @@ public class ConciertoController {
         return ResponseEntity.ok(page);
     }*/
     @Operation(
-            summary = "Obtener todos los conciertos",
-            description = "Devuelve una lista paginada de todos los conciertos disponibles en el sistema. " +
-                    "Si se envía el parámetro 'unpaged=true', devuelve la lista completa sin paginación."
+            summary = "Obtener conciertos con filtros",
+            description = "Devuelve una lista paginada de conciertos. Permite filtrar por nombre de artista, ciudad o fecha."
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -71,13 +70,21 @@ public class ConciertoController {
     @GetMapping
     public ResponseEntity<?> listAllConciertos(
             @PageableDefault(size = 10, sort = "id") Pageable pageable,
+            @RequestParam(value = "nombre", required = false) String nombre,
+            @RequestParam(value = "ubi", required = false) String localidad,
+            @RequestParam(value = "fecha", required = false) String fecha,
             @RequestParam(defaultValue = "false") boolean unpaged) {
 
+        logger.info("Solicitando conciertos. Filtros -> nombre: {}, localidad: {}, fecha: {}", nombre, localidad, fecha);
+
         if (unpaged) {
-            return ResponseEntity.ok(conciertoService.listAll(Sort.by("name").ascending()));
+            // Se asume que listAll también podría recibir filtros si fuera necesario,
+            // por ahora se mantiene la lógica de lista completa por nombre de artista
+            return ResponseEntity.ok(conciertoService.listAll(Sort.by("artistaNombre").ascending()));
         }
 
-        return ResponseEntity.ok(conciertoService.list(pageable));
+        // LLAMADA CLAVE: Pasamos los parámetros de búsqueda al método list del service
+        return ResponseEntity.ok(conciertoService.list(nombre, localidad, fecha, pageable));
     }
 
     @Operation(
@@ -131,7 +138,7 @@ public class ConciertoController {
     public ResponseEntity<ConciertoDTO> updateConcierto(@PathVariable Long id,
                                                       @Valid @RequestBody ConciertoUpdateDTO conciertoDTO) {
         logger.info("Actualizando concierto con ID {}", conciertoDTO.getId());
-
+        conciertoDTO.setId(id);
         ConciertoDTO updated = conciertoService.update(conciertoDTO);
         logger.info("Concierto con ID {} actualizado con éxito", conciertoDTO.getId());
 
