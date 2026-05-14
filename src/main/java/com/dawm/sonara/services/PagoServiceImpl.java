@@ -57,7 +57,7 @@ public class PagoServiceImpl implements PagoService {
                                                         SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                                                 .setName("Entrada Concierto ID: " + conciertoId)
                                                                 .build()
-                                                )
+                                                    )
                                                 .build()
                                 )
                                 .build()
