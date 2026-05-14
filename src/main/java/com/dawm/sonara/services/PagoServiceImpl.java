@@ -10,7 +10,9 @@ import com.dawm.sonara.repositories.PagoRepository;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
+import com.stripe.model.checkout.Session;
 import com.stripe.param.PaymentIntentCreateParams;
+import com.stripe.param.checkout.SessionCreateParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -33,38 +35,39 @@ public class PagoServiceImpl implements PagoService {
 
     @Override
     @Transactional
+    // En tu PagoService.java
     public StripeResponseDTO crearIntentoPago(Long conciertoId, Usuario usuario) throws StripeException {
-        Stripe.apiKey = stripeSecretKey;
 
-        Concierto concierto = conciertoRepository.findById(conciertoId)
-                .orElseThrow(() -> new RuntimeException("Concierto no encontrado"));
-
-        if (concierto.getStock() <= 0) {
-            throw new RuntimeException("No quedan entradas para este concierto");
-        }
-
-        // 1. Configurar el intento de pago en Stripe
-        PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                .setAmount(concierto.getPrecio().multiply(new BigDecimal(100)).longValue()) // Stripe usa céntimos
-                .setCurrency("eur")
-                .setReceiptEmail(usuario.getEmail())
-                .putMetadata("concierto_id", conciertoId.toString())
+        SessionCreateParams params = SessionCreateParams.builder()
+                .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                // Importante: Aquí configuras a dónde vuelve el usuario tras pagar
+                .setSuccessUrl("http://localhost:4200/pago-exito")
+                .setCancelUrl("http://localhost:4200/pago-cancelado")
+                .addLineItem(
+                        SessionCreateParams.LineItem.builder()
+                                .setQuantity(1L)
+                                .setPriceData(
+                                        SessionCreateParams.LineItem.PriceData.builder()
+                                                .setCurrency("eur")
+                                                .setUnitAmount(2000L) // Ejemplo: 20.00€
+                                                .setProductData(
+                                                        SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                                                                .setName("Entrada Concierto ID: " + conciertoId)
+                                                                .build()
+                                                )
+                                                .build()
+                                )
+                                .build()
+                )
                 .build();
 
-        PaymentIntent intent = PaymentIntent.create(params);
+        // 1. Creamos la sesión en los servidores de Stripe
+        Session session = Session.create(params);
 
-        // 2. Registrar el pago en nuestra DB como PENDIENTE
-        InformacionPago pago = new InformacionPago();
-        pago.setUsuario(usuario);
-        pago.setConcierto(concierto);
-        pago.setMontoPago(concierto.getPrecio());
-        pago.setIdTransaccionStripe(intent.getId());
-        pago.setEstadoPago(Estado.PENDIENTE); 
-        pago.setFechaPago(LocalDateTime.now());
-
-        pagoRepository.save(pago);
-
-        return new StripeResponseDTO(intent.getId(), intent.getClientSecret());
+        // 2. ¡AQUÍ ESTÁ EL CAMBIO!
+        // Devuelve session.getUrl() que es la URL a la que el usuario debe ir
+        return new StripeResponseDTO(session.getUrl());
     }
 
     @Override
