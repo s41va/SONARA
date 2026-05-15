@@ -38,11 +38,13 @@ public class PagoServiceImpl implements PagoService {
     // En tu PagoService.java
     public StripeResponseDTO crearIntentoPago(Long conciertoId, Usuario usuario) throws StripeException {
 
+        Stripe.apiKey = stripeSecretKey;
+
         SessionCreateParams params = SessionCreateParams.builder()
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 // Importante: Aquí configuras a dónde vuelve el usuario tras pagar
-                .setSuccessUrl("http://localhost:4200/pago-exito")
+                .setSuccessUrl("http://localhost:4200/pago-exito?session_id={CHECKOUT_SESSION_ID}")
                 .setCancelUrl("http://localhost:4200/pago-cancelado")
                 .addLineItem(
                         SessionCreateParams.LineItem.builder()
@@ -55,7 +57,7 @@ public class PagoServiceImpl implements PagoService {
                                                         SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                                                 .setName("Entrada Concierto ID: " + conciertoId)
                                                                 .build()
-                                                )
+                                                    )
                                                 .build()
                                 )
                                 .build()
