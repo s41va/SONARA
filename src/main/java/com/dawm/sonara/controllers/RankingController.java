@@ -38,19 +38,16 @@ public class RankingController {
 
     // --- SECCIÓN DE ACCIONES (VOTOS) ---
 
-    @Operation(summary = "Votar Artista", description = "Registra un voto único de un usuario para un artista")
-    @PostMapping("/votar/{artistaId}")
+    @Operation(summary = "Votar Artista", description = "Incrementa el voto de un artista para el usuario autenticado")
+    @PutMapping("/votar/{artistaId}")
     public ResponseEntity<?> votar(@PathVariable String artistaId) {
         try {
-            // 1. Extraer el email del usuario autenticado (del JWT)
             String email = org.springframework.security.core.context.SecurityContextHolder
                     .getContext().getAuthentication().getName();
 
-            // 2. Buscar al usuario en la DB
             Usuario usuarioLogueado = usuarioRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-            // 3. EJECUTAR la lógica
             votoService.votar(artistaId, usuarioLogueado);
 
             return ResponseEntity.ok().build();

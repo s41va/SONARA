@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -173,6 +174,11 @@ public class ConciertoServiceImpl implements ConciertoService {
         concierto.setLocalidad(localidad);
 
         return ConciertoMapper.toDTO(conciertoRepository.save(concierto));
+    }
+
+    @Override
+    public Page<ConciertoDTO> findByFilters(String name, Date date, String localidad, Pageable pageable) {
+        return null;
     }
 
     // ===============================

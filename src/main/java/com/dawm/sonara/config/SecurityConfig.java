@@ -95,6 +95,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/localidad/**").permitAll()
 
                         // Ejemplos por roles
+                        .requestMatchers("/api/ranking/**").hasRole("USER")
                         .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
                         .requestMatchers("/api/solicitudes").hasRole("USER")
                         .requestMatchers("/api/artistas").hasRole("USER")
