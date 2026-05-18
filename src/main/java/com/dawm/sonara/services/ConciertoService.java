@@ -5,10 +5,12 @@ import com.dawm.sonara.dtos.concierto.ConciertoDTO;
 import com.dawm.sonara.dtos.concierto.ConciertoDetailDTO;
 import com.dawm.sonara.dtos.concierto.ConciertoUpdateDTO;
 import com.dawm.sonara.entities.Concierto;
+import com.dawm.sonara.entities.Localidad;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ConciertoService {
@@ -23,6 +25,8 @@ public interface ConciertoService {
 
     ConciertoDTO create(ConciertoCreateDTO dto);
     ConciertoDTO update(ConciertoUpdateDTO dto);
+
+    Page<ConciertoDTO> findByFilters(String name, Date date, String localidad, Pageable pageable);
 
     void delete(Long id);
 }
