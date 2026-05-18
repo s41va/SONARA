@@ -23,8 +23,8 @@ public class PasswordResetToken {
 
     /** Usuario propietario del token (un usuario puede generar varios tokens a lo largo del tiempo). */
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario user;
+    @JoinColumn(name = "user_id", nullable = false) // <--- Cambiado de "usuario_id" a "user_id"
+    private Usuario usuario;
 
 
     /** Hash del token (SHA-256 en hex) para no almacenar el token en claro en base de datos. */

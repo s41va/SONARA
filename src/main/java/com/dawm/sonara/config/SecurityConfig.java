@@ -1,6 +1,7 @@
 package com.dawm.sonara.config;
 
 
+import com.dawm.sonara.handler.OAuth2LoginSuccessHandler;
 import com.dawm.sonara.services.CustomUserDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,9 @@ public class SecurityConfig {
     private CustomUserDetailsService userDetailsService;
 
     @Autowired
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+
+    @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Order(1)
@@ -66,10 +70,12 @@ public class SecurityConfig {
                 // 1) API REST: Normalmente desactivas CSRF (no hay sesion/cookies)
                 .csrf(csrf -> csrf.disable())
 
-                // 2) Sin sension (stateless) porque autenticamos por token en cada request
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // 2) IMPORTANTE PARA OAUTH2: Cambiamos a IF_REQUIRED transitoriamente
+                // Google necesita guardar una sesión flash muy pequeña en el servidor durante el "baile" del login.
+                // Una vez logueado, tu app seguirá siendo stateless porque usarás el JWT.
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
 
-                // 3) No queremos formLogin ni redirecciones
+                // 3) No queremos formLogin ni redirecciones clásicas
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
 
@@ -88,6 +94,9 @@ public class SecurityConfig {
                 )
                 // 5. Autorizacion por rutas
                 .authorizeHttpRequests(auth -> auth
+                        // ─── NUEVO: Permitir las rutas nativas de OAuth2/Google ───
+                        .requestMatchers("/oauth2/authorization/**", "/login/oauth2/code/**").permitAll()
+
                         // Endpoints publicos
                         .requestMatchers("/api/usuarios").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
@@ -97,16 +106,19 @@ public class SecurityConfig {
                         // Ejemplos por roles
                         .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
                         .requestMatchers("/api/profile/perfil").hasAnyRole("ADMIN", "MANAGER", "USER")
-                        //.requestMatchers("/api/localidad**").hasAnyRole("ADMIN", "MANAGER")
-                        //.requestMatchers("/api/profile**").hasRole("USER")                    // Solo USER
-                        // Lo demas requiere token valido
 
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/manager/**").hasRole("MANAGER")
+
+                        // Lo demas requiere token valido
                         .anyRequest().authenticated()
                 )
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/oauth2/authorization/google")
+                        // Le indicamos a Spring que ejecute TU handler al iniciar sesión con éxito
+                        .successHandler(oAuth2LoginSuccessHandler)
+                )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
 
         return http.build();
     }

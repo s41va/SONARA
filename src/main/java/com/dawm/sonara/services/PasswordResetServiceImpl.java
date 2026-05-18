@@ -96,7 +96,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 
 
             PasswordResetToken prt = new PasswordResetToken();
-            prt.setUser(user);
+            prt.setUsuario(user);
             prt.setTokenHash(tokenHash);
             prt.setCreatedAt(now);
             prt.setExpiresAt(now.plusMinutes(TOKEN_TTL_MINUTES));
@@ -153,7 +153,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         }
 
 
-        Usuario user = token.getUser();
+        Usuario user = token.getUsuario();
 
 
         user.setContrasenaHash(passwordEncoder.encode(newPassword));

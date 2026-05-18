@@ -40,7 +40,7 @@ public interface PasswordResetTokenRepository extends JpaRepository<PasswordRese
      * @return número de tokens afectados.
      */
     @Modifying
-    @Query("update PasswordResetToken t set t.usedAt = :now where t.user.id = :userId and t.usedAt is null")
+    @Query("update PasswordResetToken t set t.usedAt = :now where t.usuario.id = :userId and t.usedAt is null")
     int invalidateAllActiveTokensForUser(@Param("userId") Long userId, @Param("now") LocalDateTime now);
 
 

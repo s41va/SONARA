@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context; // <--- CORREGIDO: Import de Thymeleaf
 import org.thymeleaf.spring6.SpringTemplateEngine;
@@ -40,6 +41,7 @@ public class MailServiceImpl implements MailService {
         send(to, subject, html, true);
     }
 
+    @Async // <--- Esto hace que se ejecute en segundo plano
     @Override
     public void sendTemplate(String to,
                              String subjectKey,
@@ -87,6 +89,6 @@ public class MailServiceImpl implements MailService {
     }
 }
 
-// Comentario para aclarar templates/mail/reset-password.html,
+// Comentario para aclarar templates/mail/password-reset.html,
 // si intentaras "enviar" un componente de Angular por correo,
 // el usuario vería una página en blanco o código roto
