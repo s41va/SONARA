@@ -44,7 +44,7 @@ public class SecurityConfig {
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     // Inyectamos la URL de tu frontend de producción desde el .env
-    @Value("${CORS_ALLOWED-ORIGINS}")
+    @Value("${CORS_ALLOWED_ORIGINS}")
     private String corsAllowedOrigins;
 
     @Order(1)

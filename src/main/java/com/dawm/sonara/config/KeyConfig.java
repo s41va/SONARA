@@ -14,19 +14,19 @@ import java.security.PublicKey;
 public class KeyConfig {
 
     // Ruta al keystore (.p12 recomendado)
-    @Value("${jwt.keystore.path}")
+    @Value("${JWT_KEYSTORE_PATH}")
     private String keystorePath;
 
     // Password del keystore (y normalmente también de la clave privada)
-    @Value("${jwt.keystore.password}")
+    @Value("${JWT_KEYSTORE_PASSWORD}")
     private String keystorePassword;
 
     // Alias del par de claves dentro del keystore
-    @Value("${jwt.keystore.alias}")
+    @Value("${JWT_KEYSTORE_ALIAS}")
     private String keystoreAlias;
 
     // Tipo de keystore: PKCS12 (p12) o JKS (jks). Por defecto PKCS12
-    @Value("${jwt.keystore.type:PKCS12}")
+    @Value("${JWT_KEYSTORE_TYPE:PKCS12}")
     private String keystoreType;
 
     /**

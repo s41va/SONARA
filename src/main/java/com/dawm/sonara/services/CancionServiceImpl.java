@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class CancionServiceImpl implements CancionService {
 
-    @Value("${theaudiodb.api.url}")
+    @Value("${THEAUDIODB_API_URL}")
     private String apiUrl;
 
     private final RestTemplate restTemplate = new RestTemplate();

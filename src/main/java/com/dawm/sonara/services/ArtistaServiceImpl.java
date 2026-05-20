@@ -28,7 +28,7 @@ public class ArtistaServiceImpl implements ArtistaService {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Value("${theaudiodb.api.url}")
+    @Value("${THEAUDIODB_API_URL}")
     private String apiUrl;
 
     // --- MÉTODOS DE BÚSQUEDA EXTERNA ---
