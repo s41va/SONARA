@@ -4,6 +4,12 @@ import jakarta.validation.Valid;
 import com.dawm.sonara.dtos.auth.AuthRequestDTO;
 import com.dawm.sonara.dtos.auth.AuthResponseDTO;
 import com.dawm.sonara.utils.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +25,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Autenticación", description = "Controlador para el manejo de sesiones, login y generación de tokens JWT")
 public class AuthenticationController {
 
     @Autowired
@@ -27,22 +34,29 @@ public class AuthenticationController {
     @Autowired
     private JwtUtil jwtUtil;
 
-
-    /**
-     * Autentica al usuario y genera un token JWT si las credenciales son válidas.
-     * * <p>Flujo:</p>
-     * <ol>
-     * <li>Recibe credenciales en el body (JSON) y las valida con {@code @Valid}.</li>
-     * <li>Delegación en {@link AuthenticationManager} para autenticar.</li>
-     * <li>Extrae el nombre de usuario y los roles desde {@link Authentication}.</li>
-     * <li>Genera el JWT incluyendo roles como claim.</li>
-     * <li>Devuelve el token en un {@link AuthResponseDTO}.</li>
-     * </ol>
-     * * @param authRequest DTO con {@code username} y {@code password}.
-     * @return {@link ResponseEntity} con {@link AuthResponseDTO} que incluye el token JWT.
-     */
+    @Operation(
+            summary = "Autenticar usuario",
+            description = "Valida las credenciales del usuario (nombre de usuario y contraseña) y, si son correctas, " +
+                    "genera y devuelve un token JWT con sus roles correspondientes para acceder a las rutas protegidas."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Autenticación exitosa. Se devuelve el token JWT.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = AuthResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "400", description = "Formato de solicitud inválido o faltan campos obligatorios"),
+            @ApiResponse(responseCode = "401", description = "Credenciales incorrectas (Usuario o contraseña no válidos)"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthResponseDTO> authenticate(@Valid @RequestBody AuthRequestDTO authRequest) {
+    public ResponseEntity<AuthResponseDTO> authenticate(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Credenciales de acceso del usuario", required = true)
+            @Valid @RequestBody AuthRequestDTO authRequest) {
+
         // 1) Autenticación (si falla, Spring lanza AuthenticationException y lo gestiona el ApiExceptionHandler)
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

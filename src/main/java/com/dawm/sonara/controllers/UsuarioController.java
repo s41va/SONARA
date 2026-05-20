@@ -11,11 +11,13 @@ import com.dawm.sonara.repositories.RolesRepository;
 import com.dawm.sonara.services.LocalidadService;
 import com.dawm.sonara.services.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -35,6 +37,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/usuarios")
+@Tag(name = "Usuarios", description = "Controlador para la administración, registro y consulta del ciclo de vida de los usuarios y sus roles")
 public class UsuarioController {
     private static final Logger logger = LoggerFactory.getLogger(UsuarioController.class);
 
@@ -53,17 +56,6 @@ public class UsuarioController {
     @Autowired
     private LocalidadRepository localidadRepository;
 
-    /*@GetMapping
-    public ResponseEntity<Page<UsuarioDTO>> listUsuarios(
-            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
-        logger.info("Solicitando la lista de usuarios... page={}, size={}, sort={}",
-                pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
-        Page<UsuarioDTO> page = usuarioService.list(pageable);
-
-        logger.info("Se han cargado {} usuarios en la pagina {}.",
-                page.getNumberOfElements(), page.getNumber());
-        return ResponseEntity.ok(page);
-    }*/
     @Operation(
             summary = "Obtener todos los usuarios",
             description = "Devuelve una lista paginada de todos los usuarios disponibles en el sistema. " +
@@ -82,7 +74,8 @@ public class UsuarioController {
     })
     @GetMapping
     public ResponseEntity<?> listAllUsuarios(
-            @PageableDefault(size = 10, sort = "id") Pageable pageable,
+            @Parameter(hidden = true) @PageableDefault(size = 10, sort = "id") Pageable pageable,
+            @Parameter(description = "Indica si se requiere la lista completa sin aplicar límites de paginación", example = "false")
             @RequestParam(defaultValue = "false") boolean unpaged) {
 
         if (unpaged) {
@@ -99,17 +92,19 @@ public class UsuarioController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
-                    description = "Usuario creado exitosamente",
+                    description = "Usuario creado exitosamente. Retorna la localización del nuevo recurso en la cabecera.",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = UsuarioDTO.class)
                     )
             ),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos proporcionados"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos proporcionados para el registro"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PostMapping
-    public ResponseEntity<UsuarioDTO> createUsuario(@Valid @RequestBody UsuarioCreateDTO dto) {
+    public ResponseEntity<UsuarioDTO> createUsuario(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Estructura de datos para crear un usuario", required = true)
+            @Valid @RequestBody UsuarioCreateDTO dto) {
 
         UsuarioDTO created = usuarioService.create(dto);
 
@@ -124,7 +119,7 @@ public class UsuarioController {
 
     @Operation(
             summary = "Actualizar un usuario",
-            description = "Permite actualizar los datos de un usuario existente en la base de datos, incluyendo sus roles."
+            description = "Permite actualizar los datos de un usuario existente en la base de datos, incluyendo la asignación de sus roles correspondientes."
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -135,13 +130,16 @@ public class UsuarioController {
                             schema = @Schema(implementation = UsuarioDTO.class)
                     )
             ),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos proporcionados"),
-            @ApiResponse(responseCode = "404", description = "Usuario o roles no encontrados"),
+            @ApiResponse(responseCode = "400", description = "Datos de modificación inválidos proporcionados"),
+            @ApiResponse(responseCode = "404", description = "Usuario o identificadores de roles no encontrados"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioDTO> updateUsuario(@PathVariable Long id,
-                                                    @Valid @RequestBody UsuarioUpdateDTO usuarioDTO) {
+    public ResponseEntity<UsuarioDTO> updateUsuario(
+            @Parameter(description = "ID único del usuario a modificar", example = "1", required = true)
+            @PathVariable Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos modificados del usuario junto con su listado de roles", required = true)
+            @Valid @RequestBody UsuarioUpdateDTO usuarioDTO) {
         logger.info("Actualizando usuario con ID {}", usuarioDTO.getId());
         if (usuarioDTO.getRolesIds() != null && usuarioDTO.getRolesIds().isEmpty()) {
             usuarioDTO.setRolesIds(null);
@@ -171,15 +169,17 @@ public class UsuarioController {
 
     @Operation(
             summary = "Eliminar un usuario",
-            description = "Permite eliminar un usuario específico de la base de datos."
+            description = "Permite eliminar un usuario específico de la base de datos de manera permanente."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Usuario eliminado exitosamente"),
+            @ApiResponse(responseCode = "204", description = "Usuario eliminado exitosamente (Sin contenido)"),
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUsuario(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUsuario(
+            @Parameter(description = "ID único del usuario a eliminar", example = "1", required = true)
+            @PathVariable Long id) {
         logger.info("Eliminando usuario con ID {}", id);
 
         usuarioService.delete(id);
@@ -191,22 +191,24 @@ public class UsuarioController {
 
     @Operation(
             summary = "Obtener un usuario por ID",
-            description = "Recupera un usuario específico según su identificador único."
+            description = "Recupera la información extendida y detallada de un usuario específico según su identificador único."
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Usuario encontrado",
+                    description = "Usuario encontrado con éxito",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = UsuarioDetailDTO.class)
                     )
             ),
-            @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado con el ID especificado"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioDetailDTO> getUsuarioById(@PathVariable Long id) {
+    public ResponseEntity<UsuarioDetailDTO> getUsuarioById(
+            @Parameter(description = "ID único del usuario a consultar", example = "1", required = true)
+            @PathVariable Long id) {
         logger.info("Mostrando detalle del usuario con ID {}", id);
 
         UsuarioDetailDTO usuarioDetailDTO = usuarioService.getDetail(id);

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/canciones")
+@Tag(name = "Canciones", description = "Controlador para la gestión y búsqueda de canciones")
 public class CancionController {
 
     @Autowired
@@ -39,9 +40,9 @@ public class CancionController {
     })
     @GetMapping("/buscar")
     public ResponseEntity<CancionDTO> buscar(
-            @Parameter(description = "Nombre del artista", example = "Coldplay")
+            @Parameter(description = "Nombre del artista", example = "Coldplay", required = true)
             @RequestParam String artista,
-            @Parameter(description = "Título de la canción", example = "Yellow")
+            @Parameter(description = "Título de la canción", example = "Yellow", required = true)
             @RequestParam String titulo) {
 
         CancionDTO cancion = cancionService.buscarCancion(artista, titulo);

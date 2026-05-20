@@ -7,11 +7,13 @@ import com.dawm.sonara.dtos.concierto.ConciertoUpdateDTO;
 import com.dawm.sonara.repositories.ConciertoRepository;
 import com.dawm.sonara.services.ConciertoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -27,11 +29,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.Date;
 
 @RestController
 @RequestMapping("/api/concierto")
+@Tag(name = "Conciertos", description = "Controlador para la gestión, programación y búsqueda de conciertos")
 public class ConciertoController {
     private static final Logger logger = LoggerFactory.getLogger(ConciertoController.class);
 
@@ -43,18 +45,7 @@ public class ConciertoController {
 
     @Autowired
     private ConciertoRepository conciertoRepository;
-    /*
-    @GetMapping
-    public ResponseEntity<Page<ConciertoDTO>> listConciertos(
-            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
-        logger.info("Solicitando la lista de conciertos... page={}, size={}, sort={}",
-                pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
-        Page<ConciertoDTO> page = conciertoService.list(pageable);
 
-        logger.info("Se han cargado {} conciertos en la pagina {}.",
-                page.getNumberOfElements(), page.getNumber());
-        return ResponseEntity.ok(page);
-    }*/
     @Operation(
             summary = "Obtener conciertos con filtros",
             description = "Devuelve una lista paginada de conciertos. Permite filtrar por nombre de artista, ciudad o fecha."
@@ -72,27 +63,28 @@ public class ConciertoController {
     })
     @GetMapping
     public ResponseEntity<?> listAllConciertos(
-            @PageableDefault(size = 10, sort = "id") Pageable pageable,
+            @Parameter(hidden = true) @PageableDefault(size = 10, sort = "id") Pageable pageable,
+            @Parameter(description = "Filtro por nombre del artista", example = "Coldplay")
             @RequestParam(value = "nombre", required = false) String nombre,
+            @Parameter(description = "Filtro por ubicación o ciudad", example = "Madrid")
             @RequestParam(value = "ubi", required = false) String localidad,
+            @Parameter(description = "Filtro por fecha en formato cadena", example = "2026-05-20")
             @RequestParam(value = "fecha", required = false) String fecha,
+            @Parameter(description = "Indica si se requiere la lista completa sin paginación", example = "false")
             @RequestParam(defaultValue = "false") boolean unpaged) {
 
         logger.info("Solicitando conciertos. Filtros -> nombre: {}, localidad: {}, fecha: {}", nombre, localidad, fecha);
 
         if (unpaged) {
-            // Se asume que listAll también podría recibir filtros si fuera necesario,
-            // por ahora se mantiene la lógica de lista completa por nombre de artista
             return ResponseEntity.ok(conciertoService.listAll(Sort.by("artistaNombre").ascending()));
         }
 
-        // LLAMADA CLAVE: Pasamos los parámetros de búsqueda al método list del service
         return ResponseEntity.ok(conciertoService.list(nombre, localidad, fecha, pageable));
     }
 
     @Operation(
-            summary = "Buscar conciertos con filtros",
-            description = "Devuelve una lista paginada de conciertos filtrados por nombre, fecha y/o ubicación."
+            summary = "Buscar conciertos con filtros avanzados",
+            description = "Devuelve una lista paginada de conciertos filtrados formalmente por nombre, fecha estructurada y/o ubicación."
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -107,12 +99,14 @@ public class ConciertoController {
     })
     @GetMapping("/search")
     public ResponseEntity<?> searchConciertos(
+            @Parameter(description = "Nombre o término de búsqueda", example = "Coldplay")
             @RequestParam(required = false) String name,
+            @Parameter(description = "Fecha exacta del concierto (Formato ISO: YYYY-MM-DD)", example = "2026-05-20")
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date,
+            @Parameter(description = "Ubicación o local del evento", example = "Estadio Metropolitano")
             @RequestParam(required = false) String location,
-            @PageableDefault(size = 10, sort = "date") Pageable pageable) {
+            @Parameter(hidden = true) @PageableDefault(size = 10, sort = "date") Pageable pageable) {
 
-        // Nota: El service debería manejar la lógica de qué filtros aplicar si vienen nulos
         return ResponseEntity.ok(conciertoService.findByFilters(name, date, location, pageable));
     }
 
@@ -123,17 +117,19 @@ public class ConciertoController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
-                    description = "Concierto creado exitosamente",
+                    description = "Concierto creado exitosamente. Retorna la localización del nuevo recurso en el header.",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ConciertoDTO.class)
                     )
             ),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos proporcionados"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos proporcionados para el registro"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PostMapping
-    public ResponseEntity<ConciertoDTO> createConcierto(@Valid @RequestBody ConciertoCreateDTO dto) {
+    public ResponseEntity<ConciertoDTO> createConcierto(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Estructura de datos requerida para agendar un concierto", required = true)
+            @Valid @RequestBody ConciertoCreateDTO dto) {
 
         ConciertoDTO created = conciertoService.create(dto);
 
@@ -148,24 +144,27 @@ public class ConciertoController {
 
     @Operation(
             summary = "Actualizar un concierto",
-            description = "Permite actualizar los datos de un concierto existente en la base de datos."
+            description = "Permite actualizar por completo los datos de un concierto existente localizándolo mediante su ID."
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Concierto actualizada exitosamente",
+                    description = "Concierto actualizado exitosamente",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ConciertoDTO.class)
                     )
             ),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos proporcionados"),
-            @ApiResponse(responseCode = "404", description = "Concierto no encontrada"),
+            @ApiResponse(responseCode = "400", description = "ID o datos proporcionados incompatibles o inválidos"),
+            @ApiResponse(responseCode = "404", description = "Concierto no encontrado con el ID indicado"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ConciertoDTO> updateConcierto(@PathVariable Long id,
-                                                      @Valid @RequestBody ConciertoUpdateDTO conciertoDTO) {
+    public ResponseEntity<ConciertoDTO> updateConcierto(
+            @Parameter(description = "ID del concierto a actualizar", example = "1", required = true)
+            @PathVariable Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos modificados del concierto", required = true)
+            @Valid @RequestBody ConciertoUpdateDTO conciertoDTO) {
         logger.info("Actualizando concierto con ID {}", conciertoDTO.getId());
         conciertoDTO.setId(id);
         ConciertoDTO updated = conciertoService.update(conciertoDTO);
@@ -176,15 +175,17 @@ public class ConciertoController {
 
     @Operation(
             summary = "Eliminar un concierto",
-            description = "Permite eliminar un concierto específico de la base de datos."
+            description = "Permite eliminar un concierto específico del registro de manera permanente."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Concierto eliminada exitosamente"),
-            @ApiResponse(responseCode = "404", description = "Concierto no encontrada"),
+            @ApiResponse(responseCode = "204", description = "Concierto eliminado exitosamente (Sin contenido)"),
+            @ApiResponse(responseCode = "404", description = "Concierto no encontrado"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteConcierto(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteConcierto(
+            @Parameter(description = "ID del concierto a dar de baja", example = "1", required = true)
+            @PathVariable Long id) {
         logger.info("Eliminando concierto con ID {}", id);
 
         conciertoService.delete(id);
@@ -196,22 +197,24 @@ public class ConciertoController {
 
     @Operation(
             summary = "Obtener un concierto por ID",
-            description = "Recupera un concierto específico según su identificador único."
+            description = "Recupera los datos extendidos y detallados de un concierto específico según su identificador único."
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Concierto encontrado",
+                    description = "Detalle del concierto localizado correctamente",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ConciertoDetailDTO.class)
                     )
             ),
-            @ApiResponse(responseCode = "404", description = "Concierto no encontrada"),
+            @ApiResponse(responseCode = "404", description = "Concierto no encontrado con el ID especificado"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<ConciertoDetailDTO> getConciertoById(@PathVariable Long id) {
+    public ResponseEntity<ConciertoDetailDTO> getConciertoById(
+            @Parameter(description = "ID único del concierto a consultar", example = "1", required = true)
+            @PathVariable Long id) {
         logger.info("Mostrando detalles del concierto con ID {}", id);
 
         ConciertoDetailDTO conciertoDetailDTO = conciertoService.getDetail(id);
@@ -219,4 +222,3 @@ public class ConciertoController {
         return ResponseEntity.ok(conciertoDetailDTO);
     }
 }
-

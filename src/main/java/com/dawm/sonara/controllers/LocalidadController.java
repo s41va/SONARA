@@ -7,11 +7,13 @@ import com.dawm.sonara.dtos.localidad.LocalidadUpdateDTO;
 import com.dawm.sonara.repositories.LocalidadRepository;
 import com.dawm.sonara.services.LocalidadService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -29,6 +31,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/api/localidad")
+@Tag(name = "Localidades", description = "Controlador para la gestión y consulta de las ubicaciones y localidades del sistema")
 public class LocalidadController {
     private static final Logger logger = LoggerFactory.getLogger(LocalidadController.class);
 
@@ -40,18 +43,7 @@ public class LocalidadController {
 
     @Autowired
     private LocalidadRepository localidadRepository;
-    /*
-    @GetMapping
-    public ResponseEntity<Page<LocalidadDTO>> listLocalidads(
-            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
-        logger.info("Solicitando la lista de localidads... page={}, size={}, sort={}",
-                pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
-        Page<LocalidadDTO> page = localidadService.list(pageable);
 
-        logger.info("Se han cargado {} localidads en la pagina {}.",
-                page.getNumberOfElements(), page.getNumber());
-        return ResponseEntity.ok(page);
-    }*/
     @Operation(
             summary = "Obtener todas las localidades",
             description = "Devuelve una lista paginada de todas las localidades disponibles en el sistema. " +
@@ -70,7 +62,8 @@ public class LocalidadController {
     })
     @GetMapping
     public ResponseEntity<?> listAllLocalidades(
-            @PageableDefault(size = 10, sort = "id") Pageable pageable,
+            @Parameter(hidden = true) @PageableDefault(size = 10, sort = "id") Pageable pageable,
+            @Parameter(description = "Indica si se requiere la lista completa sin paginación", example = "false")
             @RequestParam(defaultValue = "false") boolean unpaged) {
 
         if (unpaged) {
@@ -87,17 +80,19 @@ public class LocalidadController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
-                    description = "Localidad creada exitosamente",
+                    description = "Localidad creada exitosamente. Retorna la localización del nuevo recurso en el header.",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = LocalidadDTO.class)
                     )
             ),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos proporcionados"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos proporcionados para el registro"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PostMapping
-    public ResponseEntity<LocalidadDTO> createLocalidad(@Valid @RequestBody LocalidadCreateDTO dto) {
+    public ResponseEntity<LocalidadDTO> createLocalidad(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Estructura de datos para crear una localidad", required = true)
+            @Valid @RequestBody LocalidadCreateDTO dto) {
 
         LocalidadDTO created = localidadService.create(dto);
 
@@ -112,7 +107,7 @@ public class LocalidadController {
 
     @Operation(
             summary = "Actualizar una localidad",
-            description = "Permite actualizar los datos de una localidad existente en la base de datos."
+            description = "Permite actualizar los datos de una localidad existente en la base de datos localizándola mediante su ID."
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -123,13 +118,16 @@ public class LocalidadController {
                             schema = @Schema(implementation = LocalidadDTO.class)
                     )
             ),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos proporcionados"),
-            @ApiResponse(responseCode = "404", description = "Localidad no encontrada"),
+            @ApiResponse(responseCode = "400", description = "Datos de modificación inválidos"),
+            @ApiResponse(responseCode = "404", description = "Localidad no encontrada con el ID indicado"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<LocalidadDTO> updateUsuario(@PathVariable Long id,
-                                                    @Valid @RequestBody LocalidadUpdateDTO localidadDTO) {
+    public ResponseEntity<LocalidadDTO> updateUsuario(
+            @Parameter(description = "ID único de la localidad a modificar", example = "1", required = true)
+            @PathVariable Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos actualizados de la localidad", required = true)
+            @Valid @RequestBody LocalidadUpdateDTO localidadDTO) {
         logger.info("Actualizando localidad con ID {}", localidadDTO.getId());
 
         LocalidadDTO updated = localidadService.update(localidadDTO);
@@ -140,15 +138,17 @@ public class LocalidadController {
 
     @Operation(
             summary = "Eliminar una localidad",
-            description = "Permite eliminar una localidad específico de la base de datos."
+            description = "Permite eliminar una localidad específica del registro de manera permanente."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Localidad eliminada exitosamente"),
+            @ApiResponse(responseCode = "204", description = "Localidad eliminada exitosamente (Sin contenido)"),
             @ApiResponse(responseCode = "404", description = "Localidad no encontrada"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteLocalidad(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteLocalidad(
+            @Parameter(description = "ID único de la localidad a eliminar", example = "1", required = true)
+            @PathVariable Long id) {
         logger.info("Eliminando localidad con ID {}", id);
 
         localidadService.delete(id);
@@ -160,22 +160,24 @@ public class LocalidadController {
 
     @Operation(
             summary = "Obtener una localidad por ID",
-            description = "Recupera una localidad específico según su identificador único."
+            description = "Recupera la información extendida de una localidad específica según su identificador único."
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Localidad encontrado",
+                    description = "Localidad encontrada con éxito",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = LocalidadDetailDTO.class)
                     )
             ),
-            @ApiResponse(responseCode = "404", description = "Localidad no encontrada"),
+            @ApiResponse(responseCode = "404", description = "Localidad no encontrada con el ID especificado"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<LocalidadDetailDTO> getRegionById(@PathVariable Long id) {
+    public ResponseEntity<LocalidadDetailDTO> getRegionById(
+            @Parameter(description = "ID único de la localidad a consultar", example = "1", required = true)
+            @PathVariable Long id) {
         logger.info("Mostrando detalles de la localidad con ID {}", id);
 
         LocalidadDetailDTO localidadDetailDTO = localidadService.getDetail(id);
