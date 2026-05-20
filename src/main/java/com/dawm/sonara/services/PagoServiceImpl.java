@@ -27,6 +27,9 @@ public class PagoServiceImpl implements PagoService {
     @Value("${stripe.key.secret}")
     private String stripeSecretKey;
 
+    @Value("${APP_PUBLIC_BASE_URL}")
+    private String frontendUrl;
+
     @Autowired
     private ConciertoRepository conciertoRepository;
 
@@ -44,8 +47,8 @@ public class PagoServiceImpl implements PagoService {
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 // Importante: Aquí configuras a dónde vuelve el usuario tras pagar
-                .setSuccessUrl("http://localhost:4200/pago-exito?session_id={CHECKOUT_SESSION_ID}")
-                .setCancelUrl("http://localhost:4200/pago-cancelado")
+                .setSuccessUrl(frontendUrl + "/pago-exito?session_id={CHECKOUT_SESSION_ID}")
+                .setCancelUrl(frontendUrl + "/pago-cancelado")
                 .addLineItem(
                         SessionCreateParams.LineItem.builder()
                                 .setQuantity(1L)
