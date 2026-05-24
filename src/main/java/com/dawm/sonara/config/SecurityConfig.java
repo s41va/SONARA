@@ -25,8 +25,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
@@ -43,7 +41,6 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    // Inyectamos la URL de tu frontend de producción desde el .env
     @Value("${CORS_ALLOWED_ORIGINS}")
     private String corsAllowedOrigins;
 
@@ -58,7 +55,7 @@ public class SecurityConfig {
                         "/login", "/logout")
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().hasRole("ADMIN")
+                        .anyRequest().hasAuthority("ROLE_ADMIN")
                 )
                 .formLogin(form -> form.permitAll())
                 .logout(logout -> logout.logoutUrl("/logout"))
@@ -70,20 +67,17 @@ public class SecurityConfig {
     @Order(2)
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // Configuración de seguridad
         http
-                .cors(withDefaults()) // Busca automáticamente el bean corsConfigurationSource() de abajo
-                // 1) API REST: Desactivamos CSRF
+                // CORRECCIÓN 1: Inyección explícita de la política de CORS al frente de la cadena de filtros
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
 
-                // 2) IMPORTANTE PARA OAUTH2: Sesión temporal para el login de Google
+                // IMPORTANTE: Permitimos mantener la sesión para el salto de Google OAuth2 seguro
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
 
-                // 3) Desactivamos formLogin tradicional en la API
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
 
-                // 4) Manejo de errores API: 401 / 403
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(401);
@@ -96,9 +90,7 @@ public class SecurityConfig {
                             response.getWriter().write("{\"error\":\"Forbidden\"}");
                         })
                 )
-                // 5) Autorización por rutas
                 .authorizeHttpRequests(auth -> auth
-                        // Permitir las rutas nativas de OAuth2/Google
                         .requestMatchers("/oauth2/authorization/**", "/login/oauth2/code/**").permitAll()
 
                         // Endpoints públicos
@@ -107,19 +99,17 @@ public class SecurityConfig {
                         .requestMatchers("/error", "/error/**").permitAll()
                         .requestMatchers("/api/localidad/**").permitAll()
 
-                        // Rutas restringidas por roles
-                        .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
-                        .requestMatchers("/api/profile/perfil").hasAnyRole("ADMIN", "MANAGER", "USER")
+                        // CORRECCIÓN 2: Jerarquía estricta de rutas de perfil para evitar solapamiento de comodines
+                        .requestMatchers("/api/profile/perfil").hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER")
+                        .requestMatchers("/api/profile/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER", "ROLE_USER")
 
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/manager/**").hasRole("MANAGER")
+                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/manager/**").hasAuthority("ROLE_MANAGER")
 
-                        // Lo demás requiere token válido
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/oauth2/authorization/google")
-                        // Ejecuta tu handler dinámico al iniciar sesión con éxito
                         .successHandler(oAuth2LoginSuccessHandler)
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -127,21 +117,14 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // Bean para configurar CORS usando las variables de tu .env de forma segura
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Añade el dominio del frontend (ej: https://acassar.alixarblue.team)
-        configuration.setAllowedOrigins(List.of(corsAllowedOrigins));
-
-        // Métodos HTTP permitidos para la API
+        configuration.setAllowedOrigins(List.of(corsAllowedOrigins, "http://localhost:4200"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-
-        // Cabeceras permitidas
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin"));
-
-        // Permitir el envío de credenciales (Authorization headers, etc.)
+        // Se añade Cache-Control para las peticiones de refresco de perfil del navegador
+        configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type", "X-Requested-With", "Accept", "Origin"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -151,10 +134,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        logger.info("Entrando en el método passwordEncoder");
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
-        logger.info("Saliendo del método passwordEncoder");
-        return encoder;
+        return new BCryptPasswordEncoder();
     }
 
     @Bean

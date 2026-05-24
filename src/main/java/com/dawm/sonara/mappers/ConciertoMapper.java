@@ -16,6 +16,7 @@ public class ConciertoMapper {
         dto.setFechaHora(entity.getFechaHora());
         dto.setLocal(entity.getLocal());
         dto.setDescripcion(entity.getDescripcion());
+        dto.setPrecio(entity.getPrecio());
 
         // Creamos un DTO de artista básico con lo que tenemos en la DB
         ArtistaDTO artista = new ArtistaDTO();
@@ -34,6 +35,7 @@ public class ConciertoMapper {
         e.setFechaHora(dto.getFechaHora());
         e.setLocal(dto.getLocal());
         e.setDescripcion(dto.getDescripcion());
+        e.setPrecio(dto.getPrecio());
         return e;
     }
 
@@ -42,6 +44,7 @@ public class ConciertoMapper {
         entity.setLocal(dto.getLocal());
         entity.setDescripcion(dto.getDescripcion());
         entity.setArtistaId(dto.getArtistaId());
+        entity.setPrecio(dto.getPrecio());
     }
 
     public static ConciertoDetailDTO toDetailDTO(Concierto entity) {
@@ -52,12 +55,11 @@ public class ConciertoMapper {
         dto.setFechaHora(entity.getFechaHora());
         dto.setLocal(entity.getLocal());
         dto.setDescripcion(entity.getDescripcion());
+        dto.setPrecio(entity.getPrecio());
 
         // Mapeamos la localidad usando su propio mapper
         dto.setLocalidad(LocalidadMapper.toDTO(entity.getLocalidad()));
 
-        // El campo 'artista' se queda a null aquí porque
-        // lo llenaremos en el Service con la llamada a la API
         return dto;
     }
 }

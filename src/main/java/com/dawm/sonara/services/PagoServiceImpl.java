@@ -1,10 +1,12 @@
 package com.dawm.sonara.services;
 
 import com.dawm.sonara.dtos.pagos.StripeResponseDTO;
+import com.dawm.sonara.entities.Artista;
 import com.dawm.sonara.entities.Concierto;
 import com.dawm.sonara.entities.InformacionPago;
 import com.dawm.sonara.entities.Usuario;
 import com.dawm.sonara.entities.enums.Estado;
+import com.dawm.sonara.repositories.ArtistaRepository;
 import com.dawm.sonara.repositories.ConciertoRepository;
 import com.dawm.sonara.repositories.PagoRepository;
 import com.stripe.Stripe;
@@ -19,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
 @Service
@@ -36,42 +40,70 @@ public class PagoServiceImpl implements PagoService {
     @Autowired
     private PagoRepository pagoRepository;
 
+    @Autowired
+    private ArtistaRepository artistaRepository;
+
     @Override
     @Transactional
-    // En tu PagoService.java
     public StripeResponseDTO crearIntentoPago(Long conciertoId, Usuario usuario) throws StripeException {
 
         Stripe.apiKey = stripeSecretKey;
 
+        // 1. Buscamos el concierto usando el ID que viene por parámetro
+        Concierto concierto = conciertoRepository.findById(conciertoId)
+                .orElseThrow(() -> new RuntimeException("Concierto no encontrado"));
+
+        // 2. Extraemos y codificamos de forma segura todas las características para la URL
+        String artistaCodificado = URLEncoder.encode(concierto.getArtistaNombre(), StandardCharsets.UTF_8);
+
+        String fechaCodificada = URLEncoder.encode(concierto.getFechaHora().toString(), StandardCharsets.UTF_8);
+
+        // Combinamos la localidad y el local específico del concierto
+        String lugarCompleto = concierto.getLocalidad().getNombreCiudad() + " - " + concierto.getLocal();
+        String lugarCodificado = URLEncoder.encode(lugarCompleto, StandardCharsets.UTF_8);
+
+        String descCodificada = URLEncoder.encode(concierto.getDescripcion() != null ? concierto.getDescripcion() : "", StandardCharsets.UTF_8);
+
+        String precioString = concierto.getPrecio().setScale(2, java.math.RoundingMode.HALF_UP).toString() + "€";
+        String precioCodificado = URLEncoder.encode(precioString, StandardCharsets.UTF_8);
+
+        // 3. Calculamos el precio real en céntimos para Stripe (ej: 25.50 -> 2550)
+        long montoCentimos = concierto.getPrecio().multiply(new BigDecimal(100)).longValue();
+
+        // 4. Construimos la URL de éxito con todos los parámetros anexados
+        String successUrl = frontendUrl + "/pago-exito"
+                + "?session_id={CHECKOUT_SESSION_ID}"
+                + "&artista=" + artistaCodificado
+                + "&fecha=" + fechaCodificada
+                + "&lugar=" + lugarCodificado
+                + "&descripcion=" + descCodificada
+                + "&precio=" + precioCodificado;
+
         SessionCreateParams params = SessionCreateParams.builder()
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                // Importante: Aquí configuras a dónde vuelve el usuario tras pagar
-                .setSuccessUrl(frontendUrl + "/pago-exito?session_id={CHECKOUT_SESSION_ID}")
-                .setCancelUrl(frontendUrl + "/pago-cancelado")
+                .setSuccessUrl(successUrl)
+                .setCancelUrl(frontendUrl + "/concierto")
                 .addLineItem(
                         SessionCreateParams.LineItem.builder()
                                 .setQuantity(1L)
                                 .setPriceData(
                                         SessionCreateParams.LineItem.PriceData.builder()
                                                 .setCurrency("eur")
-                                                .setUnitAmount(2000L) // Ejemplo: 20.00€
+                                                .setUnitAmount(montoCentimos)
                                                 .setProductData(
                                                         SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                                                .setName("Entrada Concierto ID: " + conciertoId)
+                                                                .setName("Entrada para " + concierto.getArtistaNombre())
+                                                                .setDescription(concierto.getLocalidad().getNombreCiudad() + " - " + concierto.getLocal())
                                                                 .build()
-                                                    )
+                                                )
                                                 .build()
                                 )
                                 .build()
                 )
                 .build();
 
-        // 1. Creamos la sesión en los servidores de Stripe
         Session session = Session.create(params);
-
-        // 2. ¡AQUÍ ESTÁ EL CAMBIO!
-        // Devuelve session.getUrl() que es la URL a la que el usuario debe ir
         return new StripeResponseDTO(session.getUrl());
     }
 
